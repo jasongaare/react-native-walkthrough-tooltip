@@ -1,0 +1,33 @@
+{
+  "name": "react-native-walkthrough-tooltip",
+  "version": "0.0.1",
+  "description": "A inline wrapper for calling out React Native components via tooltip",
+  "main": "src/Tooltip.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasongaare/react-native-walkthrough-tooltip.git"
+  },
+  "author": "Jason Gaare",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jasongaare/react-native-walkthrough-tooltip/issues"
+  },
+  "homepage": "https://github.com/jasongaare/react-native-walkthrough-tooltip#readme",
+  "keywords": [
+    "react",
+    "react-native",
+    "walkthrough",
+    "tooltip",
+    "popover"
+  ],
+  "dependencies": {
+    "prop-types": "^15.6.1"
+  },
+  "devDependencies": {
+    "react": "^16.3.2",
+    "react-native": "^0.55.3"
+  }
+}
