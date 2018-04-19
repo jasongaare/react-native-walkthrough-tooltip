@@ -2,7 +2,7 @@
   "name": "react-native-walkthrough-tooltip",
   "version": "0.0.1",
   "description": "A inline wrapper for calling out React Native components via tooltip",
-  "main": "src/Tooltip.js",
+  "main": "src/tooltip.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
