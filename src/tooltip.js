@@ -1,79 +1,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  StyleSheet,
-  Dimensions,
   Animated,
+  Dimensions,
+  Easing,
+  InteractionManager,
+  Modal,
+  StyleSheet,
   TouchableWithoutFeedback,
   View,
-  Easing,
-  Modal,
-  InteractionManager,
 } from 'react-native';
+import {
+  Point,
+  Size,
+  Rect,
+  computeTopGeometry,
+  computeBottomGeometry,
+  computeLeftGeometry,
+  computeRightGeometry,
+} from './geom';
+import styles from './styles';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const styles = StyleSheet.create({
-  container: {
-    opacity: 0,
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    position: 'absolute',
-    backgroundColor: 'transparent',
-  },
-  containerVisible: {
-    opacity: 1,
-  },
-  background: {
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    position: 'absolute',
-    backgroundColor: 'rgba(0,0,0,0.6)',
-  },
-  popover: {
-    backgroundColor: 'transparent',
-    position: 'absolute',
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 2,
-    shadowOpacity: 0.8,
-  },
-  content: {
-    borderRadius: 3,
-    padding: 8,
-    backgroundColor: '#fff',
-  },
-  arrow: {
-    position: 'absolute',
-    borderTopColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'transparent',
-    borderLeftColor: 'transparent',
-  },
-});
-
-function Point(x, y) {
-  this.x = x;
-  this.y = y;
-}
-
-function Size(width, height) {
-  this.width = width;
-  this.height = height;
-}
-
-function Rect(x, y, width, height) {
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-}
-
 const DEFAULT_ARROW_SIZE = new Size(16, 7);
+const DEFAULT_DISPLAY_AREA = new Rect(24, 24, SCREEN_WIDTH - 48, SCREEN_HEIGHT - 48);
 
 class Tooltip extends Component {
   constructor(props) {
@@ -106,6 +57,9 @@ class Tooltip extends Component {
         // We want to start the show animation only when contentSize is known
         // so that we can have some logic depending on the geometry
         this.setState({ contentSize: {}, isAwaitingShow: true });
+
+        // The location of the child element may have changed based on
+        // transition animations in the corresponding view, so remeasure
         InteractionManager.runAfterInteractions(() => {
           this.measureChildRect();
         });
@@ -244,82 +198,23 @@ class Tooltip extends Component {
 
     switch (innerPlacement) {
       case 'top':
-        return this.computeTopGeometry(options);
+        return computeTopGeometry(options);
       case 'bottom':
-        return this.computeBottomGeometry(options);
+        return computeBottomGeometry(options);
       case 'left':
-        return this.computeLeftGeometry(options);
+        return computeLeftGeometry(options);
       case 'right':
-        return this.computeRightGeometry(options);
+        return computeRightGeometry(options);
       default:
         return this.computeAutoGeometry(options);
     }
   };
 
-  computeTopGeometry = ({ displayArea, childRect, contentSize, arrowSize }) => {
-    const popoverOrigin = new Point(
-      Math.min(displayArea.x + displayArea.width - contentSize.width,
-        Math.max(displayArea.x, childRect.x + (childRect.width - contentSize.width) / 2)),
-      childRect.y - contentSize.height - arrowSize.height);
-    const anchorPoint = new Point(childRect.x + childRect.width / 2.0, childRect.y);
-
-    return {
-      popoverOrigin,
-      anchorPoint,
-      placement: 'top',
-    };
-  };
-
-  computeBottomGeometry = ({ displayArea, childRect, contentSize, arrowSize }) => {
-    const popoverOrigin = new Point(
-      Math.min(displayArea.x + displayArea.width - contentSize.width,
-        Math.max(displayArea.x, childRect.x + (childRect.width - contentSize.width) / 2)),
-      childRect.y + childRect.height + arrowSize.height);
-    const anchorPoint = new Point(
-      childRect.x + childRect.width / 2.0,
-      childRect.y + childRect.height
-    );
-
-    return {
-      popoverOrigin,
-      anchorPoint,
-      placement: 'bottom',
-    };
-  };
-
-  computeLeftGeometry = ({ displayArea, childRect, contentSize, arrowSize }) => {
-    const popoverOrigin = new Point(childRect.x - contentSize.width - arrowSize.width,
-      Math.min(displayArea.y + displayArea.height - contentSize.height,
-        Math.max(displayArea.y, childRect.y + (childRect.height - contentSize.height) / 2)));
-    const anchorPoint = new Point(childRect.x, childRect.y + childRect.height / 2.0);
-
-    return {
-      popoverOrigin,
-      anchorPoint,
-      placement: 'left',
-    };
-  };
-
-  computeRightGeometry = ({ displayArea, childRect, contentSize, arrowSize }) => {
-    const popoverOrigin = new Point(childRect.x + childRect.width + arrowSize.width,
-      Math.min(displayArea.y + displayArea.height - contentSize.height,
-        Math.max(displayArea.y, childRect.y + (childRect.height - contentSize.height) / 2)));
-    const anchorPoint = new Point(
-      childRect.x + childRect.width,
-      childRect.y + childRect.height / 2.0
-    );
-
-    return {
-      popoverOrigin,
-      anchorPoint,
-      placement: 'right',
-    };
-  };
-
   computeAutoGeometry = ({ displayArea, contentSize }) => {
-    const placementsToTry = ['left', 'right', 'bottom', 'top'];
-    let geom;
+    // prefer top, so check that first. if none 'work', fall back to top
+    const placementsToTry = ['top', 'bottom', 'left', 'right', 'top'];
 
+    let geom;
     for (let i = 0; i < placementsToTry.length; i++) {
       const placement = placementsToTry[i];
 
@@ -338,12 +233,11 @@ class Tooltip extends Component {
   };
 
   _startAnimation = ({ show }) => {
-    const handler = this._startDefaultAnimation;
-    handler({ show, doneCallback: () => this.setState({ isTransitioning: false }) });
+    this._startDefaultAnimation({ show, callback: () => this.setState({ isTransitioning: false }) });
     this.setState({ isTransitioning: true });
   };
 
-  _startDefaultAnimation = ({ show, doneCallback }) => {
+  _startDefaultAnimation = ({ show, callback }) => {
     const animDuration = 300;
     const values = this.state.defaultAnimatedValues;
     const translateOrigin = this.getTranslateOrigin();
@@ -370,7 +264,7 @@ class Tooltip extends Component {
         toValue: show ? 1 : 0,
         ...commonConfig,
       }),
-    ]).start(doneCallback);
+    ]).start(callback);
   };
 
   _getDefaultAnimatedStyles = () => {
@@ -527,7 +421,7 @@ Tooltip.defaultProps = {
   animated: false,
   arrowSize: DEFAULT_ARROW_SIZE,
   content: () => { },
-  displayArea: new Rect(24, 24, SCREEN_WIDTH - 48, SCREEN_HEIGHT - 48),
+  displayArea: DEFAULT_DISPLAY_AREA,
   isVisible: false,
   onClose: () => { },
   onElementLongPress: null,
