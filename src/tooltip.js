@@ -33,7 +33,7 @@ class Tooltip extends Component {
     this.state = {
       contentSize: {},
       anchorPoint: {},
-      popoverOrigin: {},
+      tooltipOrigin: {},
       childRect: {},
       placement: 'auto',
       isTransitioning: false,
@@ -98,19 +98,19 @@ class Tooltip extends Component {
   };
 
   getArrowDynamicStyle = () => {
-    const { anchorPoint, popoverOrigin } = this.state;
+    const { anchorPoint, tooltipOrigin } = this.state;
     const arrowSize = this.props.arrowSize;
 
     // Create the arrow from a rectangle with the appropriate borderXWidth set
     // A rotation is then applied dependending on the placement
     // Also make it slightly bigger
-    // to fix a visual artifact when the popover is animated with a scale
+    // to fix a visual artifact when the tooltip is animated with a scale
     const width = arrowSize.width + 2;
     const height = arrowSize.height * 2 + 2;
 
     return {
-      left: anchorPoint.x - popoverOrigin.x - width / 2,
-      top: anchorPoint.y - popoverOrigin.y - height / 2,
+      left: anchorPoint.x - tooltipOrigin.x - width / 2,
+      top: anchorPoint.y - tooltipOrigin.y - height / 2,
       width,
       height,
       borderTopWidth: height / 2,
@@ -121,15 +121,15 @@ class Tooltip extends Component {
   };
 
   getTranslateOrigin = () => {
-    const { contentSize, popoverOrigin, anchorPoint } = this.state;
-    const popoverCenter = new Point(popoverOrigin.x + contentSize.width / 2,
-      popoverOrigin.y + contentSize.height / 2);
-    return new Point(anchorPoint.x - popoverCenter.x, anchorPoint.y - popoverCenter.y);
+    const { contentSize, tooltipOrigin, anchorPoint } = this.state;
+    const tooltipCenter = new Point(tooltipOrigin.x + contentSize.width / 2,
+      tooltipOrigin.y + contentSize.height / 2);
+    return new Point(anchorPoint.x - tooltipCenter.x, anchorPoint.y - tooltipCenter.y);
   };
 
   measureContent = x => {
     const { width, height } = x.nativeEvent.layout;
-    const contentSize = { width, height };
+    const contentSize = new Size(width, height);
 
     if (!this.state.readyToComputeGeom) {
       this.setState({
@@ -144,7 +144,7 @@ class Tooltip extends Component {
   measureChildRect = () => {
     this.childWrapper.measureInWindow((x, y, width, height) => {
       this.setState({
-        childRect: { x, y, width, height },
+        childRect: new Rect(x, y, width, height),
         readyToComputeGeom: true,
       },
         () => {
@@ -161,11 +161,11 @@ class Tooltip extends Component {
 
   _doComputeGeometry = ({ contentSize }) => {
     const geom = this.computeGeometry({ contentSize });
-    const { popoverOrigin, anchorPoint, placement } = geom;
+    const { tooltipOrigin, anchorPoint, placement } = geom;
 
     this.setState({
       contentSize,
-      popoverOrigin,
+      tooltipOrigin,
       anchorPoint,
       placement,
       readyToComputeGeom: undefined,
@@ -177,10 +177,10 @@ class Tooltip extends Component {
 
   _updateGeometry = ({ contentSize }) => {
     const geom = this.computeGeometry({ contentSize });
-    const { popoverOrigin, anchorPoint, placement } = geom;
+    const { tooltipOrigin, anchorPoint, placement } = geom;
 
     this.setState({
-      popoverOrigin,
+      tooltipOrigin,
       anchorPoint,
       placement,
     });
@@ -219,12 +219,12 @@ class Tooltip extends Component {
       const placement = placementsToTry[i];
 
       geom = this.computeGeometry({ contentSize, placement });
-      const { popoverOrigin } = geom;
+      const { tooltipOrigin } = geom;
 
-      if (popoverOrigin.x >= displayArea.x
-        && popoverOrigin.x <= displayArea.x + displayArea.width - contentSize.width
-        && popoverOrigin.y >= displayArea.y
-        && popoverOrigin.y <= displayArea.y + displayArea.height - contentSize.height) {
+      if (tooltipOrigin.x >= displayArea.x
+        && tooltipOrigin.x <= displayArea.x + displayArea.width - contentSize.width
+        && tooltipOrigin.y >= displayArea.y
+        && tooltipOrigin.y <= displayArea.y + displayArea.height - contentSize.height) {
         break;
       }
     }
@@ -297,7 +297,7 @@ class Tooltip extends Component {
 
   _getExtendedStyles = () => {
     const background = [];
-    const popover = [];
+    const tooltip = [];
     const arrow = [];
     const content = [];
 
@@ -306,7 +306,7 @@ class Tooltip extends Component {
     [animatedStyles, this.props].forEach(source => {
       if (source) {
         background.push(source.backgroundStyle);
-        popover.push(source.popoverStyle);
+        tooltip.push(source.tooltipStyle);
         arrow.push(source.arrowStyle);
         content.push(source.contentStyle);
       }
@@ -314,7 +314,7 @@ class Tooltip extends Component {
 
     return {
       background,
-      popover,
+      tooltip,
       arrow,
       content,
     };
@@ -322,10 +322,10 @@ class Tooltip extends Component {
 
   renderChildInTooltip = () => {
     const { height, width, x, y } = this.state.childRect;
-    const { onElementPress, onElementLongPress } = this.props;
+    const { children, onChildPress, onChildLongPress } = this.props;
     const wrapInTouchable =
-      typeof onElementPress === 'function' ||
-      typeof onElementLongPress === 'function';
+      typeof onChildPress === 'function' ||
+      typeof onChildLongPress === 'function';
 
     const childElement = (
       <View
@@ -340,13 +340,13 @@ class Tooltip extends Component {
           justifyContent: 'center',
         }}
       >
-        {this.props.children}
+        {children}
       </View>
     );
 
     if (wrapInTouchable) {
       return (
-        <TouchableWithoutFeedback onPress={onElementPress} onLongPress={onElementLongPress}>
+        <TouchableWithoutFeedback onPress={onChildPress} onLongPress={onChildLongPress}>
           {childElement}
         </TouchableWithoutFeedback>
       );
@@ -360,7 +360,8 @@ class Tooltip extends Component {
       return null;
     }
 
-    const { popoverOrigin, placement } = this.state;
+    const { tooltipOrigin, placement } = this.state;
+    const { children, content, isVisible, onClose, tooltipBackgroundColor } = this.props;
 
     const extendedStyles = this._getExtendedStyles();
     const contentStyle = [styles.content, ...extendedStyles.content];
@@ -377,27 +378,27 @@ class Tooltip extends Component {
 
     return (
       <View>
-        {/* This renders the tooltip fullscreen popover */}
+        {/* This renders the fullscreen tooltip */}
         <Modal
           transparent
-          visible={this.props.isVisible}
-          onRequestClose={this.props.onClose}
+          visible={isVisible}
+          onRequestClose={onClose}
         >
-          <TouchableWithoutFeedback onPress={this.props.onClose}>
+          <TouchableWithoutFeedback onPress={onClose}>
             <View style={[styles.container, contentSizeAvailable && styles.containerVisible]}>
-              <Animated.View style={[styles.background, ...extendedStyles.background]} />
+              <Animated.View style={[styles.background, { backgroundColor: tooltipBackgroundColor }, ...extendedStyles.background]} />
               <Animated.View
-                style={[styles.popover, {
-                  top: popoverOrigin.y,
-                  left: popoverOrigin.x,
-                }, ...extendedStyles.popover]}
+                style={[styles.tooltip, {
+                  top: tooltipOrigin.y,
+                  left: tooltipOrigin.x,
+                }, ...extendedStyles.tooltip]}
               >
                 <Animated.View style={arrowStyle} />
                 <Animated.View
                   onLayout={this.measureContent}
                   style={contentStyle}
                 >
-                  {this.props.content}
+                  {content}
                 </Animated.View>
               </Animated.View>
               {this.renderChildInTooltip()}
@@ -405,12 +406,9 @@ class Tooltip extends Component {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* This renders the child element where it is in the parent's layout */}
-        <View
-          ref={r => { this.childWrapper = r; }}
-          onLayout={this.measureChildRect}
-        >
-          {this.props.children}
+        {/* This renders the child element in place in the parent's layout */}
+        <View ref={r => { this.childWrapper = r; }} onLayout={this.measureChildRect}>
+          {children}
         </View>
       </View>
     );
@@ -420,26 +418,28 @@ class Tooltip extends Component {
 Tooltip.defaultProps = {
   animated: false,
   arrowSize: DEFAULT_ARROW_SIZE,
-  content: () => { },
+  content: (<View />),
   displayArea: DEFAULT_DISPLAY_AREA,
   isVisible: false,
   onClose: () => { },
-  onElementLongPress: null,
-  onElementPress: null,
+  onChildLongPress: null,
+  onChildPress: null,
   placement: 'auto',
+  tooltipBackgroundColor: 'rgba(0,0,0,0.5)',
 };
 
 Tooltip.propTypes = {
   animated: PropTypes.bool,
   arrowSize: PropTypes.object,
+  children: PropTypes.element,
   content: PropTypes.element,
   displayArea: PropTypes.any,
   isVisible: PropTypes.bool,
-  onElementLongPress: PropTypes.func,
-  onElementPress: PropTypes.func,
+  onChildLongPress: PropTypes.func,
+  onChildPress: PropTypes.func,
   onClose: PropTypes.func,
   placement: PropTypes.string,
-  children: PropTypes.element,
+  tooltipBackgroundColor: PropTypes.string,
 };
 
 export default Tooltip;

@@ -2,26 +2,17 @@ import { StyleSheet } from 'react-native';
 
 export default (styles = StyleSheet.create({
   container: {
+    ...StyleSheet.absoluteFillObject,
     opacity: 0,
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    position: 'absolute',
     backgroundColor: 'transparent',
   },
   containerVisible: {
     opacity: 1,
   },
   background: {
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    position: 'absolute',
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    ...StyleSheet.absoluteFillObject,
   },
-  popover: {
+  tooltip: {
     backgroundColor: 'transparent',
     position: 'absolute',
     shadowColor: 'black',
@@ -30,7 +21,7 @@ export default (styles = StyleSheet.create({
     shadowOpacity: 0.8,
   },
   content: {
-    borderRadius: 3,
+    borderRadius: 4,
     padding: 8,
     backgroundColor: '#fff',
   },
