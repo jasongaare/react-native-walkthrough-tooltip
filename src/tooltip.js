@@ -23,7 +23,7 @@ import styles from './styles';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const DEFAULT_ARROW_SIZE = new Size(16, 7);
+const DEFAULT_ARROW_SIZE = new Size(16, 8);
 const DEFAULT_DISPLAY_AREA = new Rect(24, 24, SCREEN_WIDTH - 48, SCREEN_HEIGHT - 48);
 
 class Tooltip extends Component {
@@ -361,7 +361,7 @@ class Tooltip extends Component {
     }
 
     const { tooltipOrigin, placement } = this.state;
-    const { children, content, isVisible, onClose, tooltipBackgroundColor } = this.props;
+    const { backgroundColor, children, content, isVisible, onClose } = this.props;
 
     const extendedStyles = this._getExtendedStyles();
     const contentStyle = [styles.content, ...extendedStyles.content];
@@ -386,7 +386,7 @@ class Tooltip extends Component {
         >
           <TouchableWithoutFeedback onPress={onClose}>
             <View style={[styles.container, contentSizeAvailable && styles.containerVisible]}>
-              <Animated.View style={[styles.background, { backgroundColor: tooltipBackgroundColor }, ...extendedStyles.background]} />
+              <Animated.View style={[styles.background, { backgroundColor }, ...extendedStyles.background]} />
               <Animated.View
                 style={[styles.tooltip, {
                   top: tooltipOrigin.y,
@@ -418,19 +418,20 @@ class Tooltip extends Component {
 Tooltip.defaultProps = {
   animated: false,
   arrowSize: DEFAULT_ARROW_SIZE,
+  backgroundColor: 'rgba(0,0,0,0.5)',
   content: (<View />),
   displayArea: DEFAULT_DISPLAY_AREA,
   isVisible: false,
-  onClose: () => { },
   onChildLongPress: null,
   onChildPress: null,
+  onClose: null,
   placement: 'auto',
-  tooltipBackgroundColor: 'rgba(0,0,0,0.5)',
 };
 
 Tooltip.propTypes = {
   animated: PropTypes.bool,
   arrowSize: PropTypes.object,
+  backgroundColor: PropTypes.string,
   children: PropTypes.element,
   content: PropTypes.element,
   displayArea: PropTypes.any,
@@ -439,7 +440,6 @@ Tooltip.propTypes = {
   onChildPress: PropTypes.func,
   onClose: PropTypes.func,
   placement: PropTypes.string,
-  tooltipBackgroundColor: PropTypes.string,
 };
 
 export default Tooltip;
