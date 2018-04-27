@@ -7,6 +7,7 @@
 React Native Walkthrough Tooltip is a fullscreen modal that highlights whichever element it wraps.\
 When not visible, the wrapped element is displayed normally.
 
+<img style="float: right; height: 600px; padding-left: 40px" src="screenshot.gif" />
 ### Example Usage
 
 ```js
@@ -18,7 +19,7 @@ When not visible, the wrapped element is displayed normally.
   onClose={() => this.setState({ toolTipVisible: false })}
 >
   <TouchableHighlight style={styles.touchable}>
-    <Text style={{ color: 'white' }}>Press me</Text>
+    <Text>Press me</Text>
   </TouchableHighlight>
 </Tooltip>
 ```
@@ -47,8 +48,8 @@ placement        | string           | 'auto'                                 | W
 
 ### Class definitions for props
 
-- `Rect` is an object with properties: `{x: number, y: number, width: number, height: number}`
-- `Size` is an object with properties: `{width: number, height: number}`
+- `Rect` is an object with properties: `{ x: number, y: number, width: number, height: number }`
+- `Size` is an object with properties: `{ width: number, height: number }`
 
 
 <a name="onPress"></a>
@@ -60,7 +61,7 @@ When providing either of these functions, React Native Walkthrough Tooltip will 
 </TouchableWithoutFeedback>
 ```
 
-**This will disable and override any touch events on your child element** 
+** NOTE: This will disable and override any touch events on your child element** 
 
 One possible use case for these functions would be a scenerio where you are highlighting new functionality and want to restrict a user to ONLY do a certain action when they press on an element. While perhaps uncommon, this use case was relevant for another library I am working on, so it may be useful for you. When these props are NOT provided, all touch events on children occur as expected.
 
