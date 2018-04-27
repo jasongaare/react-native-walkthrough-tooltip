@@ -1,13 +1,14 @@
 # React Native Walkthrough Tooltip
 
-> Much credit belongs to @jeanregisster and the [react-native-popover](https://github.com/jeanregisser/react-native-popover) library. Most of the animations and geomery computation belong to his library. Please check it out! It was an invaluble resource.
+> Much credit belongs to [@jeanregisser](https://github.com/jeanregisser) and the [react-native-popover](https://github.com/jeanregisser/react-native-popover) library. Most of the animations and geomery computation belong to his library. Please check it out! It was an invaluble resource.
 
 ## Tooltip
 
 React Native Walkthrough Tooltip is a fullscreen modal that highlights whichever element it wraps.\
 When not visible, the wrapped element is displayed normally.
 
-<img style="float: right; height: 600px; padding-left: 40px" src="screenshot.gif" />
+<img align="right" height ="600" src="screenshot.gif" />
+
 ### Example Usage
 
 ```js
@@ -25,8 +26,8 @@ When not visible, the wrapped element is displayed normally.
 ```
 
 ### How it works
-The tooltip wraps an element _in place_ in your React Native rendering. When it initially renders, it measures the location of the element in the window, utilizing [React Native's 
-measureInWindow](https://facebook.github.io/react-native/docs/direct-manipulation.html#measureinwindowcallback). When the tooltip is displayed, it renders a _copy_ of the wrapped element positioned absolutely on the screen at the coordinates returned after measuring. This allows you to touch the element in the tooltip modal rendered above your current screen.
+The tooltip wraps an element _in place_ in your React Native rendering. When it initially renders, it measures the location of the element in the window, utilizing React Native's 
+[measureInWindow](https://facebook.github.io/react-native/docs/direct-manipulation.html#measureinwindowcallback). When the tooltip is displayed, it renders a _copy_ of the wrapped element positioned absolutely on the screen at the coordinates returned after measuring. This allows you to touch the element in the tooltip modal rendered above your current screen.
 
 Optionally, you can provide the props `onChildPress` or `onChildLongPress` to override the functionality of the current element, should you find that useful. More information on this [can be found below](onPress).
 
@@ -61,7 +62,7 @@ When providing either of these functions, React Native Walkthrough Tooltip will 
 </TouchableWithoutFeedback>
 ```
 
-** NOTE: This will disable and override any touch events on your child element** 
+**NOTE: This will disable and override any touch events on your child element** 
 
 One possible use case for these functions would be a scenerio where you are highlighting new functionality and want to restrict a user to ONLY do a certain action when they press on an element. While perhaps uncommon, this use case was relevant for another library I am working on, so it may be useful for you. When these props are NOT provided, all touch events on children occur as expected.
 
