@@ -98,7 +98,7 @@ class Tooltip extends Component {
   };
 
   getArrowDynamicStyle = () => {
-    const { anchorPoint, tooltipOrigin } = this.state;
+    const { anchorPoint, tooltipOrigin, placement } = this.state;
     const arrowSize = this.props.arrowSize;
 
     // Create the arrow from a rectangle with the appropriate borderXWidth set
@@ -107,10 +107,18 @@ class Tooltip extends Component {
     // to fix a visual artifact when the tooltip is animated with a scale
     const width = arrowSize.width + 2;
     const height = arrowSize.height * 2 + 2;
+    let marginTop = 0;
+    let marginLeft = 0;
+
+    if (placement === 'bottom') {
+      marginTop = arrowSize.height;
+    } else if (placement === 'right') {
+      marginLeft = arrowSize.height;
+    }
 
     return {
-      left: anchorPoint.x - tooltipOrigin.x - width / 2,
-      top: anchorPoint.y - tooltipOrigin.y - height / 2,
+      left: anchorPoint.x - tooltipOrigin.x - width / 2 + marginLeft,
+      top: anchorPoint.y - tooltipOrigin.y - height / 2 + marginTop,
       width,
       height,
       borderTopWidth: height / 2,
@@ -119,6 +127,40 @@ class Tooltip extends Component {
       borderLeftWidth: width / 2,
     };
   };
+
+  getTooltipPlacementStyles = () => {
+    const { height } = this.props.arrowSize;
+    const { tooltipOrigin } = this.state
+
+    switch (this.state.placement) {
+      case 'bottom':
+        return {
+          paddingTop: height,
+          top: tooltipOrigin.y - height,
+          left: tooltipOrigin.x,
+        };
+      case 'top':
+        return {
+          paddingBottom: height,
+          top: tooltipOrigin.y,
+          left: tooltipOrigin.x,
+        };
+      case 'right':
+        return {
+          paddingLeft: height,
+          top: tooltipOrigin.y,
+          left: tooltipOrigin.x - height,
+        };
+      case 'left':
+        return {
+          paddingRight: height,
+          top: tooltipOrigin.y,
+          left: tooltipOrigin.x,
+        };
+      default:
+        return {};
+    }
+  }
 
   getTranslateOrigin = () => {
     const { contentSize, tooltipOrigin, anchorPoint } = this.state;
@@ -369,6 +411,7 @@ class Tooltip extends Component {
     const arrowColorStyle = this.getArrowColorStyle(arrowColor);
     const arrowDynamicStyle = this.getArrowDynamicStyle();
     const contentSizeAvailable = this.state.contentSize.width;
+    const tooltipPlacementStyles = this.getTooltipPlacementStyles();
 
     // Special case, force the arrow rotation even if it was overriden
     let arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
@@ -387,12 +430,7 @@ class Tooltip extends Component {
           <TouchableWithoutFeedback onPress={onClose}>
             <View style={[styles.container, contentSizeAvailable && styles.containerVisible]}>
               <Animated.View style={[styles.background, { backgroundColor }, ...extendedStyles.background]} />
-              <Animated.View
-                style={[styles.tooltip, {
-                  top: tooltipOrigin.y,
-                  left: tooltipOrigin.x,
-                }, ...extendedStyles.tooltip]}
-              >
+              <Animated.View style={[styles.tooltip, ...extendedStyles.tooltip, tooltipPlacementStyles]}>
                 <Animated.View style={arrowStyle} />
                 <Animated.View
                   onLayout={this.measureContent}
