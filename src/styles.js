@@ -1,6 +1,7 @@
+// @flow
 import { StyleSheet } from 'react-native';
 
-export default (styles = StyleSheet.create({
+const styles: StyleSheet.Styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0,
@@ -32,4 +33,6 @@ export default (styles = StyleSheet.create({
     borderBottomColor: 'transparent',
     borderLeftColor: 'transparent',
   },
-}));
+});
+
+export default styles;

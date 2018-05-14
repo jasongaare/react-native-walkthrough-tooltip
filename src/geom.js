@@ -1,19 +1,48 @@
+// @flow
+
+export type PointType = {
+  x: number,
+  y: number,
+};
 class Point {
-  constructor(x, y) {
+  x: number;
+  y: number;
+
+  constructor(x: number, y: number) {
     this.x = x;
     this.y = y;
   }
 }
+
+export type SizeType = {
+  width: number,
+  height: number,
+};
 
 class Size {
-  constructor(width, height) {
+  width: number;
+  height: number;
+
+  constructor(width: number, height: number) {
     this.width = width;
     this.height = height;
   }
 }
 
+export type RectType = {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+};
+
 class Rect {
-  constructor(x, y, width, height) {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+
+  constructor(x: number, y: number, width: number, height: number) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -21,12 +50,27 @@ class Rect {
   }
 }
 
-const computeTopGeometry = ({ displayArea, childRect, contentSize, arrowSize }) => {
+type ComputeDirectionalGeomProps = {
+  displayArea: RectType,
+  childRect: RectType,
+  contentSize: SizeType,
+  arrowSize: SizeType,
+};
+
+const computeTopGeometry = ({
+  displayArea,
+  childRect,
+  contentSize,
+  arrowSize,
+}: ComputeDirectionalGeomProps) => {
   const tooltipOrigin = new Point(
-    Math.min(displayArea.x + displayArea.width - contentSize.width,
-      Math.max(displayArea.x, childRect.x + (childRect.width - contentSize.width) / 2)),
-    childRect.y - contentSize.height - arrowSize.height);
-  const anchorPoint = new Point(childRect.x + childRect.width / 2.0, childRect.y);
+    Math.min(
+      displayArea.x + displayArea.width - contentSize.width,
+      Math.max(displayArea.x, childRect.x + ((childRect.width - contentSize.width) / 2)),
+    ),
+    childRect.y - contentSize.height - arrowSize.height,
+  );
+  const anchorPoint = new Point(childRect.x + (childRect.width / 2.0), childRect.y);
 
   return {
     tooltipOrigin,
@@ -35,14 +79,22 @@ const computeTopGeometry = ({ displayArea, childRect, contentSize, arrowSize }) 
   };
 };
 
-const computeBottomGeometry = ({ displayArea, childRect, contentSize, arrowSize }) => {
+const computeBottomGeometry = ({
+  displayArea,
+  childRect,
+  contentSize,
+  arrowSize,
+}: ComputeDirectionalGeomProps) => {
   const tooltipOrigin = new Point(
-    Math.min(displayArea.x + displayArea.width - contentSize.width,
-      Math.max(displayArea.x, childRect.x + (childRect.width - contentSize.width) / 2)),
-    childRect.y + childRect.height + arrowSize.height);
+    Math.min(
+      displayArea.x + displayArea.width - contentSize.width,
+      Math.max(displayArea.x, childRect.x + ((childRect.width - contentSize.width) / 2)),
+    ),
+    childRect.y + childRect.height + arrowSize.height,
+  );
   const anchorPoint = new Point(
-    childRect.x + childRect.width / 2.0,
-    childRect.y + childRect.height
+    childRect.x + (childRect.width / 2.0),
+    childRect.y + childRect.height,
   );
 
   return {
@@ -52,11 +104,20 @@ const computeBottomGeometry = ({ displayArea, childRect, contentSize, arrowSize 
   };
 };
 
-const computeLeftGeometry = ({ displayArea, childRect, contentSize, arrowSize }) => {
-  const tooltipOrigin = new Point(childRect.x - contentSize.width - arrowSize.width,
-    Math.min(displayArea.y + displayArea.height - contentSize.height,
-      Math.max(displayArea.y, childRect.y + (childRect.height - contentSize.height) / 2)));
-  const anchorPoint = new Point(childRect.x, childRect.y + childRect.height / 2.0);
+const computeLeftGeometry = ({
+  displayArea,
+  childRect,
+  contentSize,
+  arrowSize,
+}: ComputeDirectionalGeomProps) => {
+  const tooltipOrigin = new Point(
+    childRect.x - contentSize.width - arrowSize.width,
+    Math.min(
+      displayArea.y + displayArea.height - contentSize.height,
+      Math.max(displayArea.y, childRect.y + ((childRect.height - contentSize.height) / 2)),
+    ),
+  );
+  const anchorPoint = new Point(childRect.x, childRect.y + (childRect.height / 2.0));
 
   return {
     tooltipOrigin,
@@ -65,13 +126,22 @@ const computeLeftGeometry = ({ displayArea, childRect, contentSize, arrowSize })
   };
 };
 
-const computeRightGeometry = ({ displayArea, childRect, contentSize, arrowSize }) => {
-  const tooltipOrigin = new Point(childRect.x + childRect.width + arrowSize.width,
-    Math.min(displayArea.y + displayArea.height - contentSize.height,
-      Math.max(displayArea.y, childRect.y + (childRect.height - contentSize.height) / 2)));
+const computeRightGeometry = ({
+  displayArea,
+  childRect,
+  contentSize,
+  arrowSize,
+}: ComputeDirectionalGeomProps) => {
+  const tooltipOrigin = new Point(
+    childRect.x + childRect.width + arrowSize.width,
+    Math.min(
+      displayArea.y + displayArea.height - contentSize.height,
+      Math.max(displayArea.y, childRect.y + ((childRect.height - contentSize.height) / 2)),
+    ),
+  );
   const anchorPoint = new Point(
     childRect.x + childRect.width,
-    childRect.y + childRect.height / 2.0
+    childRect.y + (childRect.height / 2.0),
   );
 
   return {
@@ -89,4 +159,4 @@ export {
   computeBottomGeometry,
   computeLeftGeometry,
   computeRightGeometry,
-}
+};
