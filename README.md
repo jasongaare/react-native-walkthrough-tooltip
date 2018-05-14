@@ -56,11 +56,12 @@ placement        | string           | 'auto'                                 | W
 ### Style Props
 
 The tooltip styles should work out-of-the-box for most use cases, however should you need you can customize the styles of the tooltip using these props.
-Prop name       |  Effect        |
-----------------|----------------|
-arrowStyle      | Styles the triangle that points to the called out element
-backgroundStyle | Styles the overlay view that sits behind the tooltip, but over the current view
-contentStyle    | Styles the content wrapper that surrounds the `content` element
+
+Prop name       | Effect        
+--------------- | -------
+arrowStyle      | Styles the triangle that points to the called out element 
+backgroundStyle | Styles the overlay view that sits behind the tooltip, but over the current view 
+contentStyle    | Styles the content wrapper that surrounds the `content` element 
 tooltipStyle    | Styles the tooltip that wraps the arrow and content elements 
 
 ### Class definitions for props
