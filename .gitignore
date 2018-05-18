@@ -1,2 +1,10 @@
 # Dependency directory
 /node_modules
+
+# Flow Coverage
+/flow-coverage/assets
+/flow-coverage/sourcefiles/
+/flow-coverage/index.html
+
+# Logs
+npm-debug.log

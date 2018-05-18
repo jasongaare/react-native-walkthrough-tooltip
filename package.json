@@ -4,6 +4,7 @@
   "description": "An inline wrapper for calling out React Native components via tooltip",
   "main": "src/tooltip.js",
   "scripts": {
+    "flow-coverage": "flow-coverage-report",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -38,8 +39,18 @@
     "eslint-plugin-react": "7.8.1",
     "eslint-plugin-react-native": "3.2.1",
     "flow-bin": "0.72.0",
+    "flow-coverage-report": "0.5.0",
     "prettier-eslint": "8.8.1",
     "react": "^16.3.2",
     "react-native": "^0.55.3"
+  },
+  "flow-coverage-report": {
+    "includeGlob": [
+      "src/**/*.js"
+    ],
+    "type": [
+      "html",
+      "text"
+    ]
   }
 }
