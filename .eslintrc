@@ -3,6 +3,7 @@
   "extends": ["airbnb"],
   "plugins": ["no-mixed-operators", "react", "react-native"],
   "env": {
+    "jest": true,
     "react-native/react-native": true
   },
   "rules": {

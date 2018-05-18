@@ -2,9 +2,14 @@
 /node_modules
 
 # Flow Coverage
-/flow-coverage/assets
-/flow-coverage/sourcefiles/
-/flow-coverage/index.html
+/coverage/flow-coverage/assets
+/coverage/flow-coverage/sourcefiles/
+/coverage/flow-coverage/index.html
+
+# Jest Coverage
+/coverage/lcov-report
+coverage-summary.json
+lcov.info
 
 # Logs
 npm-debug.log

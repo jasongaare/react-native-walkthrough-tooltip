@@ -1,4 +1,4 @@
-# React Native Walkthrough Tooltip [![npm](https://img.shields.io/npm/v/react-native-walkthrough-tooltip.svg)](https://www.npmjs.com/package/react-native-walkthrough-tooltip) [![npm](https://img.shields.io/npm/dm/react-native-walkthrough-tooltip.svg)](https://www.npmjs.com/package/react-native-walkthrough-tooltip) <img src="flow-coverage/flow-coverage-badge.svg" />
+# React Native Walkthrough Tooltip [![npm](https://img.shields.io/npm/v/react-native-walkthrough-tooltip.svg)](https://www.npmjs.com/package/react-native-walkthrough-tooltip) [![npm](https://img.shields.io/npm/dm/react-native-walkthrough-tooltip.svg)](https://www.npmjs.com/package/react-native-walkthrough-tooltip) <img src="coverage/flow-coverage/flow-coverage-badge.svg" />
 
 > Much credit belongs to [@jeanregisser](https://github.com/jeanregisser) and the [react-native-popover](https://github.com/jeanregisser/react-native-popover) library. Most of the animations and geomery computation belong to his library. Please check it out! It was an invaluble resource.
 
@@ -56,12 +56,13 @@ Optionally, you can provide the props `onChildPress` or `onChildLongPress` to ov
 ### Style Props
 
 The tooltip styles should work out-of-the-box for most use cases, however should you need you can customize the styles of the tooltip using these props.
-Prop name | Effect |
-----------------|----------------|
-arrowStyle | Styles the triangle that points to the called out element
-backgroundStyle | Styles the overlay view that sits behind the tooltip, but over the current view
-contentStyle | Styles the content wrapper that surrounds the `content` element
-tooltipStyle | Styles the tooltip that wraps the arrow and content elements
+
+| Prop name       | Effect                                                                          |
+| --------------- | ------------------------------------------------------------------------------- |
+| arrowStyle      | Styles the triangle that points to the called out element                       |
+| backgroundStyle | Styles the overlay view that sits behind the tooltip, but over the current view |
+| contentStyle    | Styles the content wrapper that surrounds the `content` element                 |
+| tooltipStyle    | Styles the tooltip that wraps the arrow and content elements                    |
 
 ### Class definitions for props
 

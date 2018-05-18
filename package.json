@@ -5,7 +5,8 @@
   "main": "src/tooltip.js",
   "scripts": {
     "flow-coverage": "flow-coverage-report",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "coverage": "npm run test -- --coverage && make-coverage-badge"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,11 @@
   "devDependencies": {
     "babel-core": "6.26.3",
     "babel-eslint": "8.2.3",
+    "babel-jest": "22.4.4",
     "babel-preset-flow": "6.23.0",
+    "enzyme": "3.3.0",
+    "enzyme-adapter-react-16": "1.1.1",
+    "enzyme-to-json": "3.3.4",
     "eslint": "4.19.1",
     "eslint-config-airbnb": "16.1.0",
     "eslint-plugin-import": "2.11.0",
@@ -40,17 +45,41 @@
     "eslint-plugin-react-native": "3.2.1",
     "flow-bin": "0.72.0",
     "flow-coverage-report": "0.5.0",
+    "jest": "22.4.4",
+    "make-coverage-badge": "1.0.1",
     "prettier-eslint": "8.8.1",
     "react": "^16.3.2",
+    "react-dom": "16.3.2",
     "react-native": "^0.55.3"
   },
   "flow-coverage-report": {
     "includeGlob": [
       "src/**/*.js"
     ],
+    "outputDir": "./coverage/flow-coverage/",
     "type": [
       "html",
       "text"
+    ]
+  },
+  "jest": {
+    "preset": "react-native",
+    "collectCoverageFrom": [
+      "src/**.js"
+    ],
+    "coverageReporters": [
+      "json-summary",
+      "text",
+      "lcov"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "setupFiles": [
+      "./jest.setup.js"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native)"
     ]
   }
 }

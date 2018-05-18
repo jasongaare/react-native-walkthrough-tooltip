@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`testing styling shows stylesheet is as expected 1`] = `
+Object {
+  "arrow": Object {
+    "borderBottomColor": "transparent",
+    "borderLeftColor": "transparent",
+    "borderRightColor": "transparent",
+    "borderTopColor": "transparent",
+    "position": "absolute",
+  },
+  "background": Object {
+    "bottom": 0,
+    "left": 0,
+    "position": "absolute",
+    "right": 0,
+    "top": 0,
+  },
+  "container": Object {
+    "backgroundColor": "transparent",
+    "bottom": 0,
+    "left": 0,
+    "opacity": 0,
+    "position": "absolute",
+    "right": 0,
+    "top": 0,
+  },
+  "containerVisible": Object {
+    "opacity": 1,
+  },
+  "content": Object {
+    "backgroundColor": "#fff",
+    "borderRadius": 4,
+    "padding": 8,
+  },
+  "tooltip": Object {
+    "backgroundColor": "transparent",
+    "position": "absolute",
+    "shadowColor": "black",
+    "shadowOffset": Object {
+      "height": 2,
+      "width": 0,
+    },
+    "shadowOpacity": 0.8,
+    "shadowRadius": 2,
+  },
+}
+`;
