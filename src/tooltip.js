@@ -254,7 +254,7 @@ class Tooltip extends Component<Props, State> {
 
   measureChildRect = () => {
     // $FlowFixMe: need to add type childWrapper
-    this.childWrapper.measureInWindow((x, y, width, height) => {
+    this.childWrapper && this.childWrapper.measureInWindow((x, y, width, height) => {
       this.setState(
         {
           childRect: new Rect(x, y, width, height),
