@@ -184,7 +184,7 @@ class Tooltip extends Component<Props, State> {
 
     return {
       left: anchorPoint.x - tooltipOrigin.x - ((width / 2) + marginLeft),
-      top: anchorPoint.y - tooltipOrigin.y - ((height / 2) + marginTop),
+      top: placement === 'bottom' ? -10 : anchorPoint.y - tooltipOrigin.y - ((height / 2) + marginTop),
       width,
       height,
       borderTopWidth: height / 2,
@@ -490,7 +490,6 @@ class Tooltip extends Component<Props, State> {
     const arrowTransform = (StyleSheet.flatten(arrowStyle).transform || []).slice(0);
     arrowTransform.unshift({ rotate: this.getArrowRotation(placement) });
     arrowStyle = [...arrowStyle, { transform: arrowTransform }];
-
     return (
       <View>
         {/* This renders the fullscreen tooltip */}
