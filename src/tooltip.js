@@ -57,6 +57,7 @@ type State = {
   placement: PlacementType,
   readyToComputeGeom: boolean,
   waitingToComputeGeom: boolean,
+  measurementsFinished: boolean,
 };
 
 type ContentSizeProps = {
@@ -106,6 +107,7 @@ class Tooltip extends Component<Props, State> {
       placement: 'auto',
       readyToComputeGeom: false,
       waitingToComputeGeom: false,
+      measurementsFinished: false,
       defaultAnimatedValues: {
         scale: new Animated.Value(0),
         translate: new Animated.ValueXY(),
@@ -132,6 +134,14 @@ class Tooltip extends Component<Props, State> {
       } else {
         this._startAnimation({ show: false });
       }
+    }
+  }
+
+  componentDidUpdate() {
+    // We always want the measurements finished flag to be false
+    // after the tooltip is closed
+    if (this.state.measurementsFinished && !this.props.isVisible) {
+      this.setState({ measurementsFinished: false });
     }
   }
 
@@ -285,7 +295,10 @@ class Tooltip extends Component<Props, State> {
         readyToComputeGeom: undefined,
         waitingToComputeGeom: false,
       },
-      () => this._startAnimation({ show: true }),
+      () => {
+        this.setState({ measurementsFinished: true })
+        this._startAnimation({ show: true })
+      }
     );
   };
 
@@ -293,11 +306,16 @@ class Tooltip extends Component<Props, State> {
     const geom = this.computeGeometry({ contentSize });
     const { tooltipOrigin, anchorPoint, placement } = geom;
 
-    this.setState({
-      tooltipOrigin,
-      anchorPoint,
-      placement,
-    });
+    this.setState(
+      {
+        tooltipOrigin,
+        anchorPoint,
+        placement,
+      },
+      () => {
+      this.setState({ measurementsFinished: true })
+      }
+    );
   };
 
   computeGeometry = ({ contentSize, placement }: ComputeGeomProps) => {
@@ -474,7 +492,7 @@ class Tooltip extends Component<Props, State> {
       return null;
     }
 
-    const { placement } = this.state;
+    const { measurementsFinished, placement } = this.state;
     const { backgroundColor, children, content, isVisible, onClose } = this.props;
 
     const extendedStyles = this._getExtendedStyles();
@@ -496,7 +514,7 @@ class Tooltip extends Component<Props, State> {
         {/* This renders the fullscreen tooltip */}
         <Modal transparent visible={isVisible} onRequestClose={onClose}>
           <TouchableWithoutFeedback onPress={onClose}>
-            <View style={[styles.container, contentSizeAvailable && styles.containerVisible]}>
+            <View style={[styles.container, contentSizeAvailable && measurementsFinished && styles.containerVisible]}>
               <Animated.View
                 style={[styles.background, ...extendedStyles.background, { backgroundColor }]}
               />
