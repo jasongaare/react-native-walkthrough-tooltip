@@ -277,6 +277,7 @@ class Tooltip extends Component<Props, State> {
           } else if (contentSize.width !== null) {
             this._updateGeometry({ contentSize });
           }
+          this.setState({ measurementsFinished: true })
         },
       );
     });
@@ -296,7 +297,6 @@ class Tooltip extends Component<Props, State> {
         waitingToComputeGeom: false,
       },
       () => {
-        this.setState({ measurementsFinished: true })
         this._startAnimation({ show: true })
       }
     );
@@ -306,16 +306,11 @@ class Tooltip extends Component<Props, State> {
     const geom = this.computeGeometry({ contentSize });
     const { tooltipOrigin, anchorPoint, placement } = geom;
 
-    this.setState(
-      {
-        tooltipOrigin,
-        anchorPoint,
-        placement,
-      },
-      () => {
-      this.setState({ measurementsFinished: true })
-      }
-    );
+    this.setState({
+      tooltipOrigin,
+      anchorPoint,
+      placement,
+    });
   };
 
   computeGeometry = ({ contentSize, placement }: ComputeGeomProps) => {
