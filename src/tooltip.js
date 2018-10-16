@@ -277,7 +277,7 @@ class Tooltip extends Component<Props, State> {
           } else if (contentSize.width !== null) {
             this._updateGeometry({ contentSize });
           }
-          this.setState({ measurementsFinished: true })
+          this.setState({ measurementsFinished: true });
         },
       );
     });
@@ -297,8 +297,8 @@ class Tooltip extends Component<Props, State> {
         waitingToComputeGeom: false,
       },
       () => {
-        this._startAnimation({ show: true })
-      }
+        this._startAnimation({ show: true });
+      },
     );
   };
 
@@ -509,7 +509,12 @@ class Tooltip extends Component<Props, State> {
         {/* This renders the fullscreen tooltip */}
         <Modal transparent visible={isVisible} onRequestClose={onClose}>
           <TouchableWithoutFeedback onPress={onClose}>
-            <View style={[styles.container, contentSizeAvailable && measurementsFinished && styles.containerVisible]}>
+            <View
+              style={[
+                styles.container,
+                contentSizeAvailable && measurementsFinished && styles.containerVisible,
+              ]}
+            >
               <Animated.View
                 style={[styles.background, ...extendedStyles.background, { backgroundColor }]}
               />
