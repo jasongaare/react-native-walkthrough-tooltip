@@ -1,0 +1,8 @@
+__tests__/
+coverage/
+.vscode/
+
+jest.setup.js
+
+yarn.lock
+screenshot.gif
