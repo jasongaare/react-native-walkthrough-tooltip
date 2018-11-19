@@ -100,6 +100,7 @@ class Tooltip extends Component<Props, State> {
     super(props);
 
     this.state = {
+      isAnimating: props.isVisible,
       contentSize: new Size(0, 0),
       anchorPoint: new Point(0, 0),
       tooltipOrigin: new Point(0, 0),
@@ -114,6 +115,15 @@ class Tooltip extends Component<Props, State> {
         fade: new Animated.Value(0),
       },
     };
+  }
+
+  componentDidMount() {
+    if (this.state.isAnimating) {
+      InteractionManager.runAfterInteractions(() => {
+        this.measureChildRect();
+        this.setState({ isAnimating: false });
+      });
+    }
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -487,7 +497,7 @@ class Tooltip extends Component<Props, State> {
       return null;
     }
 
-    const { measurementsFinished, placement } = this.state;
+    const { measurementsFinished, placement, isAnimating } = this.state;
     const { backgroundColor, children, content, isVisible, onClose } = this.props;
 
     const extendedStyles = this._getExtendedStyles();
@@ -507,7 +517,7 @@ class Tooltip extends Component<Props, State> {
     return (
       <View>
         {/* This renders the fullscreen tooltip */}
-        <Modal transparent visible={isVisible} onRequestClose={onClose}>
+        <Modal transparent visible={isVisible && !isAnimating} onRequestClose={onClose}>
           <TouchableWithoutFeedback onPress={onClose}>
             <View
               style={[
