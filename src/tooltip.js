@@ -193,8 +193,8 @@ class Tooltip extends Component<Props, State> {
     }
 
     return {
-      left: anchorPoint.x - tooltipOrigin.x - ((width / 2) + marginLeft),
-      top: anchorPoint.y - tooltipOrigin.y - ((height / 2) + marginTop),
+      left: anchorPoint.x - tooltipOrigin.x - ((width / 2) - marginLeft),
+      top: anchorPoint.y - tooltipOrigin.y - ((height / 2) - marginTop),
       width,
       height,
       borderTopWidth: height / 2,
