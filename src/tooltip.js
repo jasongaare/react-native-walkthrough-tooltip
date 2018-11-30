@@ -50,7 +50,7 @@ type Props = {
 };
 
 type State = {
-  initialInteractionsComplete: boolean,
+  waitingForInteractions: boolean,
   contentSize: SizeType,
   anchorPoint: PointType,
   tooltipOrigin: PointType,
@@ -100,9 +100,11 @@ class Tooltip extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
+    const { isVisible } = props;
+
     this.state = {
       // no need to wait for interactions if not visible initially
-      initialInteractionsComplete: props.isVisible,
+      waitingForInteractions: isVisible,
       contentSize: new Size(0, 0),
       anchorPoint: new Point(0, 0),
       tooltipOrigin: new Point(0, 0),
@@ -120,10 +122,10 @@ class Tooltip extends Component<Props, State> {
   }
 
   componentDidMount() {
-    if (this.state.initialInteractionsComplete) {
+    if (this.state.waitingForInteractions) {
       InteractionManager.runAfterInteractions(() => {
         this.measureChildRect();
-        this.setState({ initialInteractionsComplete: false });
+        this.setState({ waitingForInteractions: false });
       });
     }
   }
@@ -499,7 +501,7 @@ class Tooltip extends Component<Props, State> {
       return null;
     }
 
-    const { measurementsFinished, placement, initialInteractionsComplete } = this.state;
+    const { measurementsFinished, placement, waitingForInteractions } = this.state;
     const { backgroundColor, children, content, isVisible, onClose } = this.props;
 
     const extendedStyles = this._getExtendedStyles();
@@ -519,7 +521,7 @@ class Tooltip extends Component<Props, State> {
     return (
       <View>
         {/* This renders the fullscreen tooltip */}
-        <Modal transparent visible={isVisible && !initialInteractionsComplete} onRequestClose={onClose}>
+        <Modal transparent visible={isVisible && !waitingForInteractions} onRequestClose={onClose}>
           <TouchableWithoutFeedback onPress={onClose}>
             <View
               style={[
