@@ -62,11 +62,20 @@ const computeTopGeometry = ({
   childRect,
   contentSize,
   arrowSize,
+  arrowPosition
 }: ComputeDirectionalGeomProps) => {
+  let tooltipLeft = 0;
+  if (arrowPosition === 'left'){
+    tooltipLeft = childRect.x + (childRect.width/2)
+  } else if (arrowPosition === 'right'){
+    tooltipLeft = childRect.x + childRect.width/2 - contentSize.width
+  } else {
+    tooltipLeft = childRect.x + ((childRect.width - contentSize.width) / 2);
+  }
   const tooltipOrigin = new Point(
     Math.min(
       displayArea.x + displayArea.width - contentSize.width,
-      Math.max(displayArea.x, childRect.x + ((childRect.width - contentSize.width) / 2)),
+      Math.max(displayArea.x, tooltipLeft),
     ),
     childRect.y - contentSize.height - arrowSize.height,
   );
@@ -76,6 +85,7 @@ const computeTopGeometry = ({
     tooltipOrigin,
     anchorPoint,
     placement: 'top',
+    arrowPosition
   };
 };
 
@@ -84,6 +94,7 @@ const computeBottomGeometry = ({
   childRect,
   contentSize,
   arrowSize,
+  arrowPosition
 }: ComputeDirectionalGeomProps) => {
   const tooltipOrigin = new Point(
     Math.min(
@@ -101,6 +112,7 @@ const computeBottomGeometry = ({
     tooltipOrigin,
     anchorPoint,
     placement: 'bottom',
+    arrowPosition
   };
 };
 
@@ -109,6 +121,7 @@ const computeLeftGeometry = ({
   childRect,
   contentSize,
   arrowSize,
+  arrowPosition
 }: ComputeDirectionalGeomProps) => {
   const tooltipOrigin = new Point(
     childRect.x - contentSize.width - arrowSize.width,
@@ -123,6 +136,7 @@ const computeLeftGeometry = ({
     tooltipOrigin,
     anchorPoint,
     placement: 'left',
+    arrowPosition
   };
 };
 
@@ -131,6 +145,7 @@ const computeRightGeometry = ({
   childRect,
   contentSize,
   arrowSize,
+  arrowPosition
 }: ComputeDirectionalGeomProps) => {
   const tooltipOrigin = new Point(
     childRect.x + childRect.width + arrowSize.width,
@@ -148,6 +163,7 @@ const computeRightGeometry = ({
     tooltipOrigin,
     anchorPoint,
     placement: 'right',
+    arrowPosition
   };
 };
 
