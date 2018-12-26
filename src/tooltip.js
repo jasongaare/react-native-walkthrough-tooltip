@@ -48,6 +48,7 @@ type Props = {
   onClose: () => void,
   placement: PlacementType,
   arrowPosition: ArrowPositionType,
+  fillColor: string,
   tooltipStyle: StyleSheet.Styles,
 };
 
@@ -98,6 +99,7 @@ class Tooltip extends Component<Props, State> {
     onChildPress: null,
     onClose: null,
     placement: 'auto',
+    fillColor: '#fff',
     arrowPosition: 'center'
   };
 
@@ -519,7 +521,7 @@ class Tooltip extends Component<Props, State> {
     const { backgroundColor, children, content, isVisible, onClose } = this.props;
 
     const extendedStyles = this._getExtendedStyles();
-    const contentStyle = [styles.content, ...extendedStyles.content];
+    const contentStyle = [styles.content, ...extendedStyles.content, {backgroundColor: this.props.fillColor}];
     const arrowColor = StyleSheet.flatten(contentStyle).backgroundColor;
     const arrowColorStyle = this.getArrowColorStyle(arrowColor);
     const arrowDynamicStyle = this.getArrowDynamicStyle(this.props.arrowPosition);

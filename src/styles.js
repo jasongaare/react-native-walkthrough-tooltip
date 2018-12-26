@@ -23,8 +23,7 @@ const styles: StyleSheet.Styles = StyleSheet.create({
   },
   content: {
     borderRadius: 4,
-    padding: 8,
-    backgroundColor: '#fff',
+    padding: 8
   },
   arrow: {
     position: 'absolute',
