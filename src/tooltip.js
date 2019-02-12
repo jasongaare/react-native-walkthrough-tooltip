@@ -47,6 +47,7 @@ type Props = {
   onClose: () => void,
   placement: PlacementType,
   tooltipStyle: StyleSheet.Styles,
+  showChildInTooltip: boolean
 };
 
 type State = {
@@ -93,6 +94,7 @@ class Tooltip extends Component<Props, State> {
     onChildPress: null,
     onClose: null,
     placement: 'auto',
+    showChildInTooltip: true
   };
 
   constructor(props: Props) {
@@ -508,7 +510,7 @@ class Tooltip extends Component<Props, State> {
                   {content}
                 </Animated.View>
               </Animated.View>
-              {this.renderChildInTooltip()}
+              {this.props.showChildInTooltip && this.renderChildInTooltip()}
             </View>
           </TouchableWithoutFeedback>
         </Modal>
