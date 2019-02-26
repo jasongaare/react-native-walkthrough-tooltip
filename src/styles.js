@@ -1,7 +1,7 @@
 // @flow
 import { StyleSheet } from 'react-native';
 
-const styles: StyleSheet.Styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0,

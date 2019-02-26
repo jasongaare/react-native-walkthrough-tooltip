@@ -1,6 +1,4 @@
-// @flow
 import React, { Component } from 'react';
-import type { Node } from 'react';
 import {
   Animated,
   Dimensions,
@@ -20,69 +18,20 @@ import {
   computeLeftGeometry,
   computeRightGeometry,
 } from './geom';
-import type { SizeType, PointType, RectType } from './geom';
 import styles from './styles';
 
-const SCREEN_HEIGHT: number = Dimensions.get('window').height;
-const SCREEN_WIDTH: number = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const DEFAULT_ARROW_SIZE: SizeType = new Size(16, 8);
-const DEFAULT_DISPLAY_AREA: RectType = new Rect(24, 24, SCREEN_WIDTH - 48, SCREEN_HEIGHT - 48);
+const DEFAULT_ARROW_SIZE = new Size(16, 8);
+const DEFAULT_DISPLAY_AREA = new Rect(
+  24,
+  24,
+  SCREEN_WIDTH - 48,
+  SCREEN_HEIGHT - 48,
+);
 
-type PlacementType = 'auto' | 'top' | 'bottom' | 'left' | 'right';
-
-type Props = {
-  animated: boolean,
-  arrowSize: SizeType,
-  arrowStyle: StyleSheet.Styles,
-  backgroundColor: string,
-  backgroundStyle: StyleSheet.Styles,
-  children: Node,
-  content: Node,
-  contentStyle: StyleSheet.Styles,
-  displayArea: RectType,
-  isVisible: boolean,
-  onChildLongPress: () => void,
-  onChildPress: () => void,
-  onClose: () => void,
-  placement: PlacementType,
-  tooltipStyle: StyleSheet.Styles,
-};
-
-type State = {
-  waitingForInteractions: boolean,
-  contentSize: SizeType,
-  anchorPoint: PointType,
-  tooltipOrigin: PointType,
-  childRect: RectType,
-  placement: PlacementType,
-  readyToComputeGeom: boolean,
-  waitingToComputeGeom: boolean,
-  measurementsFinished: boolean,
-};
-
-type ContentSizeProps = {
-  contentSize: SizeType,
-};
-
-type ComputeGeomProps = {
-  contentSize: SizeType,
-  placement?: PlacementType,
-};
-
-type ComputeAutoGeomProps = {
-  displayArea: RectType,
-  contentSize: SizeType,
-};
-
-type ExtendedStylesProps = {
-  backgroundStyle: StyleSheet.Styles,
-  tooltipStyle: StyleSheet.Styles,
-  arrowStyle: StyleSheet.Styles,
-  contentStyle: StyleSheet.Styles,
-};
-
-class Tooltip extends Component<Props, State> {
+class Tooltip extends Component {
   static defaultProps = {
     animated: false,
     arrowSize: DEFAULT_ARROW_SIZE,
@@ -97,7 +46,7 @@ class Tooltip extends Component<Props, State> {
     placement: 'auto',
   };
 
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
 
     const { isVisible } = props;
@@ -130,7 +79,7 @@ class Tooltip extends Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentWillReceiveProps(nextProps) {
     const willBeVisible = nextProps.isVisible;
     const { isVisible } = this.props;
 
@@ -159,7 +108,7 @@ class Tooltip extends Component<Props, State> {
     }
   }
 
-  getArrowSize = (placement: PlacementType) => {
+  getArrowSize = (placement) => {
     const size = this.props.arrowSize;
     switch (placement) {
       case 'left':
@@ -170,11 +119,11 @@ class Tooltip extends Component<Props, State> {
     }
   };
 
-  getArrowColorStyle = (color: string) => {
+  getArrowColorStyle = (color) => {
     return { borderTopColor: color };
   };
 
-  getArrowRotation = (placement: PlacementType) => {
+  getArrowRotation = (placement) => {
     switch (placement) {
       case 'bottom':
         return '180deg';
@@ -196,7 +145,7 @@ class Tooltip extends Component<Props, State> {
     // Also make it slightly bigger
     // to fix a visual artifact when the tooltip is animated with a scale
     const width = arrowSize.width + 2;
-    const height = (arrowSize.height * 2) + 2;
+    const height = arrowSize.height * 2 + 2;
     let marginTop = 0;
     let marginLeft = 0;
 
@@ -207,8 +156,8 @@ class Tooltip extends Component<Props, State> {
     }
 
     return {
-      left: anchorPoint.x - tooltipOrigin.x - ((width / 2) - marginLeft),
-      top: anchorPoint.y - tooltipOrigin.y - ((height / 2) - marginTop),
+      left: anchorPoint.x - tooltipOrigin.x - (width / 2 - marginLeft),
+      top: anchorPoint.y - tooltipOrigin.y - (height / 2 - marginTop),
       width,
       height,
       borderTopWidth: height / 2,
@@ -255,14 +204,16 @@ class Tooltip extends Component<Props, State> {
   getTranslateOrigin = () => {
     const { contentSize, tooltipOrigin, anchorPoint } = this.state;
     const tooltipCenter = new Point(
-      tooltipOrigin.x + (contentSize.width / 2),
-      tooltipOrigin.y + (contentSize.height / 2),
+      tooltipOrigin.x + contentSize.width / 2,
+      tooltipOrigin.y + contentSize.height / 2,
     );
-    return new Point(anchorPoint.x - tooltipCenter.x, anchorPoint.y - tooltipCenter.y);
+    return new Point(
+      anchorPoint.x - tooltipCenter.x,
+      anchorPoint.y - tooltipCenter.y,
+    );
   };
 
-  // $FlowFixMe: need to add type for nativeEvent
-  measureContent = e => {
+  measureContent = (e) => {
     const { width, height } = e.nativeEvent.layout;
     const contentSize = new Size(width, height);
 
@@ -277,7 +228,6 @@ class Tooltip extends Component<Props, State> {
   };
 
   measureChildRect = () => {
-    // $FlowFixMe: need to add type childWrapper
     this.childWrapper.measureInWindow((x, y, width, height) => {
       this.setState(
         {
@@ -297,7 +247,7 @@ class Tooltip extends Component<Props, State> {
     });
   };
 
-  _doComputeGeometry = ({ contentSize }: ContentSizeProps) => {
+  _doComputeGeometry = ({ contentSize }) => {
     const geom = this.computeGeometry({ contentSize });
     const { tooltipOrigin, anchorPoint, placement } = geom;
 
@@ -316,7 +266,7 @@ class Tooltip extends Component<Props, State> {
     );
   };
 
-  _updateGeometry = ({ contentSize }: ContentSizeProps) => {
+  _updateGeometry = ({ contentSize }) => {
     const geom = this.computeGeometry({ contentSize });
     const { tooltipOrigin, anchorPoint, placement } = geom;
 
@@ -327,7 +277,7 @@ class Tooltip extends Component<Props, State> {
     });
   };
 
-  computeGeometry = ({ contentSize, placement }: ComputeGeomProps) => {
+  computeGeometry = ({ contentSize, placement }) => {
     const innerPlacement = placement || this.props.placement;
 
     const options = {
@@ -351,7 +301,7 @@ class Tooltip extends Component<Props, State> {
     }
   };
 
-  computeAutoGeometry = ({ displayArea, contentSize }: ComputeAutoGeomProps) => {
+  computeAutoGeometry = ({ displayArea, contentSize }) => {
     // prefer top, so check that first. if none 'work', fall back to top
     const placementsToTry = ['top', 'bottom', 'left', 'right', 'top'];
 
@@ -364,21 +314,21 @@ class Tooltip extends Component<Props, State> {
 
       if (
         tooltipOrigin.x >= displayArea.x &&
-        tooltipOrigin.x <= displayArea.x + displayArea.width - contentSize.width &&
+        tooltipOrigin.x <=
+          displayArea.x + displayArea.width - contentSize.width &&
         tooltipOrigin.y >= displayArea.y &&
-        tooltipOrigin.y <= displayArea.y + displayArea.height - contentSize.height
+        tooltipOrigin.y <=
+          displayArea.y + displayArea.height - contentSize.height
       ) {
         break;
       }
     }
 
-    // $FlowFixMe: need to fix issue regarding "uninitiated variable"
     return geom;
   };
 
-  _startAnimation = ({ show }: { show: boolean }) => {
+  _startAnimation = ({ show }) => {
     const animDuration = 300;
-    // $FlowFixMe: need to add type for Animated values
     const values = this.state.defaultAnimatedValues;
     const translateOrigin = this.getTranslateOrigin();
 
@@ -408,7 +358,6 @@ class Tooltip extends Component<Props, State> {
   };
 
   _getDefaultAnimatedStyles = () => {
-    // $FlowFixMe: need to add type for Animated values
     const animatedValues = this.state.defaultAnimatedValues;
 
     return {
@@ -443,9 +392,11 @@ class Tooltip extends Component<Props, State> {
     const arrow = [];
     const content = [];
 
-    const animatedStyles = this.props.animated ? this._getDefaultAnimatedStyles() : null;
+    const animatedStyles = this.props.animated
+      ? this._getDefaultAnimatedStyles()
+      : null;
 
-    [animatedStyles, this.props].forEach((source: ExtendedStylesProps | null) => {
+    [animatedStyles, this.props].forEach((source) => {
       if (source) {
         background.push(source.backgroundStyle);
         tooltip.push(source.tooltipStyle);
@@ -466,7 +417,8 @@ class Tooltip extends Component<Props, State> {
     const { height, width, x, y } = this.state.childRect;
     const { children, onChildPress, onChildLongPress } = this.props;
     const wrapInTouchable =
-      typeof onChildPress === 'function' || typeof onChildLongPress === 'function';
+      typeof onChildPress === 'function' ||
+      typeof onChildLongPress === 'function';
 
     const childElement = (
       <View
@@ -487,7 +439,10 @@ class Tooltip extends Component<Props, State> {
 
     if (wrapInTouchable) {
       return (
-        <TouchableWithoutFeedback onPress={onChildPress} onLongPress={onChildLongPress}>
+        <TouchableWithoutFeedback
+          onPress={onChildPress}
+          onLongPress={onChildLongPress}
+        >
           {childElement}
         </TouchableWithoutFeedback>
       );
@@ -501,8 +456,18 @@ class Tooltip extends Component<Props, State> {
       return null;
     }
 
-    const { measurementsFinished, placement, waitingForInteractions } = this.state;
-    const { backgroundColor, children, content, isVisible, onClose } = this.props;
+    const {
+      measurementsFinished,
+      placement,
+      waitingForInteractions,
+    } = this.state;
+    const {
+      backgroundColor,
+      children,
+      content,
+      isVisible,
+      onClose,
+    } = this.props;
 
     const extendedStyles = this._getExtendedStyles();
     const contentStyle = [styles.content, ...extendedStyles.content];
@@ -513,30 +478,54 @@ class Tooltip extends Component<Props, State> {
     const tooltipPlacementStyles = this.getTooltipPlacementStyles();
 
     // Special case, force the arrow rotation even if it was overriden
-    let arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
-    const arrowTransform = (StyleSheet.flatten(arrowStyle).transform || []).slice(0);
+    let arrowStyle = [
+      styles.arrow,
+      arrowDynamicStyle,
+      arrowColorStyle,
+      ...extendedStyles.arrow,
+    ];
+    const arrowTransform = (
+      StyleSheet.flatten(arrowStyle).transform || []
+    ).slice(0);
     arrowTransform.unshift({ rotate: this.getArrowRotation(placement) });
     arrowStyle = [...arrowStyle, { transform: arrowTransform }];
 
     return (
       <View>
         {/* This renders the fullscreen tooltip */}
-        <Modal transparent visible={isVisible && !waitingForInteractions} onRequestClose={onClose}>
+        <Modal
+          transparent
+          visible={isVisible && !waitingForInteractions}
+          onRequestClose={onClose}
+        >
           <TouchableWithoutFeedback onPress={onClose}>
             <View
               style={[
                 styles.container,
-                contentSizeAvailable && measurementsFinished && styles.containerVisible,
+                contentSizeAvailable &&
+                  measurementsFinished &&
+                  styles.containerVisible,
               ]}
             >
               <Animated.View
-                style={[styles.background, ...extendedStyles.background, { backgroundColor }]}
+                style={[
+                  styles.background,
+                  ...extendedStyles.background,
+                  { backgroundColor },
+                ]}
               />
               <Animated.View
-                style={[styles.tooltip, ...extendedStyles.tooltip, tooltipPlacementStyles]}
+                style={[
+                  styles.tooltip,
+                  ...extendedStyles.tooltip,
+                  tooltipPlacementStyles,
+                ]}
               >
                 <Animated.View style={arrowStyle} />
-                <Animated.View onLayout={this.measureContent} style={contentStyle}>
+                <Animated.View
+                  onLayout={this.measureContent}
+                  style={contentStyle}
+                >
                   {content}
                 </Animated.View>
               </Animated.View>
@@ -547,8 +536,7 @@ class Tooltip extends Component<Props, State> {
 
         {/* This renders the child element in place in the parent's layout */}
         <View
-          ref={r => {
-            // $FlowFixMe: need to add type childWrapper
+          ref={(r) => {
             this.childWrapper = r;
           }}
           onLayout={this.measureChildRect}
