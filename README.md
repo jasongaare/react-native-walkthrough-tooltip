@@ -54,6 +54,7 @@ Optionally, you can provide the props `onChildPress` or `onChildLongPress` to ov
 | onChildPress     | function         | null                                   | Callback when user long presses on wrapped child. **_Overrides_** any touches in wrapped child element. [See below for more info](onPress)                                                                     |
 | onClose          | function         | null                                   | Callback fired when the user taps the tooltip background overlay                                                                                                                                               |
 | placement        | string           | 'auto'                                 | Where to position the tooltip - options: `top, bottom, left, right, auto`. When `auto` is specified, the library will determine the ideal placement so that the popover is fully visible within `displayArea`. |
+| childlessPlacementPadding | number or percentage string | 24 | When the tooltip is rendered _without_ a child element, this prop will determine the distance in pixels from the specified placement, i.e. a value of `'25%'` with placement `'bottom'` would render the tooltip 25% of the device height above the bottom of the screen _(prop ignored if tooltip is rendered with a child element)_ |
 
 ### Style Props
 
