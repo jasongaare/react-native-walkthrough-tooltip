@@ -24,21 +24,37 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const DEFAULT_ARROW_SIZE = new Size(16, 8);
-const DEFAULT_DISPLAY_AREA = new Rect(
-  24,
-  24,
-  SCREEN_WIDTH - 48,
-  SCREEN_HEIGHT - 48,
-);
+const DEFAULT_PADDING = 24;
+
+const invertPlacement = (placement) => {
+  switch (placement) {
+    case 'top':
+      return 'bottom';
+    case 'bottom':
+      return 'top';
+    case 'right':
+      return 'left';
+    case 'left':
+      return 'right';
+    default:
+      return placement;
+  }
+};
 
 class Tooltip extends Component {
   static defaultProps = {
     animated: false,
     arrowSize: DEFAULT_ARROW_SIZE,
     backgroundColor: 'rgba(0,0,0,0.5)',
+    childlessPlacementPadding: DEFAULT_PADDING,
     children: null,
     content: <View />,
-    displayArea: DEFAULT_DISPLAY_AREA,
+    displayArea: new Rect(
+      DEFAULT_PADDING,
+      DEFAULT_PADDING,
+      SCREEN_WIDTH - DEFAULT_PADDING * 2,
+      SCREEN_HEIGHT - DEFAULT_PADDING * 2,
+    ),
     isVisible: false,
     onChildLongPress: null,
     onChildPress: null,
@@ -51,6 +67,7 @@ class Tooltip extends Component {
 
     const { isVisible } = props;
 
+    this.childWrapper = React.createRef();
     this.state = {
       // no need to wait for interactions if not visible initially
       waitingForInteractions: isVisible,
@@ -58,7 +75,11 @@ class Tooltip extends Component {
       anchorPoint: new Point(0, 0),
       tooltipOrigin: new Point(0, 0),
       childRect: new Rect(0, 0, 0, 0),
-      placement: 'auto',
+      // if we have no children, and place the tooltip at the "top" we want it to
+      // behave like placement "bottom", i.e. display below the top of the screen
+      placement: !props.children
+        ? invertPlacement(props.placement)
+        : props.placement,
       readyToComputeGeom: false,
       waitingToComputeGeom: false,
       measurementsFinished: false,
@@ -227,24 +248,109 @@ class Tooltip extends Component {
     }
   };
 
+  finishMeasurements = () => {
+    const { contentSize, waitingToComputeGeom } = this.state;
+    if (waitingToComputeGeom) {
+      this._doComputeGeometry({ contentSize });
+    } else if (contentSize.width !== null) {
+      this._updateGeometry({ contentSize });
+    }
+    this.setState({ measurementsFinished: true });
+  };
+
   measureChildRect = () => {
-    this.childWrapper.measureInWindow((x, y, width, height) => {
+    if (
+      this.childWrapper.current &&
+      typeof this.childWrapper.current.measureInWindow === 'function'
+    ) {
+      this.childWrapper.current.measureInWindow((x, y, width, height) => {
+        this.setState(
+          {
+            childRect: new Rect(x, y, width, height),
+            readyToComputeGeom: true,
+          },
+          () => this.finishMeasurements(),
+        );
+      });
+    } else {
+      // mock the placement of a child to compute geom
+      let rectForChildlessPlacement = { ...this.state.childRect };
+      let placementPadding = DEFAULT_PADDING;
+
+      const { childlessPlacementPadding, placement } = this.props;
+      // handle percentages
+      if (typeof childlessPlacementPadding === 'string') {
+        const isPercentage =
+          childlessPlacementPadding.substring(
+            childlessPlacementPadding.length - 1,
+          ) === '%';
+        const paddingValue = parseFloat(childlessPlacementPadding, 10);
+        const verticalPlacement = placement === 'top' || placement === 'bottom';
+
+        if (isPercentage) {
+          placementPadding =
+            (paddingValue / 100.0) *
+            (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
+        } else {
+          placementPadding = paddingValue;
+        }
+      } else {
+        placementPadding = childlessPlacementPadding;
+      }
+
+      if (isNaN(placementPadding)) {
+        throw new Error(
+          '[Tooltip] Invalid value passed to childlessPlacementPadding',
+        );
+      }
+
+      const CENTER_X = SCREEN_WIDTH / 2;
+      const CENTER_Y = SCREEN_HEIGHT / 2;
+
+      switch (placement) {
+        case 'bottom':
+          rectForChildlessPlacement = new Rect(
+            CENTER_X,
+            SCREEN_HEIGHT - placementPadding,
+            0,
+            0,
+          );
+          break;
+        case 'left':
+          rectForChildlessPlacement = new Rect(
+            placementPadding,
+            CENTER_Y,
+            0,
+            0,
+          );
+          break;
+        case 'right':
+          rectForChildlessPlacement = new Rect(
+            SCREEN_WIDTH - placementPadding,
+            CENTER_Y,
+            0,
+            0,
+          );
+          break;
+        default:
+        case 'top':
+          rectForChildlessPlacement = new Rect(
+            CENTER_X,
+            placementPadding,
+            0,
+            0,
+          );
+          break;
+      }
+
       this.setState(
         {
-          childRect: new Rect(x, y, width, height),
+          childRect: rectForChildlessPlacement,
           readyToComputeGeom: true,
         },
-        () => {
-          const { contentSize, waitingToComputeGeom } = this.state;
-          if (waitingToComputeGeom) {
-            this._doComputeGeometry({ contentSize });
-          } else if (contentSize.width !== null) {
-            this._updateGeometry({ contentSize });
-          }
-          this.setState({ measurementsFinished: true });
-        },
+        () => this.finishMeasurements(),
       );
-    });
+    }
   };
 
   _doComputeGeometry = ({ contentSize }) => {
@@ -278,10 +384,11 @@ class Tooltip extends Component {
   };
 
   computeGeometry = ({ contentSize, placement }) => {
-    const innerPlacement = placement || this.props.placement;
+    const innerPlacement = placement || this.state.placement;
+    const { displayArea } = this.props;
 
     const options = {
-      displayArea: this.props.displayArea,
+      displayArea: displayArea,
       childRect: this.state.childRect,
       arrowSize: this.getArrowSize(innerPlacement),
       contentSize,
@@ -452,10 +559,6 @@ class Tooltip extends Component {
   };
 
   render() {
-    if (!this.props.children) {
-      return null;
-    }
-
     const {
       measurementsFinished,
       placement,
@@ -490,6 +593,8 @@ class Tooltip extends Component {
     arrowTransform.unshift({ rotate: this.getArrowRotation(placement) });
     arrowStyle = [...arrowStyle, { transform: arrowTransform }];
 
+    const noChildren = !children;
+
     return (
       <View>
         {/* This renders the fullscreen tooltip */}
@@ -521,7 +626,7 @@ class Tooltip extends Component {
                   tooltipPlacementStyles,
                 ]}
               >
-                <Animated.View style={arrowStyle} />
+                {noChildren ? null : <Animated.View style={arrowStyle} />}
                 <Animated.View
                   onLayout={this.measureContent}
                   style={contentStyle}
@@ -529,20 +634,17 @@ class Tooltip extends Component {
                   {content}
                 </Animated.View>
               </Animated.View>
-              {this.renderChildInTooltip()}
+              {noChildren ? null : this.renderChildInTooltip()}
             </View>
           </TouchableWithoutFeedback>
         </Modal>
 
         {/* This renders the child element in place in the parent's layout */}
-        <View
-          ref={(r) => {
-            this.childWrapper = r;
-          }}
-          onLayout={this.measureChildRect}
-        >
-          {children}
-        </View>
+        {noChildren ? null : (
+          <View ref={this.childWrapper} onLayout={this.measureChildRect}>
+            {children}
+          </View>
+        )}
       </View>
     );
   }
