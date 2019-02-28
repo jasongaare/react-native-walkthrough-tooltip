@@ -24,15 +24,7 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const DEFAULT_ARROW_SIZE = new Size(16, 8);
-const DEFAULT_DISPLAY_AREA_PADDING = 24;
-
-const getDisplayAreaWithPadding = (padding) =>
-  new Rect(
-    padding,
-    padding,
-    SCREEN_WIDTH - padding * 2,
-    SCREEN_HEIGHT - padding * 2,
-  );
+const DEFAULT_PADDING = 24;
 
 const invertPlacement = (placement) => {
   switch (placement) {
@@ -54,10 +46,15 @@ class Tooltip extends Component {
     animated: false,
     arrowSize: DEFAULT_ARROW_SIZE,
     backgroundColor: 'rgba(0,0,0,0.5)',
+    childlessPlacementPadding: DEFAULT_PADDING,
     children: null,
     content: <View />,
-    displayArea: null,
-    displayAreaPadding: DEFAULT_DISPLAY_AREA_PADDING,
+    displayArea: new Rect(
+      DEFAULT_PADDING,
+      DEFAULT_PADDING,
+      SCREEN_WIDTH - DEFAULT_PADDING * 2,
+      SCREEN_HEIGHT - DEFAULT_PADDING * 2,
+    ),
     isVisible: false,
     onChildLongPress: null,
     onChildPress: null,
@@ -278,23 +275,50 @@ class Tooltip extends Component {
     } else {
       // mock the placement of a child to compute geom
       let rectForChildlessPlacement = { ...this.state.childRect };
-      const { displayAreaPadding } = this.props;
+      let placementPadding = DEFAULT_PADDING;
+
+      const { childlessPlacementPadding, placement } = this.props;
+      // handle percentages
+      if (typeof childlessPlacementPadding === 'string') {
+        const isPercentage =
+          childlessPlacementPadding.substring(
+            childlessPlacementPadding.length - 1,
+          ) === '%';
+        const paddingValue = parseFloat(childlessPlacementPadding, 10);
+        const verticalPlacement = placement === 'top' || placement === 'bottom';
+
+        if (isPercentage) {
+          placementPadding =
+            (paddingValue / 100.0) *
+            (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
+        } else {
+          placementPadding = paddingValue;
+        }
+      } else {
+        placementPadding = childlessPlacementPadding;
+      }
+
+      if (isNaN(placementPadding)) {
+        throw new Error(
+          '[Tooltip] Invalid value passed to childlessPlacementPadding',
+        );
+      }
 
       const CENTER_X = SCREEN_WIDTH / 2;
       const CENTER_Y = SCREEN_HEIGHT / 2;
 
-      switch (this.props.placement) {
+      switch (placement) {
         case 'bottom':
           rectForChildlessPlacement = new Rect(
             CENTER_X,
-            SCREEN_HEIGHT - displayAreaPadding,
+            SCREEN_HEIGHT - placementPadding,
             0,
             0,
           );
           break;
         case 'left':
           rectForChildlessPlacement = new Rect(
-            displayAreaPadding,
+            placementPadding,
             CENTER_Y,
             0,
             0,
@@ -302,7 +326,7 @@ class Tooltip extends Component {
           break;
         case 'right':
           rectForChildlessPlacement = new Rect(
-            SCREEN_WIDTH - displayAreaPadding,
+            SCREEN_WIDTH - placementPadding,
             CENTER_Y,
             0,
             0,
@@ -312,7 +336,7 @@ class Tooltip extends Component {
         case 'top':
           rectForChildlessPlacement = new Rect(
             CENTER_X,
-            displayAreaPadding,
+            placementPadding,
             0,
             0,
           );
@@ -361,10 +385,10 @@ class Tooltip extends Component {
 
   computeGeometry = ({ contentSize, placement }) => {
     const innerPlacement = placement || this.state.placement;
-    const { displayArea, displayAreaPadding } = this.props;
+    const { displayArea } = this.props;
 
     const options = {
-      displayArea: displayArea || getDisplayAreaWithPadding(displayAreaPadding),
+      displayArea: displayArea,
       childRect: this.state.childRect,
       arrowSize: this.getArrowSize(innerPlacement),
       contentSize,
