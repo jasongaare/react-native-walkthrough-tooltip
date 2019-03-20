@@ -102,7 +102,16 @@ class Tooltip extends Component {
 
   componentWillReceiveProps(nextProps) {
     const willBeVisible = nextProps.isVisible;
-    const { isVisible } = this.props;
+    const nextContent = nextProps.content;
+    const { isVisible, content} = this.props;
+
+    if (nextContent !== content && willBeVisible) {
+        // The location of the child element may have changed based on
+        // transition animations in the corresponding view, so remeasure
+        InteractionManager.runAfterInteractions(() => {
+          this.measureChildRect();
+        });
+    }
 
     if (willBeVisible !== isVisible) {
       if (willBeVisible) {
