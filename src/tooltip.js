@@ -111,9 +111,7 @@ class Tooltip extends Component {
         InteractionManager.runAfterInteractions(() => {
           this.measureChildRect();
         });
-    }
-
-    if (willBeVisible !== isVisible) {
+    } else if (willBeVisible !== isVisible) {
       if (willBeVisible) {
         // We want to start the show animation only when contentSize is known
         // so that we can have some logic depending on the geometry
