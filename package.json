@@ -1,6 +1,6 @@
 {
   "name": "react-native-walkthrough-tooltip",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "An inline wrapper for calling out React Native components via tooltip",
   "main": "src/tooltip.js",
   "scripts": {
@@ -37,7 +37,6 @@
     "eslint-config-airbnb": "16.1.0",
     "eslint-plugin-import": "2.11.0",
     "eslint-plugin-jsx-a11y": "6.0.3",
-    "eslint-plugin-no-mixed-operators": "1.1.1",
     "eslint-plugin-react": "7.8.1",
     "eslint-plugin-react-native": "3.2.1",
     "jest": "22.4.4",

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Animated,
   Dimensions,
   Easing,
-  InteractionManager,
   Modal,
   StyleSheet,
   TouchableWithoutFeedback,
@@ -77,9 +77,7 @@ class Tooltip extends Component {
       childRect: new Rect(0, 0, 0, 0),
       // if we have no children, and place the tooltip at the "top" we want it to
       // behave like placement "bottom", i.e. display below the top of the screen
-      placement: !props.children
-        ? invertPlacement(props.placement)
-        : props.placement,
+      placement: !props.children ? invertPlacement(props.placement) : props.placement,
       readyToComputeGeom: false,
       waitingToComputeGeom: false,
       measurementsFinished: false,
@@ -93,24 +91,19 @@ class Tooltip extends Component {
 
   componentDidMount() {
     if (this.state.waitingForInteractions) {
-      InteractionManager.runAfterInteractions(() => {
-        this.measureChildRect();
-        this.setState({ waitingForInteractions: false });
-      });
+      this.waitAndMeasureChildRect(true);
     }
   }
 
   componentWillReceiveProps(nextProps) {
     const willBeVisible = nextProps.isVisible;
     const nextContent = nextProps.content;
-    const { isVisible, content} = this.props;
+    const { isVisible, content } = this.props;
 
     if (nextContent !== content && willBeVisible) {
-        // The location of the child element may have changed based on
-        // transition animations in the corresponding view, so remeasure
-        InteractionManager.runAfterInteractions(() => {
-          this.measureChildRect();
-        });
+      // The location of the child element may have changed based on
+      // transition animations in the corresponding view, so remeasure
+      this.waitAndMeasureChildRect();
     } else if (willBeVisible !== isVisible) {
       if (willBeVisible) {
         // We want to start the show animation only when contentSize is known
@@ -119,9 +112,7 @@ class Tooltip extends Component {
 
         // The location of the child element may have changed based on
         // transition animations in the corresponding view, so remeasure
-        InteractionManager.runAfterInteractions(() => {
-          this.measureChildRect();
-        });
+        this.waitAndMeasureChildRect();
       } else {
         this._startAnimation({ show: false });
       }
@@ -232,13 +223,20 @@ class Tooltip extends Component {
   getTranslateOrigin = () => {
     const { contentSize, tooltipOrigin, anchorPoint } = this.state;
     const tooltipCenter = new Point(
-      tooltipOrigin.x + contentSize.width / 2,
-      tooltipOrigin.y + contentSize.height / 2,
+      (tooltipOrigin.x + contentSize.width) / 2,
+      (tooltipOrigin.y + contentSize.height) / 2,
     );
-    return new Point(
-      anchorPoint.x - tooltipCenter.x,
-      anchorPoint.y - tooltipCenter.y,
-    );
+    return new Point(anchorPoint.x - tooltipCenter.x, anchorPoint.y - tooltipCenter.y);
+  };
+
+  waitAndMeasureChildRect = (clearWaitingForInteractions) => {
+    setTimeout(() => {
+      this.measureChildRect();
+
+      if (clearWaitingForInteractions) {
+        this.setState({ waitingForInteractions: false });
+      }
+    }, 1000);
   };
 
   measureContent = (e) => {
@@ -288,16 +286,13 @@ class Tooltip extends Component {
       // handle percentages
       if (typeof childlessPlacementPadding === 'string') {
         const isPercentage =
-          childlessPlacementPadding.substring(
-            childlessPlacementPadding.length - 1,
-          ) === '%';
+          childlessPlacementPadding.substring(childlessPlacementPadding.length - 1) === '%';
         const paddingValue = parseFloat(childlessPlacementPadding, 10);
         const verticalPlacement = placement === 'top' || placement === 'bottom';
 
         if (isPercentage) {
           placementPadding =
-            (paddingValue / 100.0) *
-            (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
+            (paddingValue / 100.0) * (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
         } else {
           placementPadding = paddingValue;
         }
@@ -305,10 +300,8 @@ class Tooltip extends Component {
         placementPadding = childlessPlacementPadding;
       }
 
-      if (isNaN(placementPadding)) {
-        throw new Error(
-          '[Tooltip] Invalid value passed to childlessPlacementPadding',
-        );
+      if (Number.isNaN(placementPadding)) {
+        throw new Error('[Tooltip] Invalid value passed to childlessPlacementPadding');
       }
 
       const CENTER_X = SCREEN_WIDTH / 2;
@@ -316,37 +309,17 @@ class Tooltip extends Component {
 
       switch (placement) {
         case 'bottom':
-          rectForChildlessPlacement = new Rect(
-            CENTER_X,
-            SCREEN_HEIGHT - placementPadding,
-            0,
-            0,
-          );
+          rectForChildlessPlacement = new Rect(CENTER_X, SCREEN_HEIGHT - placementPadding, 0, 0);
           break;
         case 'left':
-          rectForChildlessPlacement = new Rect(
-            placementPadding,
-            CENTER_Y,
-            0,
-            0,
-          );
+          rectForChildlessPlacement = new Rect(placementPadding, CENTER_Y, 0, 0);
           break;
         case 'right':
-          rectForChildlessPlacement = new Rect(
-            SCREEN_WIDTH - placementPadding,
-            CENTER_Y,
-            0,
-            0,
-          );
+          rectForChildlessPlacement = new Rect(SCREEN_WIDTH - placementPadding, CENTER_Y, 0, 0);
           break;
         default:
         case 'top':
-          rectForChildlessPlacement = new Rect(
-            CENTER_X,
-            placementPadding,
-            0,
-            0,
-          );
+          rectForChildlessPlacement = new Rect(CENTER_X, placementPadding, 0, 0);
           break;
       }
 
@@ -395,7 +368,7 @@ class Tooltip extends Component {
     const { displayArea } = this.props;
 
     const options = {
-      displayArea: displayArea,
+      displayArea,
       childRect: this.state.childRect,
       arrowSize: this.getArrowSize(innerPlacement),
       contentSize,
@@ -428,11 +401,9 @@ class Tooltip extends Component {
 
       if (
         tooltipOrigin.x >= displayArea.x &&
-        tooltipOrigin.x <=
-          displayArea.x + displayArea.width - contentSize.width &&
+        tooltipOrigin.x <= displayArea.x + displayArea.width - contentSize.width &&
         tooltipOrigin.y >= displayArea.y &&
-        tooltipOrigin.y <=
-          displayArea.y + displayArea.height - contentSize.height
+        tooltipOrigin.y <= displayArea.y + displayArea.height - contentSize.height
       ) {
         break;
       }
@@ -506,9 +477,7 @@ class Tooltip extends Component {
     const arrow = [];
     const content = [];
 
-    const animatedStyles = this.props.animated
-      ? this._getDefaultAnimatedStyles()
-      : null;
+    const animatedStyles = this.props.animated ? this._getDefaultAnimatedStyles() : null;
 
     [animatedStyles, this.props].forEach((source) => {
       if (source) {
@@ -531,8 +500,7 @@ class Tooltip extends Component {
     const { height, width, x, y } = this.state.childRect;
     const { children, onChildPress, onChildLongPress } = this.props;
     const wrapInTouchable =
-      typeof onChildPress === 'function' ||
-      typeof onChildLongPress === 'function';
+      typeof onChildPress === 'function' || typeof onChildLongPress === 'function';
 
     const childElement = (
       <View
@@ -553,10 +521,7 @@ class Tooltip extends Component {
 
     if (wrapInTouchable) {
       return (
-        <TouchableWithoutFeedback
-          onPress={onChildPress}
-          onLongPress={onChildLongPress}
-        >
+        <TouchableWithoutFeedback onPress={onChildPress} onLongPress={onChildLongPress}>
           {childElement}
         </TouchableWithoutFeedback>
       );
@@ -566,18 +531,8 @@ class Tooltip extends Component {
   };
 
   render() {
-    const {
-      measurementsFinished,
-      placement,
-      waitingForInteractions,
-    } = this.state;
-    const {
-      backgroundColor,
-      children,
-      content,
-      isVisible,
-      onClose,
-    } = this.props;
+    const { measurementsFinished, placement, waitingForInteractions } = this.state;
+    const { backgroundColor, children, content, isVisible, onClose } = this.props;
 
     const extendedStyles = this._getExtendedStyles();
     const contentStyle = [styles.content, ...extendedStyles.content];
@@ -588,15 +543,8 @@ class Tooltip extends Component {
     const tooltipPlacementStyles = this.getTooltipPlacementStyles();
 
     // Special case, force the arrow rotation even if it was overriden
-    let arrowStyle = [
-      styles.arrow,
-      arrowDynamicStyle,
-      arrowColorStyle,
-      ...extendedStyles.arrow,
-    ];
-    const arrowTransform = (
-      StyleSheet.flatten(arrowStyle).transform || []
-    ).slice(0);
+    let arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
+    const arrowTransform = (StyleSheet.flatten(arrowStyle).transform || []).slice(0);
     arrowTransform.unshift({ rotate: this.getArrowRotation(placement) });
     arrowStyle = [...arrowStyle, { transform: arrowTransform }];
 
@@ -605,39 +553,22 @@ class Tooltip extends Component {
     return (
       <View>
         {/* This renders the fullscreen tooltip */}
-        <Modal
-          transparent
-          visible={isVisible && !waitingForInteractions}
-          onRequestClose={onClose}
-        >
+        <Modal transparent visible={isVisible && !waitingForInteractions} onRequestClose={onClose}>
           <TouchableWithoutFeedback onPress={onClose}>
             <View
               style={[
                 styles.container,
-                contentSizeAvailable &&
-                  measurementsFinished &&
-                  styles.containerVisible,
+                contentSizeAvailable && measurementsFinished && styles.containerVisible,
               ]}
             >
               <Animated.View
-                style={[
-                  styles.background,
-                  ...extendedStyles.background,
-                  { backgroundColor },
-                ]}
+                style={[styles.background, ...extendedStyles.background, { backgroundColor }]}
               />
               <Animated.View
-                style={[
-                  styles.tooltip,
-                  ...extendedStyles.tooltip,
-                  tooltipPlacementStyles,
-                ]}
+                style={[styles.tooltip, ...extendedStyles.tooltip, tooltipPlacementStyles]}
               >
                 {noChildren ? null : <Animated.View style={arrowStyle} />}
-                <Animated.View
-                  onLayout={this.measureContent}
-                  style={contentStyle}
-                >
+                <Animated.View onLayout={this.measureContent} style={contentStyle}>
                   {content}
                 </Animated.View>
               </Animated.View>
@@ -648,7 +579,7 @@ class Tooltip extends Component {
 
         {/* This renders the child element in place in the parent's layout */}
         {noChildren ? null : (
-          <View ref={this.childWrapper} onLayout={this.measureChildRect}>
+          <View ref={this.childWrapper} onLayout={this.waitAndMeasureChildRect}>
             {children}
           </View>
         )}
@@ -656,5 +587,28 @@ class Tooltip extends Component {
     );
   }
 }
+
+Tooltip.propTypes = {
+  animated: PropTypes.bool,
+  arrowSize: PropTypes.shape({
+    height: PropTypes.number,
+    width: PropTypes.number,
+  }),
+  backgroundColor: PropTypes.string,
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  content: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  displayArea: PropTypes.shape({
+    x: PropTypes.number,
+    y: PropTypes.number,
+    height: PropTypes.number,
+    width: PropTypes.number,
+  }),
+  isVisible: PropTypes.bool,
+  onChildLongPress: PropTypes.func,
+  onChildPress: PropTypes.func,
+  onClose: PropTypes.func,
+  placement: PropTypes.string,
+  childlessPlacementPadding: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+};
 
 export default Tooltip;
