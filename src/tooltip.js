@@ -102,9 +102,16 @@ class Tooltip extends Component {
 
   componentWillReceiveProps(nextProps) {
     const willBeVisible = nextProps.isVisible;
-    const { isVisible } = this.props;
+    const nextContent = nextProps.content;
+    const { isVisible, content} = this.props;
 
-    if (willBeVisible !== isVisible) {
+    if (nextContent !== content && willBeVisible) {
+        // The location of the child element may have changed based on
+        // transition animations in the corresponding view, so remeasure
+        InteractionManager.runAfterInteractions(() => {
+          this.measureChildRect();
+        });
+    } else if (willBeVisible !== isVisible) {
       if (willBeVisible) {
         // We want to start the show animation only when contentSize is known
         // so that we can have some logic depending on the geometry
