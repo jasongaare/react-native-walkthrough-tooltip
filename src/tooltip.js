@@ -4,6 +4,7 @@ import {
   Animated,
   Dimensions,
   Easing,
+  InteractionManager,
   Modal,
   StyleSheet,
   TouchableWithoutFeedback,
@@ -118,7 +119,10 @@ class Tooltip extends Component {
 
   componentDidMount() {
     if (this.state.waitingForInteractions) {
-      this.waitAndMeasureChildRect(true);
+      InteractionManager.runAfterInteractions(() => {
+        this.measureChildRect();
+        this.setState({ waitingForInteractions: false });
+      });
     }
   }
 
@@ -130,7 +134,9 @@ class Tooltip extends Component {
     if (nextContent !== content && willBeVisible) {
       // The location of the child element may have changed based on
       // transition animations in the corresponding view, so remeasure
-      this.waitAndMeasureChildRect();
+      InteractionManager.runAfterInteractions(() => {
+        this.measureChildRect();
+      });
     } else if (willBeVisible !== isVisible) {
       if (willBeVisible) {
         // We want to start the show animation only when contentSize is known
@@ -139,7 +145,9 @@ class Tooltip extends Component {
 
         // The location of the child element may have changed based on
         // transition animations in the corresponding view, so remeasure
-        this.waitAndMeasureChildRect();
+        InteractionManager.runAfterInteractions(() => {
+          this.measureChildRect();
+        });
       } else {
         this._startAnimation({ show: false });
       }
@@ -628,7 +636,7 @@ class Tooltip extends Component {
 
         {/* This renders the child element in place in the parent's layout */}
         {noChildren ? null : (
-          <View ref={this.childWrapper} onLayout={this.waitAndMeasureChildRect}>
+          <View ref={this.childWrapper} onLayout={this.measureChildRect}>
             {children}
           </View>
         )}
