@@ -32,39 +32,6 @@ const getBoundsForDisplayArea = displayArea => ({
   },
 });
 
-const computerBoundContentSize = ({
-  displayArea,
-  tooltipOrigin,
-  anchorPoint,
-  arrowSize,
-  contentSize,
-}) => {
-  const boundTooltipOrigin = new Point(tooltipOrigin.x, tooltipOrigin.y);
-  const boundContentSize = new Size(contentSize.width, contentSize.height);
-  const bounds = getBoundsForDisplayArea(displayArea);
-
-  // adjust width to bounds
-  if (tooltipOrigin.x < bounds.x.min) {
-    boundContentSize.width = anchorPoint.x - arrowSize.width - bounds.x.min;
-    boundTooltipOrigin.x = bounds.x.min;
-  } else if (tooltipOrigin.x + contentSize.width > bounds.x.max) {
-    boundContentSize.width = bounds.x.max - tooltipOrigin.x;
-  }
-
-  // adjust height to bounds
-  if (tooltipOrigin.y < bounds.y.min) {
-    boundContentSize.height = anchorPoint.y - arrowSize.height - bounds.y.min;
-    boundTooltipOrigin.y = bounds.y.min;
-  } else if (tooltipOrigin.y + contentSize.height > bounds.y.max) {
-    boundContentSize.height = bounds.y.max - tooltipOrigin.y;
-  }
-
-  return {
-    boundContentSize,
-    boundTooltipOrigin,
-  };
-};
-
 const computeTopGeometry = ({ displayArea, childRect, contentSize, arrowSize }) => {
   const tooltipOrigin = new Point(
     Math.min(
@@ -75,13 +42,28 @@ const computeTopGeometry = ({ displayArea, childRect, contentSize, arrowSize }) 
   );
   const anchorPoint = new Point(childRect.x + childRect.width / 2.0, childRect.y);
 
-  const { boundContentSize, boundTooltipOrigin } = computerBoundContentSize({
-    displayArea,
-    tooltipOrigin,
-    anchorPoint,
-    contentSize,
-    arrowSize,
-  });
+  // compute bound content size
+  const boundTooltipOrigin = new Point(tooltipOrigin.x, tooltipOrigin.y);
+  const boundContentSize = new Size(contentSize.width, contentSize.height);
+  const bounds = getBoundsForDisplayArea(displayArea);
+
+  const topPlacementBottomBound = anchorPoint.y - arrowSize.height;
+
+  if (tooltipOrigin.x < bounds.x.min) {
+    boundTooltipOrigin.x = bounds.x.min;
+  }
+
+  if (tooltipOrigin.y < bounds.y.min) {
+    boundTooltipOrigin.y = bounds.y.min;
+  }
+
+  if (boundTooltipOrigin.x + contentSize.width > bounds.x.max) {
+    boundContentSize.width = bounds.x.max - boundTooltipOrigin.x;
+  }
+
+  if (boundTooltipOrigin.y + contentSize.height > topPlacementBottomBound) {
+    boundContentSize.height = topPlacementBottomBound - boundTooltipOrigin.y;
+  }
 
   return {
     tooltipOrigin,
@@ -105,13 +87,22 @@ const computeBottomGeometry = ({ displayArea, childRect, contentSize, arrowSize 
     childRect.y + childRect.height,
   );
 
-  const { boundContentSize, boundTooltipOrigin } = computerBoundContentSize({
-    displayArea,
-    tooltipOrigin,
-    anchorPoint,
-    contentSize,
-    arrowSize,
-  });
+  // compute bound content size
+  const boundTooltipOrigin = new Point(tooltipOrigin.x, tooltipOrigin.y);
+  const boundContentSize = new Size(contentSize.width, contentSize.height);
+  const bounds = getBoundsForDisplayArea(displayArea);
+
+  if (tooltipOrigin.x < bounds.x.min) {
+    boundTooltipOrigin.x = bounds.x.min;
+  }
+
+  if (boundTooltipOrigin.x + contentSize.width > bounds.x.max) {
+    boundContentSize.width = bounds.x.max - boundTooltipOrigin.x;
+  }
+
+  if (boundTooltipOrigin.y + contentSize.height > bounds.y.max) {
+    boundContentSize.height = bounds.y.max - boundTooltipOrigin.y;
+  }
 
   return {
     tooltipOrigin,
@@ -132,13 +123,28 @@ const computeLeftGeometry = ({ displayArea, childRect, contentSize, arrowSize })
   );
   const anchorPoint = new Point(childRect.x, childRect.y + childRect.height / 2.0);
 
-  const { boundContentSize, boundTooltipOrigin } = computerBoundContentSize({
-    displayArea,
-    tooltipOrigin,
-    anchorPoint,
-    contentSize,
-    arrowSize,
-  });
+  // compute bound content size
+  const boundTooltipOrigin = new Point(tooltipOrigin.x, tooltipOrigin.y);
+  const boundContentSize = new Size(contentSize.width, contentSize.height);
+  const bounds = getBoundsForDisplayArea(displayArea);
+
+  const leftPlacementRightBound = anchorPoint.x - arrowSize.width;
+
+  if (tooltipOrigin.x < bounds.x.min) {
+    boundTooltipOrigin.x = bounds.x.min;
+  }
+
+  if (tooltipOrigin.y < bounds.y.min) {
+    boundTooltipOrigin.y = bounds.y.min;
+  }
+
+  if (boundTooltipOrigin.x + contentSize.width > leftPlacementRightBound) {
+    boundContentSize.width = leftPlacementRightBound - boundTooltipOrigin.x;
+  }
+
+  if (boundTooltipOrigin.y + contentSize.height > bounds.y.max) {
+    boundContentSize.height = bounds.y.max - boundTooltipOrigin.y;
+  }
 
   return {
     tooltipOrigin,
@@ -162,13 +168,28 @@ const computeRightGeometry = ({ displayArea, childRect, contentSize, arrowSize }
     childRect.y + childRect.height / 2.0,
   );
 
-  const { boundContentSize, boundTooltipOrigin } = computerBoundContentSize({
-    displayArea,
-    tooltipOrigin,
-    anchorPoint,
-    contentSize,
-    arrowSize,
-  });
+  // compute bound content size
+  const boundTooltipOrigin = new Point(tooltipOrigin.x, tooltipOrigin.y);
+  const boundContentSize = new Size(contentSize.width, contentSize.height);
+  const bounds = getBoundsForDisplayArea(displayArea);
+
+  const rightPlacementLeftBound = anchorPoint.x + arrowSize.width;
+
+  if (tooltipOrigin.x < rightPlacementLeftBound) {
+    boundTooltipOrigin.x = rightPlacementLeftBound;
+  }
+
+  if (tooltipOrigin.y < bounds.y.min) {
+    boundTooltipOrigin.y = bounds.y.min;
+  }
+
+  if (boundTooltipOrigin.x + contentSize.width > bounds.x.max) {
+    boundContentSize.width = bounds.x.max - boundTooltipOrigin.x;
+  }
+
+  if (boundTooltipOrigin.y + contentSize.height > bounds.y.max) {
+    boundContentSize.height = bounds.y.max - boundTooltipOrigin.y;
+  }
 
   return {
     tooltipOrigin,
