@@ -21,6 +21,7 @@ import {
 } from './geom';
 import styles from './styles';
 
+
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -278,6 +279,10 @@ class Tooltip extends Component {
     } else {
       this._doComputeGeometry({ contentSize });
     }
+
+    if (!this.props.children) {
+      this.mockChildRect();
+    }
   };
 
   finishMeasurements = () => {
@@ -310,64 +315,70 @@ class Tooltip extends Component {
           );
         });
       } else {
-        // mock the placement of a child to compute geom
-        let rectForChildlessPlacement = { ...this.state.childRect };
-        let placementPadding = DEFAULT_PADDING;
-
-        const { childlessPlacementPadding, placement } = this.props;
-        // handle percentages
-        if (typeof childlessPlacementPadding === 'string') {
-          const isPercentage =
-            childlessPlacementPadding.substring(childlessPlacementPadding.length - 1) === '%';
-          const paddingValue = parseFloat(childlessPlacementPadding, 10);
-          const verticalPlacement = placement === 'top' || placement === 'bottom';
-
-          if (isPercentage) {
-            placementPadding =
-              (paddingValue / 100.0) * (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
-          } else {
-            placementPadding = paddingValue;
-          }
-        } else {
-          placementPadding = childlessPlacementPadding;
-        }
-
-        if (Number.isNaN(placementPadding)) {
-          throw new Error('[Tooltip] Invalid value passed to childlessPlacementPadding');
-        }
-
-        const CENTER_X = SCREEN_WIDTH / 2;
-        const CENTER_Y = SCREEN_HEIGHT / 2;
-
-        switch (placement) {
-          case 'bottom':
-            rectForChildlessPlacement = new Rect(CENTER_X, SCREEN_HEIGHT - placementPadding, 0, 0);
-            break;
-          case 'left':
-            rectForChildlessPlacement = new Rect(placementPadding, CENTER_Y, 0, 0);
-            break;
-          case 'right':
-            rectForChildlessPlacement = new Rect(SCREEN_WIDTH - placementPadding, CENTER_Y, 0, 0);
-            break;
-          default:
-          case 'top':
-            rectForChildlessPlacement = new Rect(CENTER_X, placementPadding, 0, 0);
-            break;
-        }
-
-        this.setState(
-          {
-            childRect: rectForChildlessPlacement,
-            readyToComputeGeom: true,
-          },
-          () => {
-            this.isMeasuringChild = false;
-            this.finishMeasurements();
-          },
-        );
+        this.mockChildRect();
       }
     }
   };
+
+  mockChildRect = () => {
+    // mock the placement of a child to compute geom
+    let rectForChildlessPlacement = { ...this.state.childRect };
+    let placementPadding = DEFAULT_PADDING;
+
+    const { childlessPlacementPadding, placement } = this.props;
+
+    // handle percentages
+    if (typeof childlessPlacementPadding === 'string') {
+      const isPercentage =
+        childlessPlacementPadding.substring(childlessPlacementPadding.length - 1) === '%';
+      const paddingValue = parseFloat(childlessPlacementPadding, 10);
+      const verticalPlacement = placement === 'top' || placement === 'bottom';
+
+      if (isPercentage) {
+        placementPadding =
+          (paddingValue / 100.0) * (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
+      } else {
+        placementPadding = paddingValue;
+      }
+    } else {
+      placementPadding = childlessPlacementPadding;
+    }
+
+    if (Number.isNaN(placementPadding)) {
+      throw new Error('[Tooltip] Invalid value passed to childlessPlacementPadding');
+    }
+
+    const CENTER_X = SCREEN_WIDTH / 2;
+    const CENTER_Y = SCREEN_HEIGHT / 2;
+
+    switch (placement) {
+      case 'bottom':
+        rectForChildlessPlacement = new Rect(CENTER_X, SCREEN_HEIGHT - placementPadding, 0, 0);
+        break;
+      case 'left':
+        rectForChildlessPlacement = new Rect(placementPadding, CENTER_Y, 0, 0);
+        break;
+      case 'right':
+        rectForChildlessPlacement = new Rect(SCREEN_WIDTH - placementPadding, CENTER_Y, 0, 0);
+        break;
+      default:
+      case 'top':
+        rectForChildlessPlacement = new Rect(CENTER_X, placementPadding, 0, 0);
+        break;
+    }
+
+    this.setState(
+      {
+        childRect: rectForChildlessPlacement,
+        readyToComputeGeom: true,
+      },
+      () => {
+        this.isMeasuringChild = false;
+        this.finishMeasurements();
+      },
+    );
+  
+  }
 
   _doComputeGeometry = ({ contentSize }) => {
     const geom = this.computeGeometry({ contentSize });
@@ -618,7 +629,7 @@ class Tooltip extends Component {
             <View
               style={[
                 styles.container,
-                sizeAvailable && measurementsFinished && styles.containerVisible,
+                sizeAvailable && measurementsFinished && styles.containerVisible
               ]}
             >
               <Animated.View
