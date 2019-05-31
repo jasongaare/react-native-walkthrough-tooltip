@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import rfcIsEqual from 'react-fast-compare';
 import {
   Point,
   Size,
@@ -20,7 +21,6 @@ import {
   computeRightGeometry,
 } from './geom';
 import styles from './styles';
-
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -64,6 +64,7 @@ class Tooltip extends Component {
     onChildPress: null,
     onClose: null,
     placement: 'auto',
+    rotationDeg: 0,
     useInteractionManager: false,
   };
 
@@ -74,7 +75,10 @@ class Tooltip extends Component {
       width: PropTypes.number,
     }),
     backgroundColor: PropTypes.string,
-    childlessPlacementPadding: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    childlessPlacementPadding: PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.string,
+    ]),
     children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     content: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     contentBoundByDisplayArea: PropTypes.bool,
@@ -88,7 +92,8 @@ class Tooltip extends Component {
     onChildLongPress: PropTypes.func,
     onChildPress: PropTypes.func,
     onClose: PropTypes.func,
-    placement: PropTypes.string,
+    placement: PropTypes.oneOf(['top', 'left', 'bottom', 'right', 'auto']),
+    rotationDeg: PropTypes.oneOf([0, 90, 180, 270]),
     useInteractionManager: PropTypes.bool,
   };
 
@@ -110,7 +115,9 @@ class Tooltip extends Component {
       childRect: new Rect(0, 0, 0, 0),
       // if we have no children, and place the tooltip at the "top" we want it to
       // behave like placement "bottom", i.e. display below the top of the screen
-      placement: !props.children ? invertPlacement(props.placement) : props.placement,
+      placement: !props.children
+        ? invertPlacement(props.placement)
+        : props.placement,
       readyToComputeGeom: false,
       waitingToComputeGeom: false,
       measurementsFinished: false,
@@ -128,36 +135,45 @@ class Tooltip extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const willBeVisible = nextProps.isVisible;
-    const nextContent = nextProps.content;
-    const { isVisible, content } = this.props;
+  componentDidUpdate(prevProps) {
+    const { content, isVisible, placement, rotationDeg } = this.props;
 
-    if (nextContent !== content && willBeVisible) {
-      // The location of the child element may have changed based on
-      // transition animations in the corresponding view, so remeasure
-      this.measureChildRect();
-    } else if (willBeVisible !== isVisible) {
-      if (willBeVisible) {
+    const contentChanged = !rfcIsEqual(prevProps.content, content);
+    const placementChanged = prevProps.placement !== placement;
+    const rotationChanged = prevProps.rotationDeg !== rotationDeg;
+    const becameVisible = isVisible && !prevProps.isVisible;
+    const becameHidden = !isVisible && prevProps.isVisiblel;
+
+    if (becameHidden) {
+      this._startAnimation({ show: false });
+    } else if (
+      contentChanged ||
+      placementChanged ||
+      rotationChanged ||
+      becameVisible
+    ) {
+      setTimeout(() => {
+        this.measureChildRect();
+      });
+
+      if (becameVisible) {
+        // TODO: Move setState out of didUpdate
         // We want to start the show animation only when contentSize is known
         // so that we can have some logic depending on the geometry
         this.setState({ contentSize: new Size(0, 0) });
-
-        // The location of the child element may have changed based on
-        // transition animations in the corresponding view, so remeasure
-        this.measureChildRect();
-      } else {
-        this._startAnimation({ show: false });
       }
     }
   }
 
-  componentDidUpdate() {
-    // We always want the measurements finished flag to be false
-    // after the tooltip is closed
-    if (this.state.measurementsFinished && !this.props.isVisible) {
-      this.setState({ measurementsFinished: false });
+  static getDerivedStateFromProps(nextProps, prevState) {
+    // set measurements finished flag to false when tooltip closes
+    if (prevState.measurementsFinished && !nextProps.isVisible) {
+      return {
+        measurementsFinished: false,
+      };
     }
+
+    return null;
   }
 
   getArrowSize = (placement) => {
@@ -219,6 +235,90 @@ class Tooltip extends Component {
     };
   };
 
+  getPlacementForCurrentRotation = () => {
+    const { placement: basePlacement, rotationDeg } = this.props;
+
+    switch (basePlacement) {
+      case 'top':
+        switch (rotationDeg) {
+          case 90:
+            return 'right';
+          case 180:
+            return 'bottom';
+          case 270:
+            return 'left';
+          case 0:
+          default:
+            return 'top';
+        }
+      case 'left':
+        switch (rotationDeg) {
+          case 90:
+            return 'top';
+          case 180:
+            return 'right';
+          case 270:
+            return 'bottom';
+          case 0:
+          default:
+            return 'left';
+        }
+      case 'bottom':
+        switch (rotationDeg) {
+          case 90:
+            return 'left';
+          case 180:
+            return 'top';
+          case 270:
+            return 'right';
+          case 0:
+          default:
+            return 'bottom';
+        }
+      case 'right':
+        switch (rotationDeg) {
+          case 90:
+            return 'bottom';
+          case 180:
+            return 'left';
+          case 270:
+            return 'top';
+          case 0:
+          default:
+            return 'right';
+        }
+      default:
+        return basePlacement;
+    }
+  };
+
+  getTranslationForCurrentRotation = () => {
+    const { placement: basePlacement, rotationDeg } = this.props;
+    const {
+      width: contentWidth,
+      height: contentHeight,
+    } = this.state.contentSize;
+
+    const offset = Math.abs(contentWidth - contentHeight) / 2;
+
+    if (rotationDeg % 180 !== 0) {
+      switch (basePlacement) {
+        case 'top':
+          return { y: offset };
+        case 'left':
+          return { x: -offset };
+        case 'bottom':
+          return { y: -offset };
+        case 'right':
+          return { x: offset };
+        default:
+          break;
+      }
+    }
+
+    return {};
+  };
+
   getTooltipPlacementStyles = () => {
     const { height } = this.props.arrowSize;
     const { tooltipOrigin } = this.state;
@@ -259,7 +359,10 @@ class Tooltip extends Component {
       (tooltipOrigin.x + contentSize.width) / 2,
       (tooltipOrigin.y + contentSize.height) / 2,
     );
-    return new Point(anchorPoint.x - tooltipCenter.x, anchorPoint.y - tooltipCenter.y);
+    return new Point(
+      anchorPoint.x - tooltipCenter.x,
+      anchorPoint.y - tooltipCenter.y,
+    );
   };
 
   measureContent = (e) => {
@@ -293,23 +396,22 @@ class Tooltip extends Component {
     const doMeasurement = () => {
       if (!this.isMeasuringChild) {
         this.isMeasuringChild = true;
-  
+
         if (
           this.childWrapper.current &&
           typeof this.childWrapper.current.measureInWindow === 'function'
         ) {
           this.childWrapper.current.measureInWindow((x, y, width, height) => {
-            this.setState(
-              {
-                childRect: new Rect(x, y, width, height),
-                readyToComputeGeom: true,
-                waitingForInteractions: false,
-              },
-              () => {
-                this.isMeasuringChild = false;
-                this.finishMeasurements();
-              },
-            );
+            this.setState({
+              childRect: new Rect(x, y, width, height),
+              readyToComputeGeom: true,
+              waitingForInteractions: false,
+              placement: this.getPlacementForCurrentRotation(),
+            },
+            () => {
+              this.isMeasuringChild = false;
+              this.finishMeasurements();
+            });
           });
         } else {
           this.mockChildRect();
@@ -336,13 +438,16 @@ class Tooltip extends Component {
     // handle percentages
     if (typeof childlessPlacementPadding === 'string') {
       const isPercentage =
-        childlessPlacementPadding.substring(childlessPlacementPadding.length - 1) === '%';
+        childlessPlacementPadding.substring(
+          childlessPlacementPadding.length - 1,
+        ) === '%';
       const paddingValue = parseFloat(childlessPlacementPadding, 10);
       const verticalPlacement = placement === 'top' || placement === 'bottom';
 
       if (isPercentage) {
         placementPadding =
-          (paddingValue / 100.0) * (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
+          (paddingValue / 100.0) *
+          (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
       } else {
         placementPadding = paddingValue;
       }
@@ -351,7 +456,9 @@ class Tooltip extends Component {
     }
 
     if (Number.isNaN(placementPadding)) {
-      throw new Error('[Tooltip] Invalid value passed to childlessPlacementPadding');
+      throw new Error(
+        '[Tooltip] Invalid value passed to childlessPlacementPadding',
+      );
     }
 
     const CENTER_X = SCREEN_WIDTH / 2;
@@ -359,13 +466,23 @@ class Tooltip extends Component {
 
     switch (placement) {
       case 'bottom':
-        rectForChildlessPlacement = new Rect(CENTER_X, SCREEN_HEIGHT - placementPadding, 0, 0);
+        rectForChildlessPlacement = new Rect(
+          CENTER_X,
+          SCREEN_HEIGHT - placementPadding,
+          0,
+          0,
+        );
         break;
       case 'left':
         rectForChildlessPlacement = new Rect(placementPadding, CENTER_Y, 0, 0);
         break;
       case 'right':
-        rectForChildlessPlacement = new Rect(SCREEN_WIDTH - placementPadding, CENTER_Y, 0, 0);
+        rectForChildlessPlacement = new Rect(
+          SCREEN_WIDTH - placementPadding,
+          CENTER_Y,
+          0,
+          0,
+        );
         break;
       default:
       case 'top':
@@ -383,19 +500,26 @@ class Tooltip extends Component {
         this.finishMeasurements();
       },
     );
-  
-  }
+  };
 
   _doComputeGeometry = ({ contentSize }) => {
     const geom = this.computeGeometry({ contentSize });
-    const { tooltipOrigin, anchorPoint, placement, boundContentSize, boundTooltipOrigin } = geom;
+    const {
+      tooltipOrigin,
+      anchorPoint,
+      placement,
+      boundContentSize,
+      boundTooltipOrigin,
+    } = geom;
     const { contentBoundByDisplayArea } = this.props;
 
     this.setState(
       {
         contentSize,
         boundContentSize,
-        tooltipOrigin: contentBoundByDisplayArea ? boundTooltipOrigin : tooltipOrigin,
+        tooltipOrigin: contentBoundByDisplayArea
+          ? boundTooltipOrigin
+          : tooltipOrigin,
         anchorPoint,
         placement,
         readyToComputeGeom: undefined,
@@ -410,12 +534,20 @@ class Tooltip extends Component {
 
   _updateGeometry = ({ contentSize }) => {
     const geom = this.computeGeometry({ contentSize });
-    const { tooltipOrigin, anchorPoint, placement, boundContentSize, boundTooltipOrigin } = geom;
+    const {
+      tooltipOrigin,
+      anchorPoint,
+      placement,
+      boundContentSize,
+      boundTooltipOrigin,
+    } = geom;
     const { contentBoundByDisplayArea } = this.props;
 
     this.setState({
       boundContentSize,
-      tooltipOrigin: contentBoundByDisplayArea ? boundTooltipOrigin : tooltipOrigin,
+      tooltipOrigin: contentBoundByDisplayArea
+        ? boundTooltipOrigin
+        : tooltipOrigin,
       anchorPoint,
       placement,
       measurementsFinished: true,
@@ -460,9 +592,11 @@ class Tooltip extends Component {
 
       if (
         tooltipOrigin.x >= displayArea.x &&
-        tooltipOrigin.x <= displayArea.x + displayArea.width - contentSize.width &&
+        tooltipOrigin.x <=
+          displayArea.x + displayArea.width - contentSize.width &&
         tooltipOrigin.y >= displayArea.y &&
-        tooltipOrigin.y <= displayArea.y + displayArea.height - contentSize.height
+        tooltipOrigin.y <=
+          displayArea.y + displayArea.height - contentSize.height
       ) {
         break;
       }
@@ -531,12 +665,14 @@ class Tooltip extends Component {
   };
 
   _getExtendedStyles = () => {
+    const { animated, rotationDeg } = this.props;
+
     const background = [];
     const tooltip = [];
     const arrow = [];
     const content = [];
 
-    const animatedStyles = this.props.animated ? this._getDefaultAnimatedStyles() : null;
+    const animatedStyles = animated ? this._getDefaultAnimatedStyles() : null;
 
     [animatedStyles, this.props].forEach((source) => {
       if (source) {
@@ -546,6 +682,29 @@ class Tooltip extends Component {
         content.push(source.contentStyle);
       }
     });
+
+    if (rotationDeg !== 0) {
+      const translation = this.getTranslationForCurrentRotation();
+      const transformArray = []; // StyleSheet.flatten(content).transform;
+
+      transformArray.push({
+        rotate: `${rotationDeg}deg`,
+      });
+
+      if (translation.x) {
+        transformArray.push({
+          translateX: translation.x,
+        });
+      }
+
+      if (translation.y) {
+        transformArray.push({
+          translateY: translation.y,
+        });
+      }
+
+      content.push({ transform: transformArray });
+    }
 
     return {
       background,
@@ -559,7 +718,8 @@ class Tooltip extends Component {
     const { height, width, x, y } = this.state.childRect;
     const { children, onChildPress, onChildLongPress } = this.props;
     const wrapInTouchable =
-      typeof onChildPress === 'function' || typeof onChildLongPress === 'function';
+      typeof onChildPress === 'function' ||
+      typeof onChildLongPress === 'function';
 
     const childElement = (
       <View
@@ -580,7 +740,10 @@ class Tooltip extends Component {
 
     if (wrapInTouchable) {
       return (
-        <TouchableWithoutFeedback onPress={onChildPress} onLongPress={onChildLongPress}>
+        <TouchableWithoutFeedback
+          onPress={onChildPress}
+          onLongPress={onChildLongPress}
+        >
           {childElement}
         </TouchableWithoutFeedback>
       );
@@ -606,12 +769,16 @@ class Tooltip extends Component {
       contentBoundByDisplayArea,
     } = this.props;
 
-    const sizeAvailable = contentBoundByDisplayArea ? boundContentSize.width : contentSize.width;
+    const sizeAvailable = contentBoundByDisplayArea
+      ? boundContentSize.width
+      : contentSize.width;
 
     const extendedStyles = this._getExtendedStyles();
     const contentStyle = [
       styles.content,
-      contentBoundByDisplayArea && boundContentSize.width ? { ...boundContentSize } : {},
+      contentBoundByDisplayArea && boundContentSize.width
+        ? { ...boundContentSize }
+        : {},
       ...extendedStyles.content,
     ];
     const arrowColor = StyleSheet.flatten(contentStyle).backgroundColor;
@@ -620,8 +787,15 @@ class Tooltip extends Component {
     const tooltipPlacementStyles = this.getTooltipPlacementStyles();
 
     // Special case, force the arrow rotation even if it was overriden
-    let arrowStyle = [styles.arrow, arrowDynamicStyle, arrowColorStyle, ...extendedStyles.arrow];
-    const arrowTransform = (StyleSheet.flatten(arrowStyle).transform || []).slice(0);
+    let arrowStyle = [
+      styles.arrow,
+      arrowDynamicStyle,
+      arrowColorStyle,
+      ...extendedStyles.arrow,
+    ];
+    const arrowTransform = (
+      StyleSheet.flatten(arrowStyle).transform || []
+    ).slice(0);
     arrowTransform.unshift({ rotate: this.getArrowRotation(placement) });
     arrowStyle = [...arrowStyle, { transform: arrowTransform }];
 
@@ -630,22 +804,39 @@ class Tooltip extends Component {
     return (
       <View>
         {/* This renders the fullscreen tooltip */}
-        <Modal transparent visible={isVisible && !waitingForInteractions} onRequestClose={onClose}>
+        <Modal
+          transparent
+          visible={isVisible && !waitingForInteractions}
+          onRequestClose={onClose}
+        >
           <TouchableWithoutFeedback onPress={onClose}>
             <View
               style={[
                 styles.container,
-                sizeAvailable && measurementsFinished && styles.containerVisible,
+                sizeAvailable &&
+                  measurementsFinished &&
+                  styles.containerVisible,
               ]}
             >
               <Animated.View
-                style={[styles.background, ...extendedStyles.background, { backgroundColor }]}
+                style={[
+                  styles.background,
+                  ...extendedStyles.background,
+                  { backgroundColor },
+                ]}
               />
               <Animated.View
-                style={[styles.tooltip, ...extendedStyles.tooltip, tooltipPlacementStyles]}
+                style={[
+                  styles.tooltip,
+                  ...extendedStyles.tooltip,
+                  tooltipPlacementStyles,
+                ]}
               >
                 {noChildren ? null : <Animated.View style={arrowStyle} />}
-                <Animated.View onLayout={this.measureContent} style={contentStyle}>
+                <Animated.View
+                  onLayout={this.measureContent}
+                  style={contentStyle}
+                >
                   {content}
                 </Animated.View>
               </Animated.View>

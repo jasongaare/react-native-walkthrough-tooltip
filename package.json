@@ -24,7 +24,8 @@
     "popover"
   ],
   "dependencies": {
-    "prop-types": "^15.6.1"
+    "prop-types": "^15.6.1",
+    "react-fast-compare": "^2.0.4"
   },
   "devDependencies": {
     "babel-core": "6.26.3",
