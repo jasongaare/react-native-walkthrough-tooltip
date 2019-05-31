@@ -6,6 +6,7 @@ import {
   Easing,
   InteractionManager,
   Modal,
+  Platform,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
@@ -703,7 +704,11 @@ class Tooltip extends Component {
         });
       }
 
-      content.push({ transform: transformArray });
+      if (Platform.OS === 'android') {
+        tooltip.push({ transform: transformArray });
+      } else {
+        content.push({ transform: transformArray });
+      }
     }
 
     return {
@@ -767,6 +772,7 @@ class Tooltip extends Component {
       isVisible,
       onClose,
       contentBoundByDisplayArea,
+      rotationDeg,
     } = this.props;
 
     const sizeAvailable = contentBoundByDisplayArea
@@ -801,6 +807,10 @@ class Tooltip extends Component {
 
     const noChildren = !children;
 
+    // TODO: handle rotation better on android
+    const tempHideArrowAndChild =
+      rotationDeg !== 0 && Platform.OS === 'android';
+
     return (
       <View>
         {/* This renders the fullscreen tooltip */}
@@ -832,7 +842,9 @@ class Tooltip extends Component {
                   tooltipPlacementStyles,
                 ]}
               >
-                {noChildren ? null : <Animated.View style={arrowStyle} />}
+                {noChildren || tempHideArrowAndChild ? null : (
+                  <Animated.View style={arrowStyle} />
+                )}
                 <Animated.View
                   onLayout={this.measureContent}
                   style={contentStyle}
@@ -840,7 +852,9 @@ class Tooltip extends Component {
                   {content}
                 </Animated.View>
               </Animated.View>
-              {noChildren ? null : this.renderChildInTooltip()}
+              {noChildren || tempHideArrowAndChild
+                ? null
+                : this.renderChildInTooltip()}
             </View>
           </TouchableWithoutFeedback>
         </Modal>
