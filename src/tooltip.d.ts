@@ -14,7 +14,7 @@ declare module 'react-native-walkthrough-tooltip' {
     }
 
 
-    export interface ToolTopRect {
+    export interface ToolTipRect {
         x: number,
         y: number,
         width: number,
@@ -55,7 +55,7 @@ declare module 'react-native-walkthrough-tooltip' {
         content?: React.ReactElement
 
         // Screen area where the tooltip may be displayed
-        displayArea?: ToolTopRect
+        displayArea?: ToolTipRect
 
         // When true, tooltip is displayed
         isVisible?: boolean
