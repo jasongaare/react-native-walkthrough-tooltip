@@ -6,6 +6,7 @@ import {
   InteractionManager,
   Modal,
   Platform,
+  SafeAreaView,
   StyleSheet,
   TouchableWithoutFeedback,
   View
@@ -57,6 +58,12 @@ class Tooltip extends Component {
     children: null,
     content: <View />,
     displayArea: DEFAULT_DISPLAY_AREA,
+    displayInsets: {
+      top: 24,
+      bottom: 24,
+      left: 24,
+      right: 24
+    },
     isVisible: false,
     onChildLongPress: null,
     onChildPress: null,
@@ -83,6 +90,12 @@ class Tooltip extends Component {
       height: PropTypes.number,
       width: PropTypes.number
     }),
+    displayInsets: PropTypes.shape({
+      top: PropTypes.number,
+      bottom: PropTypes.number,
+      left: PropTypes.number,
+      right: PropTypes.number
+    }),
     isVisible: PropTypes.bool,
     onChildLongPress: PropTypes.func,
     onChildPress: PropTypes.func,
@@ -103,6 +116,7 @@ class Tooltip extends Component {
       // no need to wait for interactions if not visible initially
       waitingForInteractions: isVisible && useInteractionManager,
       contentSize: new Size(0, 0),
+      adjustedContentSize: new Size(0, 0),
       anchorPoint: new Point(0, 0),
       tooltipOrigin: new Point(0, 0),
       childRect: new Rect(0, 0, 0, 0),
@@ -113,7 +127,8 @@ class Tooltip extends Component {
         : props.placement,
       readyToComputeGeom: false,
       waitingToComputeGeom: false,
-      measurementsFinished: false
+      measurementsFinished: false,
+      windowDims: Dimensions.get("window")
     };
   }
 
@@ -121,6 +136,8 @@ class Tooltip extends Component {
     if (this.state.waitingForInteractions) {
       this.measureChildRect();
     }
+
+    Dimensions.addEventListener("change", this.updateWindowDims);
   }
 
   componentDidUpdate(prevProps) {
@@ -144,6 +161,10 @@ class Tooltip extends Component {
     }
   }
 
+  componentWillUnmount() {
+    Dimensions.removeEventListener("change", this.updateWindowDims);
+  }
+
   static getDerivedStateFromProps(nextProps, prevState) {
     // set measurements finished flag to false when tooltip closes
     if (prevState.measurementsFinished && !nextProps.isVisible) {
@@ -154,6 +175,28 @@ class Tooltip extends Component {
 
     return null;
   }
+
+  updateWindowDims = (dims) => {
+    console.log("hihihi");
+    this.setState(
+      {
+        windowDims: dims.window,
+        contentSize: new Size(0, 0),
+        adjustedContentSize: new Size(0, 0),
+        anchorPoint: new Point(0, 0),
+        tooltipOrigin: new Point(0, 0),
+        childRect: new Rect(0, 0, 0, 0),
+        readyToComputeGeom: false,
+        waitingToComputeGeom: false,
+        measurementsFinished: false
+      },
+      () => {
+        setTimeout(() => {
+          this.measureChildRect();
+        });
+      }
+    );
+  };
 
   getArrowSize = (placement) => {
     const size = this.props.arrowSize;
@@ -262,12 +305,7 @@ class Tooltip extends Component {
 
   measureContent = (e) => {
     const { width, height } = e.nativeEvent.layout;
-    const { width: dWidth, height: dHeight } = Dimensions.get("window");
-    const contentSize = new Size(
-      Math.min(width, dWidth),
-      Math.min(height, dHeight)
-    );
-
+    const contentSize = new Size(width, height);
     if (!this.state.readyToComputeGeom) {
       this.setState({
         waitingToComputeGeom: true,
@@ -279,15 +317,6 @@ class Tooltip extends Component {
 
     if (!this.props.children) {
       this.mockChildRect();
-    }
-  };
-
-  finishMeasurements = () => {
-    const { contentSize, waitingToComputeGeom } = this.state;
-    if (waitingToComputeGeom) {
-      this._doComputeGeometry({ contentSize });
-    } else if (contentSize.width !== null) {
-      this._updateGeometry({ contentSize });
     }
   };
 
@@ -310,7 +339,7 @@ class Tooltip extends Component {
               },
               () => {
                 this.isMeasuringChild = false;
-                this.finishMeasurements();
+                this._updateGeometry();
               }
             );
           });
@@ -398,7 +427,7 @@ class Tooltip extends Component {
       },
       () => {
         this.isMeasuringChild = false;
-        this.finishMeasurements();
+        this._updateGeometry();
       }
     );
   };
@@ -418,25 +447,30 @@ class Tooltip extends Component {
     });
   };
 
-  _updateGeometry = ({ contentSize }) => {
+  _updateGeometry = () => {
+    const { contentSize } = this.state;
     const geom = this.computeGeometry({ contentSize });
-    const { tooltipOrigin, anchorPoint, placement } = geom;
+    const { tooltipOrigin, anchorPoint, placement, adjustedContentSize } = geom;
 
     this.setState({
       tooltipOrigin,
       anchorPoint,
       placement,
-      measurementsFinished: true
+      measurementsFinished: true,
+      adjustedContentSize
     });
   };
 
   computeGeometry = ({ contentSize, placement }) => {
     const innerPlacement = placement || this.state.placement;
-    const { displayArea } = this.props;
+    const { displayArea, displayInsets } = this.props;
+    const { childRect, windowDims } = this.state;
 
     const options = {
       displayArea,
-      childRect: this.state.childRect,
+      displayInsets,
+      childRect,
+      windowDims,
       arrowSize: this.getArrowSize(innerPlacement),
       contentSize
     };
@@ -524,7 +558,8 @@ class Tooltip extends Component {
       measurementsFinished,
       placement,
       waitingForInteractions,
-      contentSize
+      contentSize,
+      adjustedContentSize
     } = this.state;
     const {
       backgroundColor,
@@ -535,8 +570,13 @@ class Tooltip extends Component {
     } = this.props;
 
     const sizeAvailable = contentSize.width;
+    const adjustedSizeAvailable = adjustedContentSize.width;
 
-    const contentStyle = [styles.content, this.props.contentStyle];
+    const contentStyle = [
+      styles.content,
+      adjustedSizeAvailable ? { ...adjustedContentSize } : {},
+      this.props.contentStyle
+    ];
     const arrowColor = StyleSheet.flatten(contentStyle).backgroundColor;
     const arrowColorStyle = this.getArrowColorStyle(arrowColor);
     const arrowDynamicStyle = this.getArrowDynamicStyle();
