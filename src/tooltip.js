@@ -23,17 +23,7 @@ import {
 } from "./geom";
 import styles from "./styles";
 
-const SCREEN_HEIGHT = Dimensions.get("window").height;
-const SCREEN_WIDTH = Dimensions.get("window").width;
-
 const DEFAULT_ARROW_SIZE = new Size(16, 8);
-const DEFAULT_PADDING = 24;
-const DEFAULT_DISPLAY_AREA = new Rect(
-  DEFAULT_PADDING,
-  DEFAULT_PADDING,
-  SCREEN_WIDTH - DEFAULT_PADDING * 2,
-  SCREEN_HEIGHT - DEFAULT_PADDING * 2
-);
 
 const invertPlacement = (placement) => {
   switch (placement) {
@@ -54,10 +44,9 @@ class Tooltip extends Component {
   static defaultProps = {
     arrowSize: DEFAULT_ARROW_SIZE,
     backgroundColor: "rgba(0,0,0,0.5)",
-    childlessPlacementPadding: DEFAULT_PADDING,
+    // childlessPlacementPadding: DEFAULT_PADDING,
     children: null,
     content: <View />,
-    displayArea: DEFAULT_DISPLAY_AREA,
     displayInsets: {
       top: 24,
       bottom: 24,
@@ -359,77 +348,71 @@ class Tooltip extends Component {
   };
 
   mockChildRect = () => {
+    // TODO:
     // mock the placement of a child to compute geom
-    let rectForChildlessPlacement = { ...this.state.childRect };
-    let placementPadding = DEFAULT_PADDING;
-
-    const { childlessPlacementPadding, placement } = this.props;
-
-    // handle percentages
-    if (typeof childlessPlacementPadding === "string") {
-      const isPercentage =
-        childlessPlacementPadding.substring(
-          childlessPlacementPadding.length - 1
-        ) === "%";
-      const paddingValue = parseFloat(childlessPlacementPadding, 10);
-      const verticalPlacement = placement === "top" || placement === "bottom";
-
-      if (isPercentage) {
-        placementPadding =
-          (paddingValue / 100.0) *
-          (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
-      } else {
-        placementPadding = paddingValue;
-      }
-    } else {
-      placementPadding = childlessPlacementPadding;
-    }
-
-    if (Number.isNaN(placementPadding)) {
-      throw new Error(
-        "[Tooltip] Invalid value passed to childlessPlacementPadding"
-      );
-    }
-
-    const CENTER_X = SCREEN_WIDTH / 2;
-    const CENTER_Y = SCREEN_HEIGHT / 2;
-
-    switch (placement) {
-      case "bottom":
-        rectForChildlessPlacement = new Rect(
-          CENTER_X,
-          SCREEN_HEIGHT - placementPadding,
-          0,
-          0
-        );
-        break;
-      case "left":
-        rectForChildlessPlacement = new Rect(placementPadding, CENTER_Y, 0, 0);
-        break;
-      case "right":
-        rectForChildlessPlacement = new Rect(
-          SCREEN_WIDTH - placementPadding,
-          CENTER_Y,
-          0,
-          0
-        );
-        break;
-      default:
-      case "top":
-        rectForChildlessPlacement = new Rect(CENTER_X, placementPadding, 0, 0);
-        break;
-    }
-
-    this.setState(
-      {
-        childRect: rectForChildlessPlacement,
-        readyToComputeGeom: true
-      },
-      () => {
-        this.isMeasuringChild = false;
-        this._updateGeometry();
-      }
-    );
+    // let rectForChildlessPlacement = { ...this.state.childRect };
+    // let placementPadding = DEFAULT_PADDING;
+    // const { childlessPlacementPadding, placement } = this.props;
+    // // handle percentages
+    // if (typeof childlessPlacementPadding === "string") {
+    //   const isPercentage =
+    //     childlessPlacementPadding.substring(
+    //       childlessPlacementPadding.length - 1
+    //     ) === "%";
+    //   const paddingValue = parseFloat(childlessPlacementPadding, 10);
+    //   const verticalPlacement = placement === "top" || placement === "bottom";
+    //   if (isPercentage) {
+    //     placementPadding =
+    //       (paddingValue / 100.0) *
+    //       (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
+    //   } else {
+    //     placementPadding = paddingValue;
+    //   }
+    // } else {
+    //   placementPadding = childlessPlacementPadding;
+    // }
+    // if (Number.isNaN(placementPadding)) {
+    //   throw new Error(
+    //     "[Tooltip] Invalid value passed to childlessPlacementPadding"
+    //   );
+    // }
+    // const CENTER_X = SCREEN_WIDTH / 2;
+    // const CENTER_Y = SCREEN_HEIGHT / 2;
+    // switch (placement) {
+    //   case "bottom":
+    //     rectForChildlessPlacement = new Rect(
+    //       CENTER_X,
+    //       SCREEN_HEIGHT - placementPadding,
+    //       0,
+    //       0
+    //     );
+    //     break;
+    //   case "left":
+    //     rectForChildlessPlacement = new Rect(placementPadding, CENTER_Y, 0, 0);
+    //     break;
+    //   case "right":
+    //     rectForChildlessPlacement = new Rect(
+    //       SCREEN_WIDTH - placementPadding,
+    //       CENTER_Y,
+    //       0,
+    //       0
+    //     );
+    //     break;
+    //   default:
+    //   case "top":
+    //     rectForChildlessPlacement = new Rect(CENTER_X, placementPadding, 0, 0);
+    //     break;
+    // }
+    // this.setState(
+    //   {
+    //     childRect: rectForChildlessPlacement,
+    //     readyToComputeGeom: true
+    //   },
+    //   () => {
+    //     this.isMeasuringChild = false;
+    //     this._updateGeometry();
+    //   }
+    // );
   };
 
   _doComputeGeometry = ({ contentSize }) => {
@@ -463,11 +446,10 @@ class Tooltip extends Component {
 
   computeGeometry = ({ contentSize, placement }) => {
     const innerPlacement = placement || this.state.placement;
-    const { displayArea, displayInsets } = this.props;
+    const { displayInsets } = this.props;
     const { childRect, windowDims } = this.state;
 
     const options = {
-      displayArea,
       displayInsets,
       childRect,
       windowDims,
@@ -489,7 +471,7 @@ class Tooltip extends Component {
     }
   };
 
-  computeAutoGeometry = ({ displayArea, contentSize }) => {
+  computeAutoGeometry = ({ contentSize }) => {
     // prefer top, so check that first. if none 'work', fall back to top
     const placementsToTry = ["top", "bottom", "left", "right", "top"];
 
@@ -498,18 +480,15 @@ class Tooltip extends Component {
       const placement = placementsToTry[i];
 
       geom = this.computeGeometry({ contentSize, placement });
-      const { tooltipOrigin } = geom;
+      const { tooltipOrigin, adjustedContentSize } = geom;
 
-      if (
-        tooltipOrigin.x >= displayArea.x &&
-        tooltipOrigin.x <=
-          displayArea.x + displayArea.width - contentSize.width &&
-        tooltipOrigin.y >= displayArea.y &&
-        tooltipOrigin.y <=
-          displayArea.y + displayArea.height - contentSize.height
-      ) {
-        break;
-      }
+      // Auto is "Best fit" ?
+
+      const adjustedRatio =
+        adjustedContentSize.width / adjustedContentSize.height;
+      const originalRatio = contentSize.width / adjustedContentSize.height;
+
+      console.log(placementsToTry[i], { adjustedRatio, originalRatio });
     }
 
     return geom;

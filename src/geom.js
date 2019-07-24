@@ -39,11 +39,21 @@ const computeTopGeometry = ({
   displayInsets,
   windowDims
 }) => {
+  const maxWidth =
+    windowDims.width - (displayInsets.left + displayInsets.right);
+
+  const adjustedContentSize = new Size(
+    Math.min(maxWidth, contentSize.width),
+    contentSize.height
+  );
+
   const tooltipOrigin = new Point(
-    Math.max(
-      displayInsets.left,
-      childRect.x + (childRect.width - contentSize.width) / 2
-    ),
+    contentSize.width >= maxWidth
+      ? displayInsets.left
+      : Math.max(
+          displayInsets.left,
+          childRect.x + (childRect.width - contentSize.width) / 2
+        ),
     Math.max(
       displayInsets.top,
       childRect.y - contentSize.height - arrowSize.height
@@ -54,16 +64,7 @@ const computeTopGeometry = ({
     childRect.y
   );
 
-  const adjustedContentSize = new Size(contentSize.width, contentSize.height);
   const topPlacementBottomBound = anchorPoint.y - arrowSize.height;
-
-  if (
-    tooltipOrigin.x + contentSize.width >
-    windowDims.width - (displayInsets.left + displayInsets.right)
-  ) {
-    adjustedContentSize.width =
-      windowDims.width - displayInsets.right - tooltipOrigin.x;
-  }
 
   if (tooltipOrigin.y + contentSize.height > topPlacementBottomBound) {
     adjustedContentSize.height = topPlacementBottomBound - tooltipOrigin.y;
@@ -78,155 +79,146 @@ const computeTopGeometry = ({
 };
 
 const computeBottomGeometry = ({
-  displayArea,
   childRect,
   contentSize,
-  arrowSize
+  arrowSize,
+  displayInsets,
+  windowDims
 }) => {
+  const maxWidth =
+    windowDims.width - (displayInsets.left + displayInsets.right);
+
+  const adjustedContentSize = new Size(
+    Math.min(maxWidth, contentSize.width),
+    contentSize.height
+  );
+
   const tooltipOrigin = new Point(
+    contentSize.width >= maxWidth
+      ? displayInsets.left
+      : Math.max(
+          displayInsets.left,
+          childRect.x + (childRect.width - contentSize.width) / 2
+        ),
     Math.min(
-      displayArea.x + displayArea.width - contentSize.width,
-      Math.max(
-        displayArea.x,
-        childRect.x + (childRect.width - contentSize.width) / 2
-      )
-    ),
-    childRect.y + childRect.height + arrowSize.height
+      windowDims.height - displayInsets.bottom,
+      childRect.y + childRect.height + arrowSize.height
+    )
   );
   const anchorPoint = new Point(
     childRect.x + childRect.width / 2.0,
     childRect.y + childRect.height
   );
 
-  // compute bound content size
-  const boundTooltipOrigin = new Point(tooltipOrigin.x, tooltipOrigin.y);
-  const boundContentSize = new Size(contentSize.width, contentSize.height);
-  const bounds = getBoundsForDisplayArea(displayArea);
-
-  if (tooltipOrigin.x < bounds.x.min) {
-    boundTooltipOrigin.x = bounds.x.min;
-  }
-
-  if (boundTooltipOrigin.x + contentSize.width > bounds.x.max) {
-    boundContentSize.width = bounds.x.max - boundTooltipOrigin.x;
-  }
-
-  if (boundTooltipOrigin.y + contentSize.height > bounds.y.max) {
-    boundContentSize.height = bounds.y.max - boundTooltipOrigin.y;
+  if (
+    tooltipOrigin.y + contentSize.height >
+    windowDims.height - displayInsets.bottom
+  ) {
+    adjustedContentSize.height =
+      windowDims.height - displayInsets.bottom - tooltipOrigin.y;
   }
 
   return {
     tooltipOrigin,
     anchorPoint,
     placement: "bottom",
-    boundContentSize,
-    boundTooltipOrigin
+    adjustedContentSize
   };
 };
 
 const computeLeftGeometry = ({
-  displayArea,
   childRect,
   contentSize,
-  arrowSize
+  arrowSize,
+  displayInsets,
+  windowDims
 }) => {
-  const tooltipOrigin = new Point(
-    childRect.x - contentSize.width - arrowSize.width,
-    Math.min(
-      displayArea.y + displayArea.height - contentSize.height,
-      Math.max(
-        displayArea.y,
-        childRect.y + (childRect.height - contentSize.height) / 2
-      )
-    )
+  const maxHeight =
+    windowDims.height - (displayInsets.top + displayInsets.bottom);
+
+  const adjustedContentSize = new Size(
+    contentSize.width,
+    Math.min(maxHeight, contentSize.height)
   );
+
+  const tooltipOrigin = new Point(
+    Math.max(
+      displayInsets.left,
+      childRect.x - contentSize.width - arrowSize.width
+    ),
+    contentSize.height >= maxHeight
+      ? displayInsets.top
+      : Math.max(
+          displayInsets.top,
+          childRect.y + (childRect.height - contentSize.height) / 2
+        )
+  );
+
   const anchorPoint = new Point(
     childRect.x,
     childRect.y + childRect.height / 2.0
   );
 
-  // compute bound content size
-  const boundTooltipOrigin = new Point(tooltipOrigin.x, tooltipOrigin.y);
-  const boundContentSize = new Size(contentSize.width, contentSize.height);
-  const bounds = getBoundsForDisplayArea(displayArea);
-
   const leftPlacementRightBound = anchorPoint.x - arrowSize.width;
 
-  if (tooltipOrigin.x < bounds.x.min) {
-    boundTooltipOrigin.x = bounds.x.min;
-  }
-
-  if (tooltipOrigin.y < bounds.y.min) {
-    boundTooltipOrigin.y = bounds.y.min;
-  }
-
-  if (boundTooltipOrigin.x + contentSize.width > leftPlacementRightBound) {
-    boundContentSize.width = leftPlacementRightBound - boundTooltipOrigin.x;
-  }
-
-  if (boundTooltipOrigin.y + contentSize.height > bounds.y.max) {
-    boundContentSize.height = bounds.y.max - boundTooltipOrigin.y;
+  if (tooltipOrigin.x + contentSize.width > leftPlacementRightBound) {
+    adjustedContentSize.width = leftPlacementRightBound - tooltipOrigin.x;
   }
 
   return {
     tooltipOrigin,
     anchorPoint,
     placement: "left",
-    boundContentSize,
-    boundTooltipOrigin
+    adjustedContentSize
   };
 };
 
 const computeRightGeometry = ({
-  displayArea,
   childRect,
   contentSize,
-  arrowSize
+  arrowSize,
+  displayInsets,
+  windowDims
 }) => {
-  const tooltipOrigin = new Point(
-    childRect.x + childRect.width + arrowSize.width,
-    Math.min(
-      displayArea.y + displayArea.height - contentSize.height,
-      Math.max(
-        displayArea.y,
-        childRect.y + (childRect.height - contentSize.height) / 2
-      )
-    )
+  const maxHeight =
+    windowDims.height - (displayInsets.top + displayInsets.bottom);
+
+  const adjustedContentSize = new Size(
+    contentSize.width,
+    Math.min(maxHeight, contentSize.height)
   );
+
+  const tooltipOrigin = new Point(
+    Math.min(
+      windowDims.width - displayInsets.right,
+      childRect.x + childRect.width + arrowSize.width
+    ),
+    contentSize.height >= maxHeight
+      ? displayInsets.top
+      : Math.max(
+          displayInsets.top,
+          childRect.y + (childRect.height - contentSize.height) / 2
+        )
+  );
+
   const anchorPoint = new Point(
     childRect.x + childRect.width,
     childRect.y + childRect.height / 2.0
   );
 
-  // compute bound content size
-  const boundTooltipOrigin = new Point(tooltipOrigin.x, tooltipOrigin.y);
-  const boundContentSize = new Size(contentSize.width, contentSize.height);
-  const bounds = getBoundsForDisplayArea(displayArea);
-
-  const rightPlacementLeftBound = anchorPoint.x + arrowSize.width;
-
-  if (tooltipOrigin.x < rightPlacementLeftBound) {
-    boundTooltipOrigin.x = rightPlacementLeftBound;
-  }
-
-  if (tooltipOrigin.y < bounds.y.min) {
-    boundTooltipOrigin.y = bounds.y.min;
-  }
-
-  if (boundTooltipOrigin.x + contentSize.width > bounds.x.max) {
-    boundContentSize.width = bounds.x.max - boundTooltipOrigin.x;
-  }
-
-  if (boundTooltipOrigin.y + contentSize.height > bounds.y.max) {
-    boundContentSize.height = bounds.y.max - boundTooltipOrigin.y;
+  if (
+    tooltipOrigin.x + contentSize.width >
+    windowDims.width - displayInsets.right
+  ) {
+    adjustedContentSize.width =
+      windowDims.width - displayInsets.right - tooltipOrigin.x;
   }
 
   return {
     tooltipOrigin,
     anchorPoint,
     placement: "right",
-    boundContentSize,
-    boundTooltipOrigin
+    adjustedContentSize
   };
 };
 
