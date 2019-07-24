@@ -1,38 +1,39 @@
 // @flow
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent"
   },
   containerVisible: {
-    opacity: 1,
+    opacity: 1
   },
   background: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFillObject
   },
   tooltip: {
-    backgroundColor: 'transparent',
-    position: 'absolute',
-    shadowColor: 'black',
+    backgroundColor: "transparent",
+    position: "absolute",
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 2,
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.8
   },
   content: {
     borderRadius: 4,
     padding: 8,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
+    overflow: "hidden"
   },
   arrow: {
-    position: 'absolute',
-    borderTopColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'transparent',
-    borderLeftColor: 'transparent',
-  },
+    position: "absolute",
+    borderTopColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "transparent",
+    borderLeftColor: "transparent"
+  }
 });
 
 export default styles;
