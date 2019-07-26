@@ -23,6 +23,32 @@ class Rect {
 
 const swapSizeDimmensions = (size) => new Size(size.height, size.width);
 
+const makeChildlessRect = ({ displayInsets, windowDims, placement }) => {
+  switch (placement) {
+    case "bottom":
+      return new Rect(windowDims.width / 2, displayInsets.top, 0, 0);
+
+    case "right":
+      return new Rect(displayInsets.left, windowDims.height / 2, 0, 0);
+
+    case "left":
+      return new Rect(
+        windowDims.width - displayInsets.right,
+        windowDims.height / 2,
+        0,
+        0
+      );
+    case "top":
+    default:
+      return new Rect(
+        windowDims.width / 2,
+        windowDims.height - displayInsets.bottom,
+        0,
+        0
+      );
+  }
+};
+
 const computeTopGeometry = ({
   childRect,
   contentSize,
@@ -218,6 +244,7 @@ export {
   Size,
   Rect,
   swapSizeDimmensions,
+  makeChildlessRect,
   computeTopGeometry,
   computeBottomGeometry,
   computeLeftGeometry,

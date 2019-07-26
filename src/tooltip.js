@@ -4,7 +4,6 @@ import {
   Dimensions,
   InteractionManager,
   Modal,
-  StyleSheet,
   TouchableWithoutFeedback,
   View
 } from "react-native";
@@ -14,6 +13,7 @@ import {
   Size,
   Rect,
   swapSizeDimmensions,
+  makeChildlessRect,
   computeTopGeometry,
   computeBottomGeometry,
   computeLeftGeometry,
@@ -42,7 +42,6 @@ class Tooltip extends Component {
   static defaultProps = {
     arrowSize: DEFAULT_ARROW_SIZE,
     backgroundColor: "rgba(0,0,0,0.5)",
-    // childlessPlacementPadding: DEFAULT_PADDING,
     children: null,
     content: <View />,
     displayInsets: {
@@ -65,18 +64,8 @@ class Tooltip extends Component {
       width: PropTypes.number
     }),
     backgroundColor: PropTypes.string,
-    childlessPlacementPadding: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string
-    ]),
     children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     content: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-    displayArea: PropTypes.shape({
-      x: PropTypes.number,
-      y: PropTypes.number,
-      height: PropTypes.number,
-      width: PropTypes.number
-    }),
     displayInsets: PropTypes.shape({
       top: PropTypes.number,
       bottom: PropTypes.number,
@@ -177,6 +166,16 @@ class Tooltip extends Component {
     );
   };
 
+  doChildlessPlacement = () => {
+    this.onMeasurementComplete(
+      makeChildlessRect({
+        displayInsets: this.props.displayInsets,
+        placement: this.state.placement, // MUST use from state, not props
+        windowDims: this.state.windowDims
+      })
+    );
+  };
+
   measureContent = (e) => {
     const { width, height } = e.nativeEvent.layout;
     const contentSize = new Size(width, height);
@@ -189,9 +188,23 @@ class Tooltip extends Component {
       this._doComputeGeometry({ contentSize });
     }
 
-    if (!this.props.children) {
-      this.mockChildRect();
+    if (React.Children.count(this.props.children) === 0) {
+      this.doChildlessPlacement();
     }
+  };
+
+  onMeasurementComplete = (rect) => {
+    this.setState(
+      {
+        childRect: rect,
+        readyToComputeGeom: true,
+        waitingForInteractions: false
+      },
+      () => {
+        this.isMeasuringChild = false;
+        this._updateGeometry();
+      }
+    );
   };
 
   measureChildRect = () => {
@@ -204,21 +217,11 @@ class Tooltip extends Component {
           typeof this.childWrapper.current.measureInWindow === "function"
         ) {
           this.childWrapper.current.measureInWindow((x, y, width, height) => {
-            this.setState(
-              {
-                childRect: new Rect(x, y, width, height),
-                readyToComputeGeom: true,
-                waitingForInteractions: false,
-                placement: this.props.placement
-              },
-              () => {
-                this.isMeasuringChild = false;
-                this._updateGeometry();
-              }
-            );
+            const childRect = new Rect(x, y, width, height);
+            this.onMeasurementComplete(childRect);
           });
         } else {
-          this.mockChildRect();
+          this.doChildlessPlacement();
         }
       }
     };
@@ -230,74 +233,6 @@ class Tooltip extends Component {
     } else {
       doMeasurement();
     }
-  };
-
-  mockChildRect = () => {
-    // TODO:
-    // mock the placement of a child to compute geom
-    let rectForChildlessPlacement = { ...this.state.childRect };
-    let placementPadding = DEFAULT_PADDING;
-    const { childlessPlacementPadding, placement } = this.props;
-    // handle percentages
-    if (typeof childlessPlacementPadding === "string") {
-      const isPercentage =
-        childlessPlacementPadding.substring(
-          childlessPlacementPadding.length - 1
-        ) === "%";
-      const paddingValue = parseFloat(childlessPlacementPadding, 10);
-      const verticalPlacement = placement === "top" || placement === "bottom";
-      if (isPercentage) {
-        placementPadding =
-          (paddingValue / 100.0) *
-          (verticalPlacement ? SCREEN_HEIGHT : SCREEN_WIDTH);
-      } else {
-        placementPadding = paddingValue;
-      }
-    } else {
-      placementPadding = childlessPlacementPadding;
-    }
-    if (Number.isNaN(placementPadding)) {
-      throw new Error(
-        "[Tooltip] Invalid value passed to childlessPlacementPadding"
-      );
-    }
-    const CENTER_X = SCREEN_WIDTH / 2;
-    const CENTER_Y = SCREEN_HEIGHT / 2;
-    switch (placement) {
-      case "bottom":
-        rectForChildlessPlacement = new Rect(
-          CENTER_X,
-          SCREEN_HEIGHT - placementPadding,
-          0,
-          0
-        );
-        break;
-      case "left":
-        rectForChildlessPlacement = new Rect(placementPadding, CENTER_Y, 0, 0);
-        break;
-      case "right":
-        rectForChildlessPlacement = new Rect(
-          SCREEN_WIDTH - placementPadding,
-          CENTER_Y,
-          0,
-          0
-        );
-        break;
-      default:
-      case "top":
-        rectForChildlessPlacement = new Rect(CENTER_X, placementPadding, 0, 0);
-        break;
-    }
-    this.setState(
-      {
-        childRect: rectForChildlessPlacement,
-        readyToComputeGeom: true
-      },
-      () => {
-        this.isMeasuringChild = false;
-        this._updateGeometry();
-      }
-    );
   };
 
   _doComputeGeometry = ({ contentSize }) => {
