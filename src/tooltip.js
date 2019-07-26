@@ -22,6 +22,15 @@ import {
 import styleGenerator from "./styles";
 
 const DEFAULT_ARROW_SIZE = new Size(16, 8);
+const DEFAULT_DISPLAY_INSETS = {
+  top: 24,
+  bottom: 24,
+  left: 24,
+  right: 24
+};
+
+const computeDisplayInsets = (insetsFromProps) =>
+  Object.assign({}, DEFAULT_DISPLAY_INSETS, insetsFromProps);
 
 const invertPlacement = (placement) => {
   switch (placement) {
@@ -44,12 +53,7 @@ class Tooltip extends Component {
     backgroundColor: "rgba(0,0,0,0.5)",
     children: null,
     content: <View />,
-    displayInsets: {
-      top: 24,
-      bottom: 24,
-      left: 24,
-      right: 24
-    },
+    displayInsets: {},
     isVisible: false,
     onChildLongPress: null,
     onChildPress: null,
@@ -96,6 +100,7 @@ class Tooltip extends Component {
       anchorPoint: new Point(0, 0),
       tooltipOrigin: new Point(0, 0),
       childRect: new Rect(0, 0, 0, 0),
+      displayInsets: computeDisplayInsets(props.displayInsets),
       // if we have no children, and place the tooltip at the "top" we want it to
       // behave like placement "bottom", i.e. display below the top of the screen
       placement: !props.children
@@ -116,14 +121,16 @@ class Tooltip extends Component {
     Dimensions.addEventListener("change", this.updateWindowDims);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     const { content, isVisible, placement } = this.props;
+    const { displayInsets } = this.state;
 
     const contentChanged = !rfcIsEqual(prevProps.content, content);
     const placementChanged = prevProps.placement !== placement;
     const becameVisible = isVisible && !prevProps.isVisible;
+    const insetsChanged = !rfcIsEqual(prevState.displayInsets, displayInsets);
 
-    if (contentChanged || placementChanged || becameVisible) {
+    if (contentChanged || placementChanged || becameVisible || insetsChanged) {
       setTimeout(() => {
         this.measureChildRect();
       });
@@ -135,11 +142,21 @@ class Tooltip extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    const nextState = {};
+
+    // update computed display insets if they changed
+    const nextDisplayInsets = computeDisplayInsets(nextProps.displayInsets);
+    if (!rfcIsEqual(nextDisplayInsets, prevState.displayInsets)) {
+      nextState.displayInsets = nextDisplayInsets;
+    }
+
     // set measurements finished flag to false when tooltip closes
     if (prevState.measurementsFinished && !nextProps.isVisible) {
-      return {
-        measurementsFinished: false
-      };
+      nextState.measurementsFinished = false;
+    }
+
+    if (Object.keys(nextState).length) {
+      return nextState;
     }
 
     return null;
@@ -169,7 +186,7 @@ class Tooltip extends Component {
   doChildlessPlacement = () => {
     this.onMeasurementComplete(
       makeChildlessRect({
-        displayInsets: this.props.displayInsets,
+        displayInsets: this.state.displayInsets,
         placement: this.state.placement, // MUST use from state, not props
         windowDims: this.state.windowDims
       })
@@ -266,8 +283,8 @@ class Tooltip extends Component {
 
   computeGeometry = ({ contentSize, placement }) => {
     const innerPlacement = placement || this.state.placement;
-    const { arrowSize, displayInsets } = this.props;
-    const { childRect, windowDims } = this.state;
+    const { arrowSize } = this.props;
+    const { childRect, displayInsets, windowDims } = this.state;
 
     const topBottomPlacement =
       innerPlacement === "top" || innerPlacement === "bottom";
