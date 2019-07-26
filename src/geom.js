@@ -21,16 +21,7 @@ class Rect {
   }
 }
 
-const getBoundsForDisplayArea = (displayArea) => ({
-  x: {
-    min: displayArea.x,
-    max: displayArea.x + displayArea.width
-  },
-  y: {
-    min: displayArea.y,
-    max: displayArea.y + displayArea.height
-  }
-});
+const swapSizeDimmensions = (size) => new Size(size.height, size.width);
 
 const computeTopGeometry = ({
   childRect,
@@ -226,6 +217,7 @@ export {
   Point,
   Size,
   Rect,
+  swapSizeDimmensions,
   computeTopGeometry,
   computeBottomGeometry,
   computeLeftGeometry,

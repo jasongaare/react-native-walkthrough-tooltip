@@ -36,4 +36,139 @@ const styles = StyleSheet.create({
   }
 });
 
-export default styles;
+const arrowRotationForPlacement = (placement) => {
+  switch (placement) {
+    case "bottom":
+      return "180deg";
+    case "left":
+      return "-90deg";
+    case "right":
+      return "90deg";
+    default:
+      return "0deg";
+  }
+};
+
+const arrowPlacementStyles = ({
+  anchorPoint,
+  arrowSize,
+  placement,
+  tooltipOrigin
+}) => {
+  // Create the arrow from a rectangle with the appropriate borderXWidth set
+  // A rotation is then applied dependending on the placement
+  // Also make it slightly bigger
+  // to fix a visual artifact when the tooltip is animated with a scale
+  const width = arrowSize.width + 2;
+  const height = arrowSize.height * 2 + 2;
+  let marginTop = 0;
+  let marginLeft = 0;
+
+  if (placement === "bottom") {
+    marginTop = arrowSize.height;
+  } else if (placement === "right") {
+    marginLeft = arrowSize.height;
+  }
+
+  return {
+    left: anchorPoint.x - tooltipOrigin.x - (width / 2 - marginLeft),
+    top: anchorPoint.y - tooltipOrigin.y - (height / 2 - marginTop),
+    width,
+    height,
+    borderTopWidth: height / 2,
+    borderRightWidth: width / 2,
+    borderBottomWidth: height / 2,
+    borderLeftWidth: width / 2
+  };
+};
+
+const getArrowRotation = (arrowStyle, placement) => {
+  // prevent rotation getting incorrectly overwritten
+  const arrowRotation = arrowRotationForPlacement(placement);
+  const transform = (StyleSheet.flatten(arrowStyle).transform || []).slice(0);
+  transform.unshift({ rotate: arrowRotation });
+
+  return { transform };
+};
+
+const tooltipPlacementStyles = ({ arrowSize, placement, tooltipOrigin }) => {
+  const { height } = arrowSize;
+
+  switch (placement) {
+    case "bottom":
+      return {
+        paddingTop: height,
+        top: tooltipOrigin.y - height,
+        left: tooltipOrigin.x
+      };
+    case "top":
+      return {
+        paddingBottom: height,
+        top: tooltipOrigin.y,
+        left: tooltipOrigin.x
+      };
+    case "right":
+      return {
+        paddingLeft: height,
+        top: tooltipOrigin.y,
+        left: tooltipOrigin.x - height
+      };
+    case "left":
+      return {
+        paddingRight: height,
+        top: tooltipOrigin.y,
+        left: tooltipOrigin.x
+      };
+    default:
+      return {};
+  }
+};
+
+const styleGenerator = (styleGeneratorProps) => {
+  const {
+    adjustedContentSize,
+    measurementsFinished,
+    ownProps,
+    placement
+  } = styleGeneratorProps;
+
+  const adjustedSizeAvailable = adjustedContentSize.width;
+  const { backgroundColor } = ownProps;
+
+  const contentStyle = [
+    styles.content,
+    adjustedSizeAvailable && { ...adjustedContentSize },
+    ownProps.contentStyle
+  ];
+
+  const contentBackgroundColor = StyleSheet.flatten(contentStyle)
+    .backgroundColor;
+
+  const arrowStyle = [
+    styles.arrow,
+    arrowPlacementStyles(styleGeneratorProps),
+    { borderTopColor: contentBackgroundColor },
+    ownProps.arrowStyle
+  ];
+
+  return {
+    arrowStyle: [...arrowStyle, getArrowRotation(arrowStyle, placement)],
+    backgroundStyle: [
+      styles.background,
+      ownProps.backgroundStyle,
+      { backgroundColor }
+    ],
+    containerStyle: [
+      styles.container,
+      adjustedSizeAvailable && measurementsFinished && styles.containerVisible
+    ],
+    contentStyle,
+    tooltipStyle: [
+      styles.tooltip,
+      tooltipPlacementStyles(styleGeneratorProps),
+      ownProps.tooltipStyle
+    ]
+  };
+};
+
+export default styleGenerator;
