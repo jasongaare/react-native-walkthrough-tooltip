@@ -21,7 +21,6 @@ import {
 } from "./geom";
 import styleGenerator from "./styles";
 
-const DEFAULT_ARROW_SIZE = new Size(16, 8);
 const DEFAULT_DISPLAY_INSETS = {
   top: 24,
   bottom: 24,
@@ -49,7 +48,7 @@ const invertPlacement = (placement) => {
 
 class Tooltip extends Component {
   static defaultProps = {
-    arrowSize: DEFAULT_ARROW_SIZE,
+    arrowSize: new Size(16, 8),
     backgroundColor: "rgba(0,0,0,0.5)",
     children: null,
     content: <View />,
@@ -59,6 +58,8 @@ class Tooltip extends Component {
     onChildPress: null,
     onClose: null,
     placement: "auto",
+    showChildInTooltip: true,
+    supportedOrientations: ["portrait", "landscape"],
     useInteractionManager: false
   };
 
@@ -81,6 +82,8 @@ class Tooltip extends Component {
     onChildPress: PropTypes.func,
     onClose: PropTypes.func,
     placement: PropTypes.oneOf(["top", "left", "bottom", "right", "auto"]),
+    showChildInTooltip: PropTypes.bool,
+    supportedOrientations: PropTypes.arrayOf(PropTypes.string),
     useInteractionManager: PropTypes.bool
   };
 
@@ -394,7 +397,7 @@ class Tooltip extends Component {
           transparent
           visible={this.props.isVisible && !this.state.waitingForInteractions}
           onRequestClose={this.props.onClose}
-          supportedOrientations={["portrait", "landscape"]}
+          supportedOrientations={this.props.supportedOrientations}
         >
           <TouchableWithoutFeedback onPress={this.props.onClose}>
             <View style={generatedStyles.containerStyle}>
@@ -416,7 +419,7 @@ class Tooltip extends Component {
         </Modal>
 
         {/* This renders the child element in place in the parent's layout */}
-        {hasChildren ? (
+        {hasChildren && this.props.showChildInTooltip ? (
           <View ref={this.childWrapper} onLayout={this.measureChildRect}>
             {this.props.children}
           </View>
