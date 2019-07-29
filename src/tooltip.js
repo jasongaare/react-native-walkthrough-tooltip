@@ -158,6 +158,15 @@ class Tooltip extends Component {
       nextState.measurementsFinished = false;
     }
 
+    // update placement in state if changed (and inverted if childless!)
+    const hasChildren = React.Children.count(nextProps.children) > 0;
+    const nextPlacement = hasChildren
+      ? nextProps.placement
+      : invertPlacement(nextProps.placement);
+    if (nextPlacement !== prevState.placement) {
+      nextState.placement = nextPlacement;
+    }
+
     if (Object.keys(nextState).length) {
       return nextState;
     }
