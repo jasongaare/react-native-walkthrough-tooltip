@@ -14,6 +14,7 @@ For Version 1.0, the library was refactored and simplified.
 - **No more `animated` prop** - if you want to have your tooltips animated, use the last stable version: `0.5.3`. Hopefully animations can be added again in the sure (great idea for a PR!)
 - **No more `displayArea` and `childlessPlacementPadding` props** - these have been replaced with the `displayInsets` prop, which allows you to simply declare how many pixels in from each side of the screen to inset the area the tooltip may display.
 - **Tooltips are now bound by the displayInsets** - before if your content was larger than the displayArea prop, the tooltip would render outside of the display area. Now the tooltip should always resize to be inside the display area as defined by the `displayInsets` prop
+- **Removed the "auto" option for placement** - you must now specify a direction
 
  
 

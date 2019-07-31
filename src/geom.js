@@ -81,10 +81,33 @@ const computeTopGeometry = ({
     childRect.y
   );
 
+  // make sure arrow does not extend beyond displayInsets
+  if (
+    anchorPoint.x + arrowSize.width >
+    windowDims.width - displayInsets.right
+  ) {
+    anchorPoint.x =
+      windowDims.width -
+      displayInsets.right -
+      Math.abs(arrowSize.width - arrowSize.height) -
+      8;
+  } else if (anchorPoint.x - arrowSize.width < displayInsets.left) {
+    anchorPoint.x =
+      displayInsets.left + Math.abs(arrowSize.width - arrowSize.height) + 8;
+  }
+
   const topPlacementBottomBound = anchorPoint.y - arrowSize.height;
 
   if (tooltipOrigin.y + contentSize.height > topPlacementBottomBound) {
     adjustedContentSize.height = topPlacementBottomBound - tooltipOrigin.y;
+  }
+
+  if (
+    tooltipOrigin.x + contentSize.width >
+    windowDims.width - displayInsets.right
+  ) {
+    tooltipOrigin.x =
+      windowDims.width - displayInsets.right - contentSize.width;
   }
 
   return {
@@ -127,12 +150,35 @@ const computeBottomGeometry = ({
     childRect.y + childRect.height
   );
 
+  // make sure arrow does not extend beyond displayInsets
+  if (
+    anchorPoint.x + arrowSize.width >
+    windowDims.width - displayInsets.right
+  ) {
+    anchorPoint.x =
+      windowDims.width -
+      displayInsets.right -
+      Math.abs(arrowSize.width - arrowSize.height) -
+      8;
+  } else if (anchorPoint.x - arrowSize.width < displayInsets.left) {
+    anchorPoint.x =
+      displayInsets.left + Math.abs(arrowSize.width - arrowSize.height) + 8;
+  }
+
   if (
     tooltipOrigin.y + contentSize.height >
     windowDims.height - displayInsets.bottom
   ) {
     adjustedContentSize.height =
       windowDims.height - displayInsets.bottom - tooltipOrigin.y;
+  }
+
+  if (
+    tooltipOrigin.x + contentSize.width >
+    windowDims.width - displayInsets.right
+  ) {
+    tooltipOrigin.x =
+      windowDims.width - displayInsets.right - contentSize.width;
   }
 
   return {
@@ -176,10 +222,33 @@ const computeLeftGeometry = ({
     childRect.y + childRect.height / 2.0
   );
 
+  // make sure arrow does not extend beyond displayInsets
+  if (
+    anchorPoint.y + arrowSize.width >
+    windowDims.height - displayInsets.bottom
+  ) {
+    anchorPoint.y =
+      windowDims.height -
+      displayInsets.bottom -
+      Math.abs(arrowSize.height - arrowSize.width) -
+      8;
+  } else if (anchorPoint.y - arrowSize.height < displayInsets.top) {
+    anchorPoint.y =
+      displayInsets.top + Math.abs(arrowSize.height - arrowSize.width) + 8;
+  }
+
   const leftPlacementRightBound = anchorPoint.x - arrowSize.width;
 
   if (tooltipOrigin.x + contentSize.width > leftPlacementRightBound) {
     adjustedContentSize.width = leftPlacementRightBound - tooltipOrigin.x;
+  }
+
+  if (
+    tooltipOrigin.y + contentSize.height >
+    windowDims.height - displayInsets.bottom
+  ) {
+    tooltipOrigin.y =
+      windowDims.height - displayInsets.bottom - contentSize.height;
   }
 
   return {
@@ -223,12 +292,35 @@ const computeRightGeometry = ({
     childRect.y + childRect.height / 2.0
   );
 
+  // make sure arrow does not extend beyond displayInsets
+  if (
+    anchorPoint.y + arrowSize.width >
+    windowDims.height - displayInsets.bottom
+  ) {
+    anchorPoint.y =
+      windowDims.height -
+      displayInsets.bottom -
+      Math.abs(arrowSize.height - arrowSize.width) -
+      8;
+  } else if (anchorPoint.y - arrowSize.height < displayInsets.top) {
+    anchorPoint.y =
+      displayInsets.top + Math.abs(arrowSize.height - arrowSize.width) + 8;
+  }
+
   if (
     tooltipOrigin.x + contentSize.width >
     windowDims.width - displayInsets.right
   ) {
     adjustedContentSize.width =
       windowDims.width - displayInsets.right - tooltipOrigin.x;
+  }
+
+  if (
+    tooltipOrigin.y + contentSize.height >
+    windowDims.height - displayInsets.bottom
+  ) {
+    tooltipOrigin.y =
+      windowDims.height - displayInsets.bottom - contentSize.height;
   }
 
   return {

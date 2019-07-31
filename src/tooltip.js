@@ -57,7 +57,7 @@ class Tooltip extends Component {
     onChildLongPress: null,
     onChildPress: null,
     onClose: null,
-    placement: "auto",
+    placement: "top",
     showChildInTooltip: true,
     supportedOrientations: ["portrait", "landscape"],
     useInteractionManager: false
@@ -81,7 +81,7 @@ class Tooltip extends Component {
     onChildLongPress: PropTypes.func,
     onChildPress: PropTypes.func,
     onClose: PropTypes.func,
-    placement: PropTypes.oneOf(["top", "left", "bottom", "right", "auto"]),
+    placement: PropTypes.oneOf(["top", "left", "bottom", "right"]),
     showChildInTooltip: PropTypes.bool,
     supportedOrientations: PropTypes.arrayOf(PropTypes.string),
     useInteractionManager: PropTypes.bool
@@ -156,15 +156,6 @@ class Tooltip extends Component {
     // set measurements finished flag to false when tooltip closes
     if (prevState.measurementsFinished && !nextProps.isVisible) {
       nextState.measurementsFinished = false;
-    }
-
-    // update placement in state if changed (and inverted if childless!)
-    const hasChildren = React.Children.count(nextProps.children) > 0;
-    const nextPlacement = hasChildren
-      ? nextProps.placement
-      : invertPlacement(nextProps.placement);
-    if (nextPlacement !== prevState.placement) {
-      nextState.placement = nextPlacement;
     }
 
     if (Object.keys(nextState).length) {
@@ -267,7 +258,6 @@ class Tooltip extends Component {
   _doComputeGeometry = ({ contentSize }) => {
     const geom = this.computeGeometry({ contentSize });
     const { tooltipOrigin, anchorPoint, placement } = geom;
-
     this.setState({
       contentSize,
       tooltipOrigin,
@@ -312,40 +302,16 @@ class Tooltip extends Component {
     };
 
     switch (innerPlacement) {
-      case "top":
-        return computeTopGeometry(options);
       case "bottom":
         return computeBottomGeometry(options);
       case "left":
         return computeLeftGeometry(options);
       case "right":
         return computeRightGeometry(options);
+      case "top":
       default:
-        return this.computeAutoGeometry(options);
+        return computeTopGeometry(options);
     }
-  };
-
-  computeAutoGeometry = ({ contentSize }) => {
-    // prefer top, so check that first. if none 'work', fall back to top
-    const placementsToTry = ["top", "bottom", "left", "right", "top"];
-
-    let geom;
-    for (let i = 0; i < placementsToTry.length; i += 1) {
-      const placement = placementsToTry[i];
-
-      geom = this.computeGeometry({ contentSize, placement });
-      const { tooltipOrigin, adjustedContentSize } = geom;
-
-      // Auto is "Best fit" ?
-
-      const adjustedRatio =
-        adjustedContentSize.width / adjustedContentSize.height;
-      const originalRatio = contentSize.width / adjustedContentSize.height;
-
-      console.log(placementsToTry[i], { adjustedRatio, originalRatio });
-    }
-
-    return geom;
   };
 
   renderChildInTooltip = () => {
