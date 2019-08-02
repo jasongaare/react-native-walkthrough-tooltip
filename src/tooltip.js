@@ -20,6 +20,7 @@ import {
   computeRightGeometry,
 } from './geom';
 import styles from './styles';
+import TooltipChildrenContext from './tooltip-children.context';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -41,6 +42,9 @@ const invertPlacement = (placement) => {
       return placement;
   }
 };
+
+const TooltipChildrenProvider = TooltipChildrenContext.Provider;
+export const TooltipChildrenConsumer = TooltipChildrenContext.Consumer;
 
 class Tooltip extends Component {
   static defaultProps = {
@@ -523,7 +527,9 @@ class Tooltip extends Component {
           justifyContent: 'center',
         }}
       >
-        {children}
+        <TooltipChildrenProvider value={{ tooltipDuplicate: true }}>
+          {children}
+        </TooltipChildrenProvider>
       </View>
     );
 
