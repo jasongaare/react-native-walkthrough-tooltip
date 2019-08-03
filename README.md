@@ -88,21 +88,21 @@ When providing either of these functions, React Native Walkthrough Tooltip will 
 
 One possible use case for these functions would be a scenerio where you are highlighting new functionality and want to restrict a user to ONLY do a certain action when they press on an element. While perhaps uncommon, this use case was relevant for another library I am working on, so it may be useful for you. When these props are NOT provided, all touch events on children occur as expected.
 
-### TooltipChildrenConsumer
+### TooltipChildrenContext
 
-[React Context](https://reactjs.org/docs/context.html) consumer that can be used to distinguish "real" children rendered inside parent's layout from their copies rendered inside tooltip's modal. The duplicate child rendered in the tooltip modal is wrapped in a Context.Provider which provides object with prop `tooltipDuplicate` set to `true`, so informed decisions may be made, if necessary, based on where the child rendered.
+[React Context](https://reactjs.org/docs/context.html) that can be used to distinguish "real" children rendered inside parent's layout from their copies rendered inside tooltip's modal. The duplicate child rendered in the tooltip modal is wrapped in a Context.Provider which provides object with prop `tooltipDuplicate` set to `true`, so informed decisions may be made, if necessary, based on where the child rendered.
 ```js
-import Tooltip, { TooltipChildrenConsumer } from 'react-native-walkthrough-tooltip';
+import Tooltip, { TooltipChildrenContext } from 'react-native-walkthrough-tooltip';
 ...
-<Tooltip withContext>
+<Tooltip>
   <ComponentA />
   <ComponentB>
-    <TooltipChildrenConsumer>
+    <TooltipChildrenContext.Consumer>
       {({ tooltipDuplicate }) => (
         // will only assign a ref to the original component
         <FlatList {...(!tooltipDuplicate && { ref: this.listRef })} />
       )}
-    </WalkthroughConsumer>
+    </TooltipChildrenContext.Consumer>
   </ComponentB>
 </Tooltip>
 ```

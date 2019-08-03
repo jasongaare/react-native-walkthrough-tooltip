@@ -89,19 +89,19 @@ declare module 'react-native-walkthrough-tooltip' {
     /**
      ```js
         // Usage Example
-        import Tooltip, { TooltipChildrenConsumer } from 'react-native-walkthrough-tooltip';
+        import Tooltip, { TooltipChildrenContext } from 'react-native-walkthrough-tooltip';
         <Tooltip>
-            <TooltipChildrenConsumer>
+            <TooltipChildrenContext.Consumer>
                 {({ tooltipDuplicate }) => (
                     <ScrollView scrollEnabled={!tooltipDuplicate}>
                         {children}
                     </ScrollView>
                 )}
-            </TooltipChildrenConsumer>
+            </TooltipChildrenContext.Consumer>
         </Tooltip>
     ```
      */
-    export const TooltipChildrenConsumer: React.Consumer<{ tooltipDuplicate: boolean }>;
+    export const TooltipChildrenContext: React.Context<{ tooltipDuplicate: boolean }>;
 
     /**
      ```js
