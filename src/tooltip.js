@@ -22,6 +22,8 @@ import {
 import styles from './styles';
 import TooltipChildrenContext from './tooltip-children.context';
 
+export { TooltipChildrenContext };
+
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -42,9 +44,6 @@ const invertPlacement = (placement) => {
       return placement;
   }
 };
-
-const TooltipChildrenProvider = TooltipChildrenContext.Provider;
-export const TooltipChildrenConsumer = TooltipChildrenContext.Consumer;
 
 class Tooltip extends Component {
   static defaultProps = {
@@ -527,9 +526,9 @@ class Tooltip extends Component {
           justifyContent: 'center',
         }}
       >
-        <TooltipChildrenProvider value={{ tooltipDuplicate: true }}>
+        <TooltipChildrenContext.Provider value={{ tooltipDuplicate: true }}>
           {children}
-        </TooltipChildrenProvider>
+        </TooltipChildrenContext.Provider>
       </View>
     );
 
