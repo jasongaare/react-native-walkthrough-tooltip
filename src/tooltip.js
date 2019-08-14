@@ -20,6 +20,9 @@ import {
   computeRightGeometry
 } from "./geom";
 import styleGenerator from "./styles";
+import TooltipChildrenContext from "./tooltip-children.context";
+
+export { TooltipChildrenContext };
 
 const DEFAULT_DISPLAY_INSETS = {
   top: 24,
@@ -334,7 +337,9 @@ class Tooltip extends Component {
           justifyContent: "center"
         }}
       >
-        {children}
+        <TooltipChildrenContext.Provider value={{ tooltipDuplicate: true }}>
+          {children}
+        </TooltipChildrenContext.Provider>
       </View>
     );
 
