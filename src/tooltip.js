@@ -59,7 +59,11 @@ class Tooltip extends Component {
     isVisible: false,
     onChildLongPress: null,
     onChildPress: null,
-    onClose: null,
+    onClose: () => {
+      console.warn(
+        "[react-native-walkthrough-tooltip] onClose prop no provided"
+      );
+    },
     placement: "top",
     showChildInTooltip: true,
     supportedOrientations: ["portrait", "landscape"],
@@ -86,6 +90,7 @@ class Tooltip extends Component {
     onClose: PropTypes.func,
     placement: PropTypes.oneOf(["top", "left", "bottom", "right"]),
     showChildInTooltip: PropTypes.bool,
+    showStatusBar: PropTypes.bool,
     supportedOrientations: PropTypes.arrayOf(PropTypes.string),
     useInteractionManager: PropTypes.bool
   };
@@ -234,15 +239,16 @@ class Tooltip extends Component {
     const doMeasurement = () => {
       if (!this.isMeasuringChild) {
         this.isMeasuringChild = true;
-
         if (
           this.childWrapper.current &&
-          typeof this.childWrapper.current.measureInWindow === "function"
+          typeof this.childWrapper.current.measure === "function"
         ) {
-          this.childWrapper.current.measureInWindow((x, y, width, height) => {
-            const childRect = new Rect(x, y, width, height);
-            this.onMeasurementComplete(childRect);
-          });
+          this.childWrapper.current.measure(
+            (x, y, width, height, pageX, pageY) => {
+              const childRect = new Rect(pageX, pageY, width, height);
+              this.onMeasurementComplete(childRect);
+            }
+          );
         } else {
           this.doChildlessPlacement();
         }
@@ -393,13 +399,15 @@ class Tooltip extends Component {
                   {this.props.content}
                 </View>
               </View>
-              {hasChildren ? this.renderChildInTooltip() : null}
+              {hasChildren && this.props.showChildInTooltip
+                ? this.renderChildInTooltip()
+                : null}
             </View>
           </TouchableWithoutFeedback>
         </Modal>
 
         {/* This renders the child element in place in the parent's layout */}
-        {hasChildren && this.props.showChildInTooltip ? (
+        {hasChildren ? (
           <View ref={this.childWrapper} onLayout={this.measureChildRect}>
             {this.props.children}
           </View>
