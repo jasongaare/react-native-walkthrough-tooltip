@@ -118,8 +118,13 @@ const tooltipPlacementStyles = ({ arrowSize, placement, tooltipOrigin }) => {
         top: tooltipOrigin.y,
         left: tooltipOrigin.x
       };
+    case "center":
     default:
-      return {};
+      return {
+        top: tooltipOrigin.y,
+        left: tooltipOrigin.x
+      };
+  
   }
 };
 

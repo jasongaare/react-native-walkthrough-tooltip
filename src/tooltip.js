@@ -14,6 +14,7 @@ import {
   Rect,
   swapSizeDimmensions,
   makeChildlessRect,
+  computeCenterGeomerty,
   computeTopGeometry,
   computeBottomGeometry,
   computeLeftGeometry,
@@ -64,7 +65,7 @@ class Tooltip extends Component {
         "[react-native-walkthrough-tooltip] onClose prop no provided"
       );
     },
-    placement: "top",
+    placement: "center", // falls back to "top" if there ARE children
     showChildInTooltip: true,
     supportedOrientations: ["portrait", "landscape"],
     useInteractionManager: false
@@ -88,7 +89,7 @@ class Tooltip extends Component {
     onChildLongPress: PropTypes.func,
     onChildPress: PropTypes.func,
     onClose: PropTypes.func,
-    placement: PropTypes.oneOf(["top", "left", "bottom", "right"]),
+    placement: PropTypes.oneOf(["top", "left", "bottom", "right", "center"]),
     showChildInTooltip: PropTypes.bool,
     showStatusBar: PropTypes.bool,
     supportedOrientations: PropTypes.arrayOf(PropTypes.string),
@@ -297,18 +298,23 @@ class Tooltip extends Component {
     const { arrowSize } = this.props;
     const { childRect, displayInsets, windowDims } = this.state;
 
-    const topBottomPlacement =
-      innerPlacement === "top" || innerPlacement === "bottom";
-
     const options = {
       displayInsets,
       childRect,
       windowDims,
-      arrowSize: topBottomPlacement
+      arrowSize: innerPlacement === "top" || innerPlacement === "bottom"
         ? arrowSize
         : swapSizeDimmensions(arrowSize),
       contentSize
     };
+
+    // special case for centered, childless placement tooltip
+    if (
+      innerPlacement === "center" && 
+      React.Children.count(this.props.children) === 0
+    ) {
+      return computeCenterGeomerty(options);
+    }
 
     switch (innerPlacement) {
       case "bottom":
