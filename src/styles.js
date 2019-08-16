@@ -124,7 +124,6 @@ const tooltipPlacementStyles = ({ arrowSize, placement, tooltipOrigin }) => {
         top: tooltipOrigin.y,
         left: tooltipOrigin.x
       };
-  
   }
 };
 

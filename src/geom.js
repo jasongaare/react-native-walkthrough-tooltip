@@ -63,7 +63,7 @@ const computeCenterGeomerty = ({
 
   const adjustedContentSize = new Size(
     Math.min(maxWidth, contentSize.width),
-    Math.min(maxHeight, contentSize.height),
+    Math.min(maxHeight, contentSize.height)
   );
 
   const tooltipOrigin = new Point(
@@ -71,8 +71,8 @@ const computeCenterGeomerty = ({
       ? displayInsets.left
       : (maxWidth - adjustedContentSize.width) / 2 + displayInsets.left,
     adjustedContentSize.height === maxHeight
-      ? displayInsets.top 
-      : (maxHeight - adjustedContentSize.height) / 2 + displayInsets.top,
+      ? displayInsets.top
+      : (maxHeight - adjustedContentSize.height) / 2 + displayInsets.top
   );
 
   const anchorPoint = new Point(
@@ -86,7 +86,7 @@ const computeCenterGeomerty = ({
     placement: "center",
     adjustedContentSize
   };
-}
+};
 
 const computeTopGeometry = ({
   childRect,

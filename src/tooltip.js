@@ -302,15 +302,16 @@ class Tooltip extends Component {
       displayInsets,
       childRect,
       windowDims,
-      arrowSize: innerPlacement === "top" || innerPlacement === "bottom"
-        ? arrowSize
-        : swapSizeDimmensions(arrowSize),
+      arrowSize:
+        innerPlacement === "top" || innerPlacement === "bottom"
+          ? arrowSize
+          : swapSizeDimmensions(arrowSize),
       contentSize
     };
 
     // special case for centered, childless placement tooltip
     if (
-      innerPlacement === "center" && 
+      innerPlacement === "center" &&
       React.Children.count(this.props.children) === 0
     ) {
       return computeCenterGeomerty(options);
