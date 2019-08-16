@@ -68,7 +68,8 @@ class Tooltip extends Component {
     placement: "center", // falls back to "top" if there ARE children
     showChildInTooltip: true,
     supportedOrientations: ["portrait", "landscape"],
-    useInteractionManager: false
+    useInteractionManager: false,
+    useReactNativeModal: true
   };
 
   static propTypes = {
@@ -93,7 +94,8 @@ class Tooltip extends Component {
     showChildInTooltip: PropTypes.bool,
     showStatusBar: PropTypes.bool,
     supportedOrientations: PropTypes.arrayOf(PropTypes.string),
-    useInteractionManager: PropTypes.bool
+    useInteractionManager: PropTypes.bool,
+    useReactNativeModal: PropTypes.bool
   };
 
   constructor(props) {
@@ -115,9 +117,10 @@ class Tooltip extends Component {
       displayInsets: computeDisplayInsets(props.displayInsets),
       // if we have no children, and place the tooltip at the "top" we want it to
       // behave like placement "bottom", i.e. display below the top of the screen
-      placement: !props.children
-        ? invertPlacement(props.placement)
-        : props.placement,
+      placement:
+        React.Children.count(props.children) === 0
+          ? invertPlacement(props.placement)
+          : props.placement,
       readyToComputeGeom: false,
       waitingToComputeGeom: false,
       measurementsFinished: false,
@@ -155,6 +158,16 @@ class Tooltip extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     const nextState = {};
+
+    // update placement in state if the prop changed
+    const nextPlacement =
+      React.Children.count(nextProps.children) === 0
+        ? invertPlacement(nextProps.placement)
+        : nextProps.placement;
+
+    if (nextPlacement !== prevState.placement) {
+      nextState.placement = nextPlacement;
+    }
 
     // update computed display insets if they changed
     const nextDisplayInsets = computeDisplayInsets(nextProps.displayInsets);
@@ -370,7 +383,7 @@ class Tooltip extends Component {
     return childElement;
   };
 
-  render() {
+  renderContentForTooltip = () => {
     const generatedStyles = styleGenerator({
       adjustedContentSize: this.state.adjustedContentSize,
       anchorPoint: this.state.anchorPoint,
@@ -384,41 +397,55 @@ class Tooltip extends Component {
     const hasChildren = React.Children.count(this.props.children) > 0;
 
     return (
-      <React.Fragment>
-        {/* This renders the fullscreen tooltip */}
-        <Modal
-          transparent
-          visible={this.props.isVisible && !this.state.waitingForInteractions}
-          onRequestClose={this.props.onClose}
-          supportedOrientations={this.props.supportedOrientations}
-        >
-          <TouchableWithoutFeedback onPress={this.props.onClose}>
-            <View style={generatedStyles.containerStyle}>
-              <View style={generatedStyles.backgroundStyle} />
-              <View style={generatedStyles.tooltipStyle}>
-                {hasChildren ? (
-                  <View style={generatedStyles.arrowStyle} />
-                ) : null}
-                <View
-                  onLayout={this.measureContent}
-                  style={generatedStyles.contentStyle}
-                >
-                  {this.props.content}
-                </View>
-              </View>
-              {hasChildren && this.props.showChildInTooltip
-                ? this.renderChildInTooltip()
-                : null}
+      <TouchableWithoutFeedback onPress={this.props.onClose}>
+        <View style={generatedStyles.containerStyle}>
+          <View style={generatedStyles.backgroundStyle} />
+          <View style={generatedStyles.tooltipStyle}>
+            {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
+            <View
+              onLayout={this.measureContent}
+              style={generatedStyles.contentStyle}
+            >
+              {this.props.content}
             </View>
-          </TouchableWithoutFeedback>
-        </Modal>
+          </View>
+          {hasChildren && this.props.showChildInTooltip
+            ? this.renderChildInTooltip()
+            : null}
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  };
+
+  render() {
+    const { children, isVisible, useReactNativeModal } = this.props;
+
+    const hasChildren = React.Children.count(children) > 0;
+    const showTooltip = isVisible && !this.state.waitingForInteractions;
+
+    return (
+      <React.Fragment>
+        {useReactNativeModal ? (
+          <Modal
+            transparent
+            visible={showTooltip}
+            onRequestClose={this.props.onClose}
+            supportedOrientations={this.props.supportedOrientations}
+          >
+            {this.renderContentForTooltip()}
+          </Modal>
+        ) : null}
 
         {/* This renders the child element in place in the parent's layout */}
         {hasChildren ? (
           <View ref={this.childWrapper} onLayout={this.measureChildRect}>
-            {this.props.children}
+            {children}
           </View>
         ) : null}
+
+        {!useReactNativeModal && isVisible && !this.state.waitingForInteractions
+          ? this.renderContentForTooltip()
+          : null}
       </React.Fragment>
     );
   }

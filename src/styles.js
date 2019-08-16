@@ -4,7 +4,8 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0,
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
+    zIndex: 500
   },
   containerVisible: {
     opacity: 1
