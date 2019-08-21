@@ -59,13 +59,13 @@ Optionally, you can provide the props `onChildPress` or `onChildLongPress` to ov
 
 | Prop name        | Type             | Default value                          | Description                                                                                                                                                                                                    |
 | ---------------- | ---------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| allowChildInteraction | bool| true | By default, the user can touch and interact with the child element. When this prop is false, the user cannot interact with the child element while the tooltip is visible. |
 | arrowSize        | `Size`           | { width: 16, height: 8 }               | The dimensions of the arrow on the bubble pointing to the highlighted element                                                                                                                                  |
 | backgroundColor  | string           | 'rgba(0,0,0,0.5)'                      | Color of the fullscreen background beneath the tooltip. **_Overrides_** the `backgroundStyle` prop                                                                                                             |
+| closeOnChildInteraction | bool | true | When child interaction is allowed, this prop determines if `onClose` should be called when the user interacts with the child element. Default is true (usually means the tooltip will dismiss once the user touches the element highlighted) |
 | content          | function/Element | `<View />`                             | This is the view displayed in the tooltip popover bubble                                                                                                                                                       |
 | displayInsets | object | { top: 24, bottom: 24, left: 24, right: 24 } | The number of pixels to inset the tooltip on the screen (think of it like padding). The tooltip bubble should never render outside of these insets, so you may need to adjust your `content` accordingly |
-| isVisible        | bool             | false                                  | When true, tooltip is displayed                                                                                                                                                                                |
-| onChildLongPress | function         | null                                   | Callback when user long presses on wrapped child. **_Overrides_** any touches in wrapped child element. [See below for more info](onPress)                                                                     |
-| onChildPress     | function         | null                                   | Callback when user long presses on wrapped child. **_Overrides_** any touches in wrapped child element. [See below for more info](onPress)                                                                     |
+| isVisible        | bool             | false                                  | When true, tooltip is displayed                                                                                                                                                                                |                                                            |
 | onClose          | function         | null                                   | Callback fired when the user taps the tooltip background overlay                                                                                                                                               |
 | placement        | string           | "top" \| "center"                                  | Where to position the tooltip - options: `top, bottom, left, right, center`. Default is `top` for tooltips rendered with children Default is `center` for tooltips rendered without children. <br><br>NOTE: `center` is only available with a childless placement, and the content will be centered within the bounds defined by the `displayInsets`. |
 | showChildInTooltip | bool | true | Set this to `false` if you do NOT want to display the child alongside the tooltip when the tooltip is visible |
@@ -87,22 +87,6 @@ The tooltip styles should work out-of-the-box for most use cases, however should
 ### Class definitions for props
 
 * `Size` is an object with properties: `{ width: number, height: number }`
-
-<a name="onPress"></a>
-
-### onChildPress and onChildLongPress
-
-When providing either of these functions, React Native Walkthrough Tooltip will wrap your entire child element in a touchable like so:
-
-```js
-<TouchableWithoutFeedback onPress={onChildPress} onLongPress={onChildLongPress}>
-  {childElement}
-</TouchableWithoutFeedback>
-```
-
-**NOTE: This will disable and override any touch events on your child element**
-
-One possible use case for these functions would be a scenerio where you are highlighting new functionality and want to restrict a user to ONLY do a certain action when they press on an element. While perhaps uncommon, this use case was relevant for another library I am working on, so it may be useful for you. When these props are NOT provided, all touch events on children occur as expected.
 
 ### TooltipChildrenContext
 

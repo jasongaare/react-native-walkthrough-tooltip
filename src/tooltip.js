@@ -52,9 +52,11 @@ const invertPlacement = (placement) => {
 
 class Tooltip extends Component {
   static defaultProps = {
+    allowChildInteraction: true,
     arrowSize: new Size(16, 8),
     backgroundColor: "rgba(0,0,0,0.5)",
     children: null,
+    closeOnChildInteraction: true,
     content: <View />,
     displayInsets: {},
     isVisible: false,
@@ -73,12 +75,14 @@ class Tooltip extends Component {
   };
 
   static propTypes = {
+    allowChildInteraction: PropTypes.bool,
     arrowSize: PropTypes.shape({
       height: PropTypes.number,
       width: PropTypes.number
     }),
     backgroundColor: PropTypes.string,
     children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+    closeOnChildInteraction: PropTypes.bool,
     content: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     displayInsets: PropTypes.shape({
       top: PropTypes.number,
@@ -345,42 +349,32 @@ class Tooltip extends Component {
 
   renderChildInTooltip = () => {
     const { height, width, x, y } = this.state.childRect;
-    const { children, onChildPress, onChildLongPress } = this.props;
-    const wrapInTouchable =
-      typeof onChildPress === "function" ||
-      typeof onChildLongPress === "function";
+    const {
+      allowChildInteraction,
+      children,
+      closeOnChildInteraction,
+      onClose
+    } = this.props;
 
-    const childElement = (
-      <View
-        pointerEvents={wrapInTouchable ? "box-only" : "auto"}
-        style={{
-          position: "absolute",
-          height,
-          width,
-          top: y,
-          left: x,
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        <TooltipChildrenContext.Provider value={{ tooltipDuplicate: true }}>
-          {children}
-        </TooltipChildrenContext.Provider>
-      </View>
-    );
-
-    if (wrapInTouchable) {
-      return (
-        <TouchableWithoutFeedback
-          onPress={onChildPress}
-          onLongPress={onChildLongPress}
+    return (
+      <TooltipChildrenContext.Provider value={{ tooltipDuplicate: true }}>
+        <View
+          onTouchEnd={closeOnChildInteraction ? onClose : null}
+          pointerEvents={allowChildInteraction ? "box-none" : "none"}
+          style={{
+            position: "absolute",
+            height,
+            width,
+            top: y,
+            left: x,
+            alignItems: "center",
+            justifyContent: "center"
+          }}
         >
-          {childElement}
-        </TouchableWithoutFeedback>
-      );
-    }
-
-    return childElement;
+          {children}
+        </View>
+      </TooltipChildrenContext.Provider>
+    );
   };
 
   renderContentForTooltip = () => {

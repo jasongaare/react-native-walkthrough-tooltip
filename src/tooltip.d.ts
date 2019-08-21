@@ -1,105 +1,102 @@
 // Type definitions for react-native-walkthrough-tooltip 1.0.0
 // Original definitions by: Siraj Alam https://github.com/sirajalam049
 
-declare module 'react-native-walkthrough-tooltip' {
+declare module "react-native-walkthrough-tooltip" {
+  import React from "react";
+  import { GestureResponderEvent, StyleProp, ViewStyle } from "react-native";
 
-    import React from 'react';
-    import { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native'
-
-    type Orientation =
+  type Orientation =
     | "portrait"
     | "portrait-upside-down"
     | "landscape"
     | "landscape-left"
     | "landscape-right";
 
-    export interface TooltipSize {
-        width: number,
-        height: number
-    }
+  export interface TooltipSize {
+    width: number;
+    height: number;
+  }
 
-    export interface TooltipDisplayInsets {
-        top: number,
-        bottom: number,
-        left: number,
-        right: number,
-    }
+  export interface TooltipDisplayInsets {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  }
+
+  /**
+   * Style Props
+   * The tooltip styles should work out-of-the-box for most use cases,
+   * however should you need you can customize the styles of the tooltip using these props.
+   */
+  export interface TooltipStyleProps {
+    // Styles the triangle that points to the called out element
+    arrowStyle?: StyleProp<ViewStyle>;
+
+    // Styles the overlay view that sits behind the tooltip, but over the current view
+    backgroundStyle?: StyleProp<ViewStyle>;
+
+    // Styles the content wrapper that surrounds the content element
+    contentStyle?: StyleProp<ViewStyle>;
+
+    // Styles the tooltip that wraps the arrow and content elements
+    tooltipStyle?: StyleProp<ViewStyle>;
+  }
+
+  export interface TooltipProps extends Partial<TooltipStyleProps> {
+    // When true (default), user can interact with child element
+    allowChildInteraction?: boolean;
+
+    // The dimensions of the arrow on the bubble pointing to the highlighted element
+    arrowSize?: TooltipSize;
+
+    // Color of the fullscreen background beneath the tooltip. Overrides the backgroundStyle prop
+    backgroundColor?: string;
+
+    // When true (default), onClose prop is called when user touches child element
+    closeOnChildInteraction?: boolean;
+
+    // This is the view displayed in the tooltip popover bubble
+    content?: React.ReactElement;
+
+    // The number of pixels to inset the tooltip on the screen
+    displayInsets?: TooltipDisplayInsets;
+
+    // When true, tooltip is displayed
+    isVisible?: boolean;
+
+    // Callback fired when the user taps the tooltip background overlay
+    onClose?: (event: GestureResponderEvent) => void;
 
     /**
-     * Style Props
-     * The tooltip styles should work out-of-the-box for most use cases, 
-     * however should you need you can customize the styles of the tooltip using these props.
+     * Where to position the tooltip - options: top, bottom, left, right, center.
+     * Default is 'top' for tooltips rendered with children. Default is 'center' for tooltips
+     * rendered without children. NOTE: center is only available with a childless placement,
+     * and the content will be centered within the bounds defined by the displayInsets.
      */
-    export interface TooltipStyleProps {
+    placement?: "top" | "bottom" | "left" | "right" | "center";
 
-        // Styles the triangle that points to the called out element
-        arrowStyle?: StyleProp<ViewStyle>
+    // Determines if the tooltip's children should be shown in the foreground when the tooltip is visible.
+    showChildInTooltip?: boolean;
 
-        // Styles the overlay view that sits behind the tooltip, but over the current view
-        backgroundStyle?: StyleProp<ViewStyle>
-
-        // Styles the content wrapper that surrounds the content element
-        contentStyle?: StyleProp<ViewStyle>
-
-        // Styles the tooltip that wraps the arrow and content elements
-        tooltipStyle?: StyleProp<ViewStyle>
-    }
-
-    export interface TooltipProps extends Partial<TooltipStyleProps> {
-
-        // The dimensions of the arrow on the bubble pointing to the highlighted element
-        arrowSize?: TooltipSize
-
-        // Color of the fullscreen background beneath the tooltip. Overrides the backgroundStyle prop
-        backgroundColor?: string
-
-        // This is the view displayed in the tooltip popover bubble
-        content?: React.ReactElement
-
-        // The number of pixels to inset the tooltip on the screen 
-        displayInsets?: TooltipDisplayInsets
-
-        // When true, tooltip is displayed
-        isVisible?: boolean
-
-        // Callback when user long presses on wrapped child. Overrides any touches in wrapped child element. 
-        onChildLongPress?: (e: GestureResponderEvent) => void
-
-        // Callback when user long presses on wrapped child. Overrides any touches in wrapped child element.
-        onChildPress?: (event: GestureResponderEvent) => void
-
-        // Callback fired when the user taps the tooltip background overlay
-        onClose?: (event: GestureResponderEvent) => void
-
-        /**
-         * Where to position the tooltip - options: top, bottom, left, right, center. 
-         * Default is 'top' for tooltips rendered with children. Default is 'center' for tooltips 
-         * rendered without children. NOTE: center is only available with a childless placement, 
-         * and the content will be centered within the bounds defined by the displayInsets.
-         */
-        placement?: 'top' | 'bottom' | 'left' | 'right' | 'center'
-
-        // Determines if the tooltip's children should be shown in the foreground when the tooltip is visible.  
-        showChildInTooltip?: boolean
-
-        // The supportedOrientations prop allows the modal to be rotated to any of the specified orientations.
-        supportedOrientations?: Orientation[];
-
-        /**
-         * Set this to true if you want the tooltip to wait to become visible until the callback
-         * from InteractionManager.runAfterInteractions is executed. Can be useful if you need 
-         * to wait for navigation transitions to complete, etc
-         */
-        useInteractionManager: boolean
-
-        /**
-         * When false, will not use a React Native Modal component to display tooltip,
-         * but rather an absolutely positioned view
-         */
-        useReactNativeModal: boolean
-    }
+    // The supportedOrientations prop allows the modal to be rotated to any of the specified orientations.
+    supportedOrientations?: Orientation[];
 
     /**
+     * Set this to true if you want the tooltip to wait to become visible until the callback
+     * from InteractionManager.runAfterInteractions is executed. Can be useful if you need
+     * to wait for navigation transitions to complete, etc
+     */
+    useInteractionManager: boolean;
+
+    /**
+     * When false, will not use a React Native Modal component to display tooltip,
+     * but rather an absolutely positioned view
+     */
+    useReactNativeModal: boolean;
+  }
+
+  /**
      ```js
         // Usage Example
         import Tooltip, { TooltipChildrenContext } from 'react-native-walkthrough-tooltip';
@@ -114,9 +111,11 @@ declare module 'react-native-walkthrough-tooltip' {
         </Tooltip>
     ```
      */
-    export const TooltipChildrenContext: React.Context<{ tooltipDuplicate: boolean }>;
+  export const TooltipChildrenContext: React.Context<{
+    tooltipDuplicate: boolean;
+  }>;
 
-    /**
+  /**
      ```js
         // Simple Usage
         import Tooltip from 'react-native-walkthrough-tooltip';
@@ -132,9 +131,7 @@ declare module 'react-native-walkthrough-tooltip' {
         </Tooltip>
     ```
      */
-    class Tooltip extends React.Component<TooltipProps> {
+  class Tooltip extends React.Component<TooltipProps> {}
 
-    }
-
-    export default Tooltip;
+  export default Tooltip;
 }
