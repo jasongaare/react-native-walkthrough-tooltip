@@ -349,18 +349,18 @@ class Tooltip extends Component {
 
   renderChildInTooltip = () => {
     const { height, width, x, y } = this.state.childRect;
-    const {
-      allowChildInteraction,
-      children,
-      closeOnChildInteraction,
-      onClose
-    } = this.props;
+
+    const onTouchEnd = () => {
+      if (this.props.closeOnChildInteraction) {
+        this.props.onClose();
+      }
+    };
 
     return (
       <TooltipChildrenContext.Provider value={{ tooltipDuplicate: true }}>
         <View
-          onTouchEnd={closeOnChildInteraction ? onClose : null}
-          pointerEvents={allowChildInteraction ? "box-none" : "none"}
+          onTouchEnd={onTouchEnd}
+          pointerEvents={this.props.allowChildInteraction ? "box-none" : "none"}
           style={{
             position: "absolute",
             height,
@@ -371,7 +371,7 @@ class Tooltip extends Component {
             justifyContent: "center"
           }}
         >
-          {children}
+          {this.props.children}
         </View>
       </TooltipChildrenContext.Provider>
     );
