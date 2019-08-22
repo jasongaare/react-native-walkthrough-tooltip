@@ -55,8 +55,8 @@ import Tooltip from 'react-native-walkthrough-tooltip';
 
 ### How it works
 
-The tooltip wraps an element _in place_ in your React Native rendering. When it initially renders, it measures the location of the element in the window, utilizing React Native's
-[measureInWindow](https://facebook.github.io/react-native/docs/direct-manipulation.html#measureinwindowcallback). When the tooltip is displayed, it renders a _copy_ of the wrapped element positioned absolutely on the screen at the coordinates returned after measuring. This allows you to touch the element in the tooltip modal rendered above your current screen.
+The tooltip wraps an element _in place_ in your React Native rendering. When it renders, it measures the location of the element, using React Native's
+[measure](https://facebook.github.io/react-native/docs/direct-manipulation.html#measurecallback). When the tooltip is displayed, it renders a _copy_ of the wrapped element positioned absolutely on the screen at the coordinates returned after measuring ([see `TooltipChildrenContext` below](childrenContent) if you need to tell the difference between the _copy_ and the _original_ element). This allows you to touch the element in the tooltip modal rendered above your current screen.
 
 ### Props
 
@@ -91,6 +91,7 @@ The tooltip styles should work out-of-the-box for most use cases, however should
 
 * `Size` is an object with properties: `{ width: number, height: number }`
 
+<a name="childrenContent"></a>
 ### TooltipChildrenContext
 
 [React Context](https://reactjs.org/docs/context.html) that can be used to distinguish "real" children rendered inside parent's layout from their copies rendered inside tooltip's modal. The duplicate child rendered in the tooltip modal is wrapped in a Context.Provider which provides object with prop `tooltipDuplicate` set to `true`, so informed decisions may be made, if necessary, based on where the child rendered.
