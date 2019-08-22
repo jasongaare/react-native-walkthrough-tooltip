@@ -60,8 +60,6 @@ class Tooltip extends Component {
     content: <View />,
     displayInsets: {},
     isVisible: false,
-    onChildLongPress: null,
-    onChildPress: null,
     onClose: () => {
       console.warn(
         "[react-native-walkthrough-tooltip] onClose prop no provided"
@@ -91,12 +89,9 @@ class Tooltip extends Component {
       right: PropTypes.number
     }),
     isVisible: PropTypes.bool,
-    onChildLongPress: PropTypes.func,
-    onChildPress: PropTypes.func,
     onClose: PropTypes.func,
     placement: PropTypes.oneOf(["top", "left", "bottom", "right", "center"]),
     showChildInTooltip: PropTypes.bool,
-    showStatusBar: PropTypes.bool,
     supportedOrientations: PropTypes.arrayOf(PropTypes.string),
     useInteractionManager: PropTypes.bool,
     useReactNativeModal: PropTypes.bool
@@ -207,7 +202,7 @@ class Tooltip extends Component {
       () => {
         setTimeout(() => {
           this.measureChildRect();
-        });
+        }, 500); // give the rotation a moment to finish
       }
     );
   };
