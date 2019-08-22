@@ -437,7 +437,7 @@ class Tooltip extends Component {
           </View>
         ) : null}
 
-        {!useReactNativeModal && isVisible && !this.state.waitingForInteractions
+        {!useReactNativeModal && showTooltip
           ? this.renderContentForTooltip()
           : null}
       </React.Fragment>

@@ -16,6 +16,13 @@ For Version 1.0, the library was refactored and simplified.
 - **Tooltips are now bound by the displayInsets** - before if your content was larger than the displayArea prop, the tooltip would render outside of the display area. Now the tooltip should always resize to be inside the display area as defined by the `displayInsets` prop
 - **Removed the "auto" option for placement** - you must now specify a direction
 - **Added the "center" option for _childless_ placement** - option to center the tooltip within the bounds of the `displayInsets` when it does not point to a child
+- **Added `useReactNativeModal` prop** - this allows you to enable/disable the usage of React Native's `Modal` component to render the tooltip content. It is true by default.
+
+Changes to handling users pressing the tooltip child element:
+
+- **No more `onChildPress` and `onChildLongPress` props** - touches are now passed to the child by default. This allows you to maintain the original functionality of the child element. Further, the tooltip will also automatically dismiss on interaction with the child element.
+- **Added `closeOnChildInteraction` prop** - if you want the user to be able to interact with the child element, but not automatically dismiss the tooltip when they do so, set this to false (true by default)
+- **Added `allowChildInteraction` prop** - if you'd like to disable interaction with the child element, set this to false (true by default). When false, tapping on the child element will call `onClose` as if the user touched the background element.
 
  
 
@@ -50,10 +57,6 @@ import Tooltip from 'react-native-walkthrough-tooltip';
 
 The tooltip wraps an element _in place_ in your React Native rendering. When it initially renders, it measures the location of the element in the window, utilizing React Native's
 [measureInWindow](https://facebook.github.io/react-native/docs/direct-manipulation.html#measureinwindowcallback). When the tooltip is displayed, it renders a _copy_ of the wrapped element positioned absolutely on the screen at the coordinates returned after measuring. This allows you to touch the element in the tooltip modal rendered above your current screen.
-
-### Listening for touches on highlighted child element
-
-Optionally, you can provide the props `onChildPress` or `onChildLongPress` to override any functionality of the current element, should you find that useful. More information on this [can be found below](onPress).
 
 ### Props
 
