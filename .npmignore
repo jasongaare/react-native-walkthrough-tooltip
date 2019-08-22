@@ -5,4 +5,4 @@ coverage/
 jest.setup.js
 
 yarn.lock
-screenshot.gif
+example.gif
