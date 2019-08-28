@@ -131,6 +131,7 @@ const tooltipPlacementStyles = ({ arrowSize, placement, tooltipOrigin }) => {
 const styleGenerator = (styleGeneratorProps) => {
   const {
     adjustedContentSize,
+    displayInsets,
     measurementsFinished,
     ownProps,
     placement
@@ -160,7 +161,13 @@ const styleGenerator = (styleGeneratorProps) => {
     backgroundStyle: [
       styles.background,
       ownProps.backgroundStyle,
-      { backgroundColor }
+      {
+        paddingTop: displayInsets.top,
+        paddingLeft: displayInsets.left,
+        paddingRight: displayInsets.right,
+        paddingBottom: displayInsets.bottom,
+        backgroundColor
+      }
     ],
     containerStyle: [
       styles.container,
