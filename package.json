@@ -1,6 +1,6 @@
 {
   "name": "react-native-walkthrough-tooltip",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An inline wrapper for calling out React Native components via tooltip",
   "main": "src/tooltip.js",
   "scripts": {

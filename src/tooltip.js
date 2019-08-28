@@ -377,6 +377,7 @@ class Tooltip extends Component {
       adjustedContentSize: this.state.adjustedContentSize,
       anchorPoint: this.state.anchorPoint,
       arrowSize: this.props.arrowSize,
+      displayInsets: this.state.displayInsets,
       measurementsFinished: this.state.measurementsFinished,
       ownProps: { ...this.props },
       placement: this.state.placement,
@@ -388,14 +389,15 @@ class Tooltip extends Component {
     return (
       <TouchableWithoutFeedback onPress={this.props.onClose}>
         <View style={generatedStyles.containerStyle}>
-          <View style={generatedStyles.backgroundStyle} />
-          <View style={generatedStyles.tooltipStyle}>
-            {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
-            <View
-              onLayout={this.measureContent}
-              style={generatedStyles.contentStyle}
-            >
-              {this.props.content}
+          <View style={[generatedStyles.backgroundStyle]}>
+            <View style={generatedStyles.tooltipStyle}>
+              {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
+              <View
+                onLayout={this.measureContent}
+                style={generatedStyles.contentStyle}
+              >
+                {this.props.content}
+              </View>
             </View>
           </View>
           {hasChildren && this.props.showChildInTooltip
