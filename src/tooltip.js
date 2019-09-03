@@ -55,6 +55,7 @@ class Tooltip extends Component {
     allowChildInteraction: true,
     arrowSize: new Size(16, 8),
     backgroundColor: "rgba(0,0,0,0.5)",
+    childContentSpacing: 4,
     children: null,
     closeOnChildInteraction: true,
     content: <View />,
@@ -79,6 +80,7 @@ class Tooltip extends Component {
       width: PropTypes.number
     }),
     backgroundColor: PropTypes.string,
+    childContentSpacing: PropTypes.number,
     children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     closeOnChildInteraction: PropTypes.bool,
     content: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
@@ -307,7 +309,7 @@ class Tooltip extends Component {
 
   computeGeometry = ({ contentSize, placement }) => {
     const innerPlacement = placement || this.state.placement;
-    const { arrowSize } = this.props;
+    const { arrowSize, childContentSpacing } = this.props;
     const { childRect, displayInsets, windowDims } = this.state;
 
     const options = {
@@ -318,7 +320,8 @@ class Tooltip extends Component {
         innerPlacement === "top" || innerPlacement === "bottom"
           ? arrowSize
           : swapSizeDimmensions(arrowSize),
-      contentSize
+      contentSize,
+      childContentSpacing
     };
 
     // special case for centered, childless placement tooltip
