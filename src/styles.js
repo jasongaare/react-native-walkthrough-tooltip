@@ -137,14 +137,13 @@ const styleGenerator = (styleGeneratorProps) => {
     placement
   } = styleGeneratorProps;
 
-  const adjustedSizeAvailable = adjustedContentSize.width;
+  const { height, width } = adjustedContentSize;
   const { backgroundColor } = ownProps;
 
   const contentStyle = [
     styles.content,
-    adjustedSizeAvailable && placement !== "center"
-      ? { ...adjustedContentSize }
-      : {},
+    height > 0 && { height }, // ignore special case of -1 with center placement (and 0 when not yet measured)
+    width > 0 && { width }, // ignore special case of -1 with center placement (and 0 when not yet measured)
     ownProps.contentStyle
   ];
 
@@ -173,7 +172,9 @@ const styleGenerator = (styleGeneratorProps) => {
     ],
     containerStyle: [
       styles.container,
-      adjustedSizeAvailable && measurementsFinished && styles.containerVisible
+      adjustedContentSize.width !== 0 &&
+        measurementsFinished &&
+        styles.containerVisible
     ],
     contentStyle,
     tooltipStyle: [

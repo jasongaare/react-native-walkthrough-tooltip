@@ -49,10 +49,9 @@ const makeChildlessRect = ({ displayInsets, windowDims, placement }) => {
   }
 };
 
-const computeCenterGeomerty = ({
+const computeCenterGeometry = ({
   childRect,
   contentSize,
-  arrowSize,
   displayInsets,
   windowDims
 }) => {
@@ -62,17 +61,17 @@ const computeCenterGeomerty = ({
     windowDims.height - (displayInsets.top + displayInsets.bottom);
 
   const adjustedContentSize = new Size(
-    Math.min(maxWidth, contentSize.width),
-    Math.min(maxHeight, contentSize.height)
+    contentSize.width >= maxWidth ? maxWidth : -1,
+    contentSize.height >= maxHeight ? maxHeight : -1
   );
 
   const tooltipOrigin = new Point(
-    adjustedContentSize.width === maxWidth
-      ? displayInsets.left
-      : (maxWidth - adjustedContentSize.width) / 2 + displayInsets.left,
-    adjustedContentSize.height === maxHeight
-      ? displayInsets.top
-      : (maxHeight - adjustedContentSize.height) / 2 + displayInsets.top
+    adjustedContentSize.width === -1
+      ? (maxWidth - contentSize.width) / 2 + displayInsets.left
+      : displayInsets.left,
+    adjustedContentSize.height === -1
+      ? (maxHeight - contentSize.height) / 2 + displayInsets.top
+      : displayInsets.top
   );
 
   const anchorPoint = new Point(
@@ -364,7 +363,7 @@ export {
   Rect,
   swapSizeDimmensions,
   makeChildlessRect,
-  computeCenterGeomerty,
+  computeCenterGeometry,
   computeTopGeometry,
   computeBottomGeometry,
   computeLeftGeometry,

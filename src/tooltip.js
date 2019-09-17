@@ -14,7 +14,7 @@ import {
   Rect,
   swapSizeDimmensions,
   makeChildlessRect,
-  computeCenterGeomerty,
+  computeCenterGeometry,
   computeTopGeometry,
   computeBottomGeometry,
   computeLeftGeometry,
@@ -319,7 +319,7 @@ class Tooltip extends Component {
       innerPlacement === "center" &&
       React.Children.count(this.props.children) === 0
     ) {
-      return computeCenterGeomerty(options);
+      return computeCenterGeometry(options);
     }
 
     switch (innerPlacement) {
