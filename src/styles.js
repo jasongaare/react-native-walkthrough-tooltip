@@ -142,7 +142,9 @@ const styleGenerator = (styleGeneratorProps) => {
 
   const contentStyle = [
     styles.content,
-    adjustedSizeAvailable && { ...adjustedContentSize },
+    adjustedSizeAvailable && placement !== "center"
+      ? { ...adjustedContentSize }
+      : {},
     ownProps.contentStyle
   ];
 

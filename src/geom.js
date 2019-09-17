@@ -142,12 +142,8 @@ const computeTopGeometry = ({
     adjustedContentSize.height = topPlacementBottomBound - tooltipOrigin.y;
   }
 
-  if (
-    tooltipOrigin.x + contentSize.width >
-    windowDims.width - displayInsets.right
-  ) {
-    tooltipOrigin.x =
-      windowDims.width - displayInsets.right - contentSize.width;
+  if (tooltipOrigin.x + contentSize.width > maxWidth) {
+    tooltipOrigin.x = displayInsets.left;
   }
 
   return {
@@ -214,12 +210,8 @@ const computeBottomGeometry = ({
       windowDims.height - displayInsets.bottom - tooltipOrigin.y;
   }
 
-  if (
-    tooltipOrigin.x + contentSize.width >
-    windowDims.width - displayInsets.right
-  ) {
-    tooltipOrigin.x =
-      windowDims.width - displayInsets.right - contentSize.width;
+  if (tooltipOrigin.x + contentSize.width > maxWidth) {
+    tooltipOrigin.x = displayInsets.left;
   }
 
   return {
@@ -285,12 +277,8 @@ const computeLeftGeometry = ({
     adjustedContentSize.width = leftPlacementRightBound - tooltipOrigin.x;
   }
 
-  if (
-    tooltipOrigin.y + contentSize.height >
-    windowDims.height - displayInsets.bottom
-  ) {
-    tooltipOrigin.y =
-      windowDims.height - displayInsets.bottom - contentSize.height;
+  if (tooltipOrigin.y + contentSize.height > maxHeight) {
+    tooltipOrigin.y = displayInsets.top;
   }
 
   return {
@@ -358,12 +346,8 @@ const computeRightGeometry = ({
       windowDims.width - displayInsets.right - tooltipOrigin.x;
   }
 
-  if (
-    tooltipOrigin.y + contentSize.height >
-    windowDims.height - displayInsets.bottom
-  ) {
-    tooltipOrigin.y =
-      windowDims.height - displayInsets.bottom - contentSize.height;
+  if (tooltipOrigin.y + contentSize.height > maxHeight) {
+    tooltipOrigin.y = displayInsets.top;
   }
 
   return {
