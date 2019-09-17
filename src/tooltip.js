@@ -228,7 +228,9 @@ class Tooltip extends Component {
         contentSize
       });
     } else {
-      this._doComputeGeometry({ contentSize });
+      this.setState({ contentSize }, () => {
+        this._updateGeometry();
+      });
     }
 
     if (React.Children.count(this.props.children) === 0) {
@@ -279,20 +281,6 @@ class Tooltip extends Component {
     }
   };
 
-  _doComputeGeometry = ({ contentSize }) => {
-    const geom = this.computeGeometry({ contentSize });
-    const { tooltipOrigin, anchorPoint, placement } = geom;
-    this.setState({
-      contentSize,
-      tooltipOrigin,
-      anchorPoint,
-      placement,
-      readyToComputeGeom: undefined,
-      waitingToComputeGeom: false,
-      measurementsFinished: true
-    });
-  };
-
   _updateGeometry = () => {
     const { contentSize } = this.state;
     const geom = this.computeGeometry({ contentSize });
@@ -302,6 +290,8 @@ class Tooltip extends Component {
       tooltipOrigin,
       anchorPoint,
       placement,
+      readyToComputeGeom: undefined,
+      waitingToComputeGeom: false,
       measurementsFinished: true,
       adjustedContentSize
     });

@@ -7,6 +7,8 @@
 React Native Walkthrough Tooltip is a fullscreen modal that highlights whichever element it wraps.\
 When not visible, the wrapped element is displayed normally.
 
+> 🎉 Now available 🎉 [`react-native-walkthrough`](https://github.com/jasongaare/react-native-walkthrough): a lightweight walkthrough library for React Native using react-native-walkthrough-tooltip
+
 ## Breaking Changes in Version 1.0
 
 For Version 1.0, the library was refactored and simplified. 
