@@ -122,8 +122,6 @@ class Tooltip extends Component {
         React.Children.count(props.children) === 0
           ? invertPlacement(props.placement)
           : props.placement,
-      readyToComputeGeom: false,
-      waitingToComputeGeom: false,
       measurementsFinished: false,
       windowDims: Dimensions.get("window")
     };
@@ -179,6 +177,7 @@ class Tooltip extends Component {
     // set measurements finished flag to false when tooltip closes
     if (prevState.measurementsFinished && !nextProps.isVisible) {
       nextState.measurementsFinished = false;
+      nextState.adjustedContentSize = new Size(0, 0);
     }
 
     if (Object.keys(nextState).length) {
@@ -197,8 +196,6 @@ class Tooltip extends Component {
         anchorPoint: new Point(0, 0),
         tooltipOrigin: new Point(0, 0),
         childRect: new Rect(0, 0, 0, 0),
-        readyToComputeGeom: false,
-        waitingToComputeGeom: false,
         measurementsFinished: false
       },
       () => {
@@ -210,7 +207,7 @@ class Tooltip extends Component {
   };
 
   doChildlessPlacement = () => {
-    this.onMeasurementComplete(
+    this.onChildMeasurementComplete(
       makeChildlessRect({
         displayInsets: this.state.displayInsets,
         placement: this.state.placement, // MUST use from state, not props
@@ -222,27 +219,20 @@ class Tooltip extends Component {
   measureContent = (e) => {
     const { width, height } = e.nativeEvent.layout;
     const contentSize = new Size(width, height);
-    if (!this.state.readyToComputeGeom) {
-      this.setState({
-        waitingToComputeGeom: true,
-        contentSize
-      });
-    } else {
-      this.setState({ contentSize }, () => {
-        this._updateGeometry();
-      });
-    }
+
+    this.setState({ contentSize }, () => {
+      this._updateGeometry();
+    });
 
     if (React.Children.count(this.props.children) === 0) {
       this.doChildlessPlacement();
     }
   };
 
-  onMeasurementComplete = (rect) => {
+  onChildMeasurementComplete = (rect) => {
     this.setState(
       {
         childRect: rect,
-        readyToComputeGeom: true,
         waitingForInteractions: false
       },
       () => {
@@ -263,7 +253,7 @@ class Tooltip extends Component {
           this.childWrapper.current.measure(
             (x, y, width, height, pageX, pageY) => {
               const childRect = new Rect(pageX, pageY, width, height);
-              this.onMeasurementComplete(childRect);
+              this.onChildMeasurementComplete(childRect);
             }
           );
         } else {
@@ -290,8 +280,6 @@ class Tooltip extends Component {
       tooltipOrigin,
       anchorPoint,
       placement,
-      readyToComputeGeom: undefined,
-      waitingToComputeGeom: false,
       measurementsFinished: true,
       adjustedContentSize
     });
