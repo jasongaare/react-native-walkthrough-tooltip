@@ -108,13 +108,14 @@ const computeTopGeometry = ({
       ? displayInsets.left
       : Math.max(
           displayInsets.left,
-          childRect.x + (childRect.width - contentSize.width) / 2
+          childRect.x + (childRect.width - adjustedContentSize.width) / 2
         ),
     Math.max(
       displayInsets.top - childContentSpacing,
       childRect.y - contentSize.height - arrowSize.height - childContentSpacing
     )
   );
+
   const anchorPoint = new Point(
     childRect.x + childRect.width / 2.0,
     childRect.y - childContentSpacing
@@ -142,7 +143,8 @@ const computeTopGeometry = ({
   }
 
   if (tooltipOrigin.x + contentSize.width > maxWidth) {
-    tooltipOrigin.x = displayInsets.left;
+    tooltipOrigin.x =
+      windowDims.width - displayInsets.right - adjustedContentSize.width;
   }
 
   return {
@@ -174,7 +176,7 @@ const computeBottomGeometry = ({
       ? displayInsets.left
       : Math.max(
           displayInsets.left,
-          childRect.x + (childRect.width - contentSize.width) / 2
+          childRect.x + (childRect.width - adjustedContentSize.width) / 2
         ),
     Math.min(
       windowDims.height - displayInsets.bottom + childContentSpacing,
@@ -210,7 +212,8 @@ const computeBottomGeometry = ({
   }
 
   if (tooltipOrigin.x + contentSize.width > maxWidth) {
-    tooltipOrigin.x = displayInsets.left;
+    tooltipOrigin.x =
+      windowDims.width - displayInsets.right - adjustedContentSize.width;
   }
 
   return {
@@ -246,7 +249,7 @@ const computeLeftGeometry = ({
       ? displayInsets.top
       : Math.max(
           displayInsets.top,
-          childRect.y + (childRect.height - contentSize.height) / 2
+          childRect.y + (childRect.height - adjustedContentSize.height) / 2
         )
   );
 
@@ -277,7 +280,8 @@ const computeLeftGeometry = ({
   }
 
   if (tooltipOrigin.y + contentSize.height > maxHeight) {
-    tooltipOrigin.y = displayInsets.top;
+    tooltipOrigin.y =
+      windowDims.height - displayInsets.bottom - adjustedContentSize.height;
   }
 
   return {
@@ -313,7 +317,7 @@ const computeRightGeometry = ({
       ? displayInsets.top
       : Math.max(
           displayInsets.top,
-          childRect.y + (childRect.height - contentSize.height) / 2
+          childRect.y + (childRect.height - adjustedContentSize.height) / 2
         )
   );
 
@@ -346,7 +350,8 @@ const computeRightGeometry = ({
   }
 
   if (tooltipOrigin.y + contentSize.height > maxHeight) {
-    tooltipOrigin.y = displayInsets.top;
+    tooltipOrigin.y =
+      windowDims.height - displayInsets.bottom - adjustedContentSize.height;
   }
 
   return {
