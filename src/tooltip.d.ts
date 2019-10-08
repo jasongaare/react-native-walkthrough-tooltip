@@ -87,13 +87,13 @@ declare module "react-native-walkthrough-tooltip" {
      * from InteractionManager.runAfterInteractions is executed. Can be useful if you need
      * to wait for navigation transitions to complete, etc
      */
-    useInteractionManager: boolean;
+    useInteractionManager?: boolean;
 
     /**
      * When false, will not use a React Native Modal component to display tooltip,
      * but rather an absolutely positioned view
      */
-    useReactNativeModal: boolean;
+    useReactNativeModal?: boolean;
   }
 
   /**
