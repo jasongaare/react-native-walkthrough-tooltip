@@ -217,18 +217,12 @@ class Tooltip extends Component {
   };
 
   measureContent = (e) => {
-    if (!this.state.measurementsFinished) {
-      const { width, height } = e.nativeEvent.layout;
-      const contentSize = new Size(width, height);
+    const { width, height } = e.nativeEvent.layout;
+    const contentSize = new Size(width, height);
 
-      this.setState({ contentSize }, () => {
-        this._updateGeometry();
-      });
-
-      // if (React.Children.count(this.props.children) === 0) {
-      //   this.doChildlessPlacement();
-      // }
-    }
+    this.setState({ contentSize }, () => {
+      this._updateGeometry();
+    });
   };
 
   onChildMeasurementComplete = (rect) => {
