@@ -223,10 +223,6 @@ class Tooltip extends Component {
     this.setState({ contentSize }, () => {
       this._updateGeometry();
     });
-
-    if (React.Children.count(this.props.children) === 0) {
-      this.doChildlessPlacement();
-    }
   };
 
   onChildMeasurementComplete = (rect) => {
@@ -237,7 +233,9 @@ class Tooltip extends Component {
       },
       () => {
         this.isMeasuringChild = false;
-        this._updateGeometry();
+        if (this.state.contentSize.width) {
+          this._updateGeometry();
+        }
       }
     );
   };
