@@ -217,15 +217,17 @@ class Tooltip extends Component {
   };
 
   measureContent = (e) => {
-    const { width, height } = e.nativeEvent.layout;
-    const contentSize = new Size(width, height);
+    if (!this.state.measurementsFinished) {
+      const { width, height } = e.nativeEvent.layout;
+      const contentSize = new Size(width, height);
 
-    this.setState({ contentSize }, () => {
-      this._updateGeometry();
-    });
+      this.setState({ contentSize }, () => {
+        this._updateGeometry();
+      });
 
-    if (React.Children.count(this.props.children) === 0) {
-      this.doChildlessPlacement();
+      // if (React.Children.count(this.props.children) === 0) {
+      //   this.doChildlessPlacement();
+      // }
     }
   };
 
@@ -237,7 +239,9 @@ class Tooltip extends Component {
       },
       () => {
         this.isMeasuringChild = false;
-        this._updateGeometry();
+        if (this.state.contentSize.width) {
+          this._updateGeometry();
+        }
       }
     );
   };
