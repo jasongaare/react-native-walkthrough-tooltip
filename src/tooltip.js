@@ -70,7 +70,8 @@ class Tooltip extends Component {
     showChildInTooltip: true,
     supportedOrientations: ["portrait", "landscape"],
     useInteractionManager: false,
-    useReactNativeModal: true
+    useReactNativeModal: true,
+    topAdjustment: 0
   };
 
   static propTypes = {
@@ -323,6 +324,7 @@ class Tooltip extends Component {
 
   renderChildInTooltip = () => {
     const { height, width, x, y } = this.state.childRect;
+    const { topAdjustment } = this.props;
 
     const onTouchEnd = () => {
       if (this.props.closeOnChildInteraction) {
@@ -339,7 +341,7 @@ class Tooltip extends Component {
             position: "absolute",
             height,
             width,
-            top: y,
+            top: y + topAdjustment,
             left: x,
             alignItems: "center",
             justifyContent: "center"
