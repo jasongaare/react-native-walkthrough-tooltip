@@ -5,7 +5,8 @@ import {
   InteractionManager,
   Modal,
   TouchableWithoutFeedback,
-  View
+  View,
+  Platform
 } from "react-native";
 import rfcIsEqual from "react-fast-compare";
 import {
@@ -22,6 +23,10 @@ import {
 } from "./geom";
 import styleGenerator from "./styles";
 import TooltipChildrenContext from "./tooltip-children.context";
+import Svg, { Circle, Ellipse, G, TSpan, Text, TextPath, Path, Polygon, Polyline, Line, Use, Symbol, Defs, LinearGradient, RadialGradient, Stop, ClipPath, Pattern, Mask } from 'react-native-svg';
+import Androw from 'react-native-androw';
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 
 export { TooltipChildrenContext };
 
@@ -369,7 +374,7 @@ class Tooltip extends Component {
       <TouchableWithoutFeedback onPress={this.props.onClose}>
         <View style={generatedStyles.containerStyle}>
           <View style={[generatedStyles.backgroundStyle]}>
-            <View style={generatedStyles.tooltipStyle}>
+            <Androw style={generatedStyles.tooltipStyle}>
               {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
               <View
                 onLayout={this.measureContent}
@@ -377,7 +382,7 @@ class Tooltip extends Component {
               >
                 {this.props.content}
               </View>
-            </View>
+            </Androw>
           </View>
           {hasChildren && this.props.showChildInTooltip
             ? this.renderChildInTooltip()
