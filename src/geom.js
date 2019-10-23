@@ -21,30 +21,30 @@ class Rect {
   }
 }
 
-const swapSizeDimmensions = (size) => new Size(size.height, size.width);
+const swapSizeDimmensions = size => new Size(size.height, size.width);
 
 const makeChildlessRect = ({ displayInsets, windowDims, placement }) => {
   switch (placement) {
-    case "bottom":
+    case 'bottom':
       return new Rect(windowDims.width / 2, displayInsets.top, 0, 0);
 
-    case "right":
+    case 'right':
       return new Rect(displayInsets.left, windowDims.height / 2, 0, 0);
 
-    case "left":
+    case 'left':
       return new Rect(
         windowDims.width - displayInsets.right,
         windowDims.height / 2,
         0,
-        0
+        0,
       );
-    case "top":
+    case 'top':
     default:
       return new Rect(
         windowDims.width / 2,
         windowDims.height - displayInsets.bottom,
         0,
-        0
+        0,
       );
   }
 };
@@ -53,7 +53,7 @@ const computeCenterGeometry = ({
   childRect,
   contentSize,
   displayInsets,
-  windowDims
+  windowDims,
 }) => {
   const maxWidth =
     windowDims.width - (displayInsets.left + displayInsets.right);
@@ -62,7 +62,7 @@ const computeCenterGeometry = ({
 
   const adjustedContentSize = new Size(
     contentSize.width >= maxWidth ? maxWidth : -1,
-    contentSize.height >= maxHeight ? maxHeight : -1
+    contentSize.height >= maxHeight ? maxHeight : -1,
   );
 
   const tooltipOrigin = new Point(
@@ -71,19 +71,19 @@ const computeCenterGeometry = ({
       : displayInsets.left,
     adjustedContentSize.height === -1
       ? (maxHeight - contentSize.height) / 2 + displayInsets.top
-      : displayInsets.top
+      : displayInsets.top,
   );
 
   const anchorPoint = new Point(
     childRect.x + childRect.width / 2.0,
-    childRect.y
+    childRect.y,
   );
 
   return {
     tooltipOrigin,
     anchorPoint,
-    placement: "center",
-    adjustedContentSize
+    placement: 'center',
+    adjustedContentSize,
   };
 };
 
@@ -93,14 +93,14 @@ const computeTopGeometry = ({
   arrowSize,
   displayInsets,
   windowDims,
-  childContentSpacing
+  childContentSpacing,
 }) => {
   const maxWidth =
     windowDims.width - (displayInsets.left + displayInsets.right);
 
   const adjustedContentSize = new Size(
     Math.min(maxWidth, contentSize.width),
-    contentSize.height
+    contentSize.height,
   );
 
   const tooltipOrigin = new Point(
@@ -108,17 +108,17 @@ const computeTopGeometry = ({
       ? displayInsets.left
       : Math.max(
           displayInsets.left,
-          childRect.x + (childRect.width - adjustedContentSize.width) / 2
+          childRect.x + (childRect.width - adjustedContentSize.width) / 2,
         ),
     Math.max(
       displayInsets.top - childContentSpacing,
-      childRect.y - contentSize.height - arrowSize.height - childContentSpacing
-    )
+      childRect.y - contentSize.height - arrowSize.height - childContentSpacing,
+    ),
   );
 
   const anchorPoint = new Point(
     childRect.x + childRect.width / 2.0,
-    childRect.y - childContentSpacing
+    childRect.y - childContentSpacing,
   );
 
   // make sure arrow does not extend beyond displayInsets
@@ -150,8 +150,8 @@ const computeTopGeometry = ({
   return {
     tooltipOrigin,
     anchorPoint,
-    placement: "top",
-    adjustedContentSize
+    placement: 'top',
+    adjustedContentSize,
   };
 };
 
@@ -161,14 +161,14 @@ const computeBottomGeometry = ({
   arrowSize,
   displayInsets,
   windowDims,
-  childContentSpacing
+  childContentSpacing,
 }) => {
   const maxWidth =
     windowDims.width - (displayInsets.left + displayInsets.right);
 
   const adjustedContentSize = new Size(
     Math.min(maxWidth, contentSize.width),
-    contentSize.height
+    contentSize.height,
   );
 
   const tooltipOrigin = new Point(
@@ -176,16 +176,16 @@ const computeBottomGeometry = ({
       ? displayInsets.left
       : Math.max(
           displayInsets.left,
-          childRect.x + (childRect.width - adjustedContentSize.width) / 2
+          childRect.x + (childRect.width - adjustedContentSize.width) / 2,
         ),
     Math.min(
       windowDims.height - displayInsets.bottom + childContentSpacing,
-      childRect.y + childRect.height + arrowSize.height + childContentSpacing
-    )
+      childRect.y + childRect.height + arrowSize.height + childContentSpacing,
+    ),
   );
   const anchorPoint = new Point(
     childRect.x + childRect.width / 2.0,
-    childRect.y + childRect.height + childContentSpacing
+    childRect.y + childRect.height + childContentSpacing,
   );
 
   // make sure arrow does not extend beyond displayInsets
@@ -219,8 +219,8 @@ const computeBottomGeometry = ({
   return {
     tooltipOrigin,
     anchorPoint,
-    placement: "bottom",
-    adjustedContentSize
+    placement: 'bottom',
+    adjustedContentSize,
   };
 };
 
@@ -230,32 +230,32 @@ const computeLeftGeometry = ({
   arrowSize,
   displayInsets,
   windowDims,
-  childContentSpacing
+  childContentSpacing,
 }) => {
   const maxHeight =
     windowDims.height - (displayInsets.top + displayInsets.bottom);
 
   const adjustedContentSize = new Size(
     contentSize.width,
-    Math.min(maxHeight, contentSize.height)
+    Math.min(maxHeight, contentSize.height),
   );
 
   const tooltipOrigin = new Point(
     Math.max(
       displayInsets.left - childContentSpacing,
-      childRect.x - contentSize.width - arrowSize.width - childContentSpacing
+      childRect.x - contentSize.width - arrowSize.width - childContentSpacing,
     ),
     contentSize.height >= maxHeight
       ? displayInsets.top
       : Math.max(
           displayInsets.top,
-          childRect.y + (childRect.height - adjustedContentSize.height) / 2
-        )
+          childRect.y + (childRect.height - adjustedContentSize.height) / 2,
+        ),
   );
 
   const anchorPoint = new Point(
     childRect.x - childContentSpacing,
-    childRect.y + childRect.height / 2.0
+    childRect.y + childRect.height / 2.0,
   );
 
   // make sure arrow does not extend beyond displayInsets
@@ -287,8 +287,8 @@ const computeLeftGeometry = ({
   return {
     tooltipOrigin,
     anchorPoint,
-    placement: "left",
-    adjustedContentSize
+    placement: 'left',
+    adjustedContentSize,
   };
 };
 
@@ -298,32 +298,32 @@ const computeRightGeometry = ({
   arrowSize,
   displayInsets,
   windowDims,
-  childContentSpacing
+  childContentSpacing,
 }) => {
   const maxHeight =
     windowDims.height - (displayInsets.top + displayInsets.bottom);
 
   const adjustedContentSize = new Size(
     contentSize.width,
-    Math.min(maxHeight, contentSize.height)
+    Math.min(maxHeight, contentSize.height),
   );
 
   const tooltipOrigin = new Point(
     Math.min(
       windowDims.width - displayInsets.right + childContentSpacing,
-      childRect.x + childRect.width + arrowSize.width + childContentSpacing
+      childRect.x + childRect.width + arrowSize.width + childContentSpacing,
     ),
     contentSize.height >= maxHeight
       ? displayInsets.top
       : Math.max(
           displayInsets.top,
-          childRect.y + (childRect.height - adjustedContentSize.height) / 2
-        )
+          childRect.y + (childRect.height - adjustedContentSize.height) / 2,
+        ),
   );
 
   const anchorPoint = new Point(
     childRect.x + childRect.width + childContentSpacing,
-    childRect.y + childRect.height / 2.0
+    childRect.y + childRect.height / 2.0,
   );
 
   // make sure arrow does not extend beyond displayInsets
@@ -357,8 +357,8 @@ const computeRightGeometry = ({
   return {
     tooltipOrigin,
     anchorPoint,
-    placement: "right",
-    adjustedContentSize
+    placement: 'right',
+    adjustedContentSize,
   };
 };
 
@@ -372,5 +372,5 @@ export {
   computeTopGeometry,
   computeBottomGeometry,
   computeLeftGeometry,
-  computeRightGeometry
+  computeRightGeometry,
 };

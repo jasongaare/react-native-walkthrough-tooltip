@@ -1,51 +1,51 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0,
-    backgroundColor: "transparent",
-    zIndex: 500
+    backgroundColor: 'transparent',
+    zIndex: 500,
   },
   containerVisible: {
-    opacity: 1
+    opacity: 1,
   },
   background: {
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
   },
   tooltip: {
-    backgroundColor: "transparent",
-    position: "absolute",
-    shadowColor: "black",
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    shadowColor: 'black',
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 2,
-    shadowOpacity: 0.8
+    shadowOpacity: 0.8,
   },
   content: {
     borderRadius: 4,
     padding: 8,
-    backgroundColor: "#fff",
-    overflow: "hidden"
+    backgroundColor: '#fff',
+    overflow: 'hidden',
   },
   arrow: {
-    position: "absolute",
-    borderTopColor: "transparent",
-    borderRightColor: "transparent",
-    borderBottomColor: "transparent",
-    borderLeftColor: "transparent"
-  }
+    position: 'absolute',
+    borderTopColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderLeftColor: 'transparent',
+  },
 });
 
-const arrowRotationForPlacement = (placement) => {
+const arrowRotationForPlacement = placement => {
   switch (placement) {
-    case "bottom":
-      return "180deg";
-    case "left":
-      return "-90deg";
-    case "right":
-      return "90deg";
+    case 'bottom':
+      return '180deg';
+    case 'left':
+      return '-90deg';
+    case 'right':
+      return '90deg';
     default:
-      return "0deg";
+      return '0deg';
   }
 };
 
@@ -53,7 +53,7 @@ const arrowPlacementStyles = ({
   anchorPoint,
   arrowSize,
   placement,
-  tooltipOrigin
+  tooltipOrigin,
 }) => {
   // Create the arrow from a rectangle with the appropriate borderXWidth set
   // A rotation is then applied dependending on the placement
@@ -64,9 +64,9 @@ const arrowPlacementStyles = ({
   let marginTop = 0;
   let marginLeft = 0;
 
-  if (placement === "bottom") {
+  if (placement === 'bottom') {
     marginTop = arrowSize.height;
-  } else if (placement === "right") {
+  } else if (placement === 'right') {
     marginLeft = arrowSize.height;
   }
 
@@ -78,7 +78,7 @@ const arrowPlacementStyles = ({
     borderTopWidth: height / 2,
     borderRightWidth: width / 2,
     borderBottomWidth: height / 2,
-    borderLeftWidth: width / 2
+    borderLeftWidth: width / 2,
   };
 };
 
@@ -95,46 +95,46 @@ const tooltipPlacementStyles = ({ arrowSize, placement, tooltipOrigin }) => {
   const { height } = arrowSize;
 
   switch (placement) {
-    case "bottom":
+    case 'bottom':
       return {
         paddingTop: height,
         top: tooltipOrigin.y - height,
-        left: tooltipOrigin.x
+        left: tooltipOrigin.x,
       };
-    case "top":
+    case 'top':
       return {
         paddingBottom: height,
         top: tooltipOrigin.y,
-        left: tooltipOrigin.x
+        left: tooltipOrigin.x,
       };
-    case "right":
+    case 'right':
       return {
         paddingLeft: height,
         top: tooltipOrigin.y,
-        left: tooltipOrigin.x - height
+        left: tooltipOrigin.x - height,
       };
-    case "left":
+    case 'left':
       return {
         paddingRight: height,
         top: tooltipOrigin.y,
-        left: tooltipOrigin.x
+        left: tooltipOrigin.x,
       };
-    case "center":
+    case 'center':
     default:
       return {
         top: tooltipOrigin.y,
-        left: tooltipOrigin.x
+        left: tooltipOrigin.x,
       };
   }
 };
 
-const styleGenerator = (styleGeneratorProps) => {
+const styleGenerator = styleGeneratorProps => {
   const {
     adjustedContentSize,
     displayInsets,
     measurementsFinished,
     ownProps,
-    placement
+    placement,
   } = styleGeneratorProps;
 
   const { height, width } = adjustedContentSize;
@@ -144,7 +144,7 @@ const styleGenerator = (styleGeneratorProps) => {
     styles.content,
     height > 0 && { height }, // ignore special case of -1 with center placement (and 0 when not yet measured)
     width > 0 && { width }, // ignore special case of -1 with center placement (and 0 when not yet measured)
-    ownProps.contentStyle
+    ownProps.contentStyle,
   ];
 
   const contentBackgroundColor = StyleSheet.flatten(contentStyle)
@@ -154,7 +154,7 @@ const styleGenerator = (styleGeneratorProps) => {
     styles.arrow,
     arrowPlacementStyles(styleGeneratorProps),
     { borderTopColor: contentBackgroundColor },
-    ownProps.arrowStyle
+    ownProps.arrowStyle,
   ];
 
   return {
@@ -167,21 +167,21 @@ const styleGenerator = (styleGeneratorProps) => {
         paddingLeft: displayInsets.left,
         paddingRight: displayInsets.right,
         paddingBottom: displayInsets.bottom,
-        backgroundColor
-      }
+        backgroundColor,
+      },
     ],
     containerStyle: [
       styles.container,
       adjustedContentSize.width !== 0 &&
         measurementsFinished &&
-        styles.containerVisible
+        styles.containerVisible,
     ],
     contentStyle,
     tooltipStyle: [
       styles.tooltip,
       tooltipPlacementStyles(styleGeneratorProps),
-      ownProps.tooltipStyle
-    ]
+      ownProps.tooltipStyle,
+    ],
   };
 };
 

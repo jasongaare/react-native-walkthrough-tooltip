@@ -1,16 +1,16 @@
 // Type definitions for react-native-walkthrough-tooltip 1.0.0
 // Original definitions by: Siraj Alam https://github.com/sirajalam049
 
-declare module "react-native-walkthrough-tooltip" {
-  import React from "react";
-  import { GestureResponderEvent, StyleProp, ViewStyle } from "react-native";
+declare module 'react-native-walkthrough-tooltip' {
+  import React from 'react';
+  import { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
 
   type Orientation =
-    | "portrait"
-    | "portrait-upside-down"
-    | "landscape"
-    | "landscape-left"
-    | "landscape-right";
+    | 'portrait'
+    | 'portrait-upside-down'
+    | 'landscape'
+    | 'landscape-left'
+    | 'landscape-right';
 
   export interface TooltipSize {
     width: number;
@@ -74,7 +74,7 @@ declare module "react-native-walkthrough-tooltip" {
      * rendered without children. NOTE: center is only available with a childless placement,
      * and the content will be centered within the bounds defined by the displayInsets.
      */
-    placement?: "top" | "bottom" | "left" | "right" | "center";
+    placement?: 'top' | 'bottom' | 'left' | 'right' | 'center';
 
     // Determines if the tooltip's children should be shown in the foreground when the tooltip is visible.
     showChildInTooltip?: boolean;
