@@ -128,10 +128,6 @@ class Tooltip extends Component {
   }
 
   componentDidMount() {
-    if (this.state.waitingForInteractions) {
-      this.measureChildRect();
-    }
-
     Dimensions.addEventListener('change', this.updateWindowDims);
   }
 
@@ -219,9 +215,8 @@ class Tooltip extends Component {
   measureContent = e => {
     const { width, height } = e.nativeEvent.layout;
     const contentSize = new Size(width, height);
-
     this.setState({ contentSize }, () => {
-      this._updateGeometry();
+      this.computeGeometry();
     });
   };
 
@@ -234,7 +229,7 @@ class Tooltip extends Component {
       () => {
         this.isMeasuringChild = false;
         if (this.state.contentSize.width) {
-          this._updateGeometry();
+          this.computeGeometry();
         }
       },
     );
@@ -269,56 +264,62 @@ class Tooltip extends Component {
     }
   };
 
-  _updateGeometry = () => {
-    const { contentSize } = this.state;
-    const geom = this.computeGeometry({ contentSize });
-    const { tooltipOrigin, anchorPoint, placement, adjustedContentSize } = geom;
-
-    this.setState({
-      tooltipOrigin,
-      anchorPoint,
-      placement,
-      measurementsFinished: true,
-      adjustedContentSize,
-    });
-  };
-
-  computeGeometry = ({ contentSize, placement }) => {
-    const innerPlacement = placement || this.state.placement;
+  computeGeometry = () => {
     const { arrowSize, childContentSpacing } = this.props;
-    const { childRect, displayInsets, windowDims } = this.state;
+    const {
+      childRect,
+      contentSize,
+      displayInsets,
+      placement,
+      windowDims,
+    } = this.state;
 
     const options = {
       displayInsets,
       childRect,
       windowDims,
       arrowSize:
-        innerPlacement === 'top' || innerPlacement === 'bottom'
+        placement === 'top' || placement === 'bottom'
           ? arrowSize
           : swapSizeDimmensions(arrowSize),
       contentSize,
       childContentSpacing,
     };
 
+    let geom = computeTopGeometry(options);
+
     // special case for centered, childless placement tooltip
     if (
-      innerPlacement === 'center' &&
+      placement === 'center' &&
       React.Children.count(this.props.children) === 0
     ) {
-      return computeCenterGeometry(options);
+      geom = computeCenterGeometry(options);
+    } else {
+      switch (placement) {
+        case 'bottom':
+          geom = computeBottomGeometry(options);
+          break;
+        case 'left':
+          geom = computeLeftGeometry(options);
+          break;
+        case 'right':
+          geom = computeRightGeometry(options);
+          break;
+        case 'top':
+        default:
+          break; // computed just above if-else-block
+      }
     }
 
-    switch (innerPlacement) {
-      case 'bottom':
-        return computeBottomGeometry(options);
-      case 'left':
-        return computeLeftGeometry(options);
-      case 'right':
-        return computeRightGeometry(options);
-      case 'top':
-      default:
-        return computeTopGeometry(options);
-    }
+    const { tooltipOrigin, anchorPoint, adjustedContentSize } = geom;
+
+    this.setState({
+      tooltipOrigin,
+      anchorPoint,
+      placement,
+      measurementsFinished: childRect.width && contentSize.width,
+      adjustedContentSize,
+    });
   };
 
   renderChildInTooltip = () => {
