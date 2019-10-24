@@ -172,8 +172,9 @@ class Tooltip extends Component {
 
     // set measurements finished flag to false when tooltip closes
     if (prevState.measurementsFinished && !nextProps.isVisible) {
-      nextState.measurementsFinished = false;
       nextState.adjustedContentSize = new Size(0, 0);
+      nextState.contentSize = new Size(0, 0);
+      nextState.measurementsFinished = false;
     }
 
     if (Object.keys(nextState).length) {
@@ -236,24 +237,25 @@ class Tooltip extends Component {
   };
 
   measureChildRect = () => {
-    const doMeasurement = () => {
-      if (!this.isMeasuringChild) {
-        this.isMeasuringChild = true;
-        if (
-          this.childWrapper.current &&
-          typeof this.childWrapper.current.measure === 'function'
-        ) {
-          this.childWrapper.current.measure(
-            (x, y, width, height, pageX, pageY) => {
-              const childRect = new Rect(pageX, pageY, width, height);
-              this.onChildMeasurementComplete(childRect);
-            },
-          );
-        } else {
-          this.doChildlessPlacement();
+    const doMeasurement = () =>
+      setTimeout(() => {
+        if (!this.isMeasuringChild) {
+          this.isMeasuringChild = true;
+          if (
+            this.childWrapper.current &&
+            typeof this.childWrapper.current.measure === 'function'
+          ) {
+            this.childWrapper.current.measure(
+              (x, y, width, height, pageX, pageY) => {
+                const childRect = new Rect(pageX, pageY, width, height);
+                this.onChildMeasurementComplete(childRect);
+              },
+            );
+          } else {
+            this.doChildlessPlacement();
+          }
         }
-      }
-    };
+      }, 1000);
 
     if (this.props.useInteractionManager) {
       InteractionManager.runAfterInteractions(() => {
@@ -317,7 +319,8 @@ class Tooltip extends Component {
       tooltipOrigin,
       anchorPoint,
       placement,
-      measurementsFinished: childRect.width && contentSize.width,
+      measurementsFinished:
+        childRect.width && adjustedContentSize.width === contentSize.width,
       adjustedContentSize,
     });
   };

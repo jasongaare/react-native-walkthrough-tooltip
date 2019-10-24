@@ -237,7 +237,7 @@ const computeLeftGeometry = ({
 
   const adjustedContentSize = new Size(
     contentSize.width,
-    Math.min(maxHeight, contentSize.height),
+    contentSize.height >= maxHeight ? maxHeight : -1,
   );
 
   const tooltipOrigin = new Point(
@@ -249,7 +249,7 @@ const computeLeftGeometry = ({
       ? displayInsets.top
       : Math.max(
           displayInsets.top,
-          childRect.y + (childRect.height - adjustedContentSize.height) / 2,
+          childRect.y + (childRect.height - contentSize.height) / 2,
         ),
   );
 
@@ -305,7 +305,7 @@ const computeRightGeometry = ({
 
   const adjustedContentSize = new Size(
     contentSize.width,
-    Math.min(maxHeight, contentSize.height),
+    contentSize.height >= maxHeight ? maxHeight : -1,
   );
 
   const tooltipOrigin = new Point(
@@ -317,7 +317,7 @@ const computeRightGeometry = ({
       ? displayInsets.top
       : Math.max(
           displayInsets.top,
-          childRect.y + (childRect.height - adjustedContentSize.height) / 2,
+          childRect.y + (childRect.height - contentSize.height) / 2,
         ),
   );
 
