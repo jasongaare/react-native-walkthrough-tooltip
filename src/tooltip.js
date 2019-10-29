@@ -142,7 +142,14 @@ class Tooltip extends Component {
 
     if (contentChanged || placementChanged || becameVisible || insetsChanged) {
       setTimeout(() => {
-        this.measureChildRect();
+        this.setState(
+          {
+            adjustedContentSize: new Size(0, 0),
+            contentSize: new Size(0, 0),
+            measurementsFinished: false,
+          },
+          this.measureChildRect,
+        );
       });
     }
   }
@@ -216,9 +223,31 @@ class Tooltip extends Component {
   measureContent = e => {
     const { width, height } = e.nativeEvent.layout;
     const contentSize = new Size(width, height);
-    this.setState({ contentSize }, () => {
-      this.computeGeometry();
-    });
+    const { adjustedContentSize } = this.state;
+
+    if (this.props.placement === 'right') {
+      console.log('mc', {
+        adjustedContentSize: this.state.adjustedContentSize,
+        contentSize,
+        prevContentSize: this.state.contentSize,
+      });
+    }
+
+    this.setState(
+      {
+        contentSize,
+      },
+      () => {
+        if (
+          adjustedContentSize.width === -1 ||
+          adjustedContentSize.height === -1
+        ) {
+          // do nothing
+        } else {
+          this.computeGeometry(1);
+        }
+      },
+    );
   };
 
   onChildMeasurementComplete = rect => {
@@ -229,9 +258,7 @@ class Tooltip extends Component {
       },
       () => {
         this.isMeasuringChild = false;
-        if (this.state.contentSize.width) {
-          this.computeGeometry();
-        }
+        this.computeGeometry(2);
       },
     );
   };
@@ -266,7 +293,10 @@ class Tooltip extends Component {
     }
   };
 
-  computeGeometry = () => {
+  computeGeometry = num => {
+    if (this.props.placement === 'right') {
+      console.log('compute', num);
+    }
     const { arrowSize, childContentSpacing } = this.props;
     const {
       childRect,
@@ -320,7 +350,15 @@ class Tooltip extends Component {
       anchorPoint,
       placement,
       measurementsFinished:
-        childRect.width && adjustedContentSize.width === contentSize.width,
+        childRect.width &&
+        ((adjustedContentSize.width > 0 &&
+          adjustedContentSize.height === -1 &&
+          adjustedContentSize.width === contentSize.width) ||
+          (adjustedContentSize.height > 0 &&
+            adjustedContentSize.width === -1 &&
+            adjustedContentSize.height === contentSize.height) ||
+          (adjustedContentSize.height === contentSize.height &&
+            adjustedContentSize.width === contentSize.width)),
       adjustedContentSize,
     });
   };
