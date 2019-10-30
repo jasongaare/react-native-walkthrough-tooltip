@@ -3,23 +3,23 @@ import { StyleSheet } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    opacity: 0,
     backgroundColor: 'transparent',
     zIndex: 500,
-  },
-  containerVisible: {
-    opacity: 1,
   },
   background: {
     ...StyleSheet.absoluteFillObject,
   },
   tooltip: {
     backgroundColor: 'transparent',
+    opacity: 0,
     position: 'absolute',
     shadowColor: 'black',
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 2,
     shadowOpacity: 0.8,
+  },
+  tooltipVisible: {
+    opacity: 1,
   },
   content: {
     borderRadius: 4,
@@ -92,30 +92,30 @@ const getArrowRotation = (arrowStyle, placement) => {
 };
 
 const tooltipPlacementStyles = ({ arrowSize, placement, tooltipOrigin }) => {
-  const { height } = arrowSize;
+  const { height: arrowHeight } = arrowSize;
 
   switch (placement) {
     case 'bottom':
       return {
-        paddingTop: height,
-        top: tooltipOrigin.y - height,
+        paddingTop: arrowHeight,
+        top: tooltipOrigin.y - arrowHeight,
         left: tooltipOrigin.x,
       };
     case 'top':
       return {
-        paddingBottom: height,
+        paddingBottom: arrowHeight,
         top: tooltipOrigin.y,
         left: tooltipOrigin.x,
       };
     case 'right':
       return {
-        paddingLeft: height,
+        paddingLeft: arrowHeight,
         top: tooltipOrigin.y,
-        left: tooltipOrigin.x - height,
+        left: tooltipOrigin.x - arrowHeight,
       };
     case 'left':
       return {
-        paddingRight: height,
+        paddingRight: arrowHeight,
         top: tooltipOrigin.y,
         left: tooltipOrigin.x,
       };
@@ -170,17 +170,13 @@ const styleGenerator = styleGeneratorProps => {
         backgroundColor,
       },
     ],
-    containerStyle: [
-      styles.container,
-      adjustedContentSize.width !== 0 &&
-        measurementsFinished &&
-        styles.containerVisible,
-    ],
+    containerStyle: styles.container,
     contentStyle,
     tooltipStyle: [
       styles.tooltip,
       tooltipPlacementStyles(styleGeneratorProps),
       ownProps.tooltipStyle,
+      measurementsFinished && styles.tooltipVisible,
     ],
   };
 };

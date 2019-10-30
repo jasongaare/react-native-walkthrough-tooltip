@@ -14,6 +14,7 @@ import {
   Rect,
   swapSizeDimmensions,
   makeChildlessRect,
+  adjustedContentMeasured,
   computeCenterGeometry,
   computeTopGeometry,
   computeBottomGeometry,
@@ -128,8 +129,27 @@ class Tooltip extends Component {
   }
 
   componentDidMount() {
-    Dimensions.addEventListener('change', this.updateWindowDims);
+    Dimensions.addEventListener('change', this.resetMeasurements);
   }
+
+  resetMeasurements = (dims = null) => {
+    this.setState(
+      prevState => ({
+        contentSize: new Size(0, 0),
+        adjustedContentSize: new Size(0, 0),
+        anchorPoint: new Point(0, 0),
+        tooltipOrigin: new Point(0, 0),
+        childRect: new Rect(0, 0, 0, 0),
+        measurementsFinished: false,
+        windowDims: dims ? dims.window : prevState.windowDims,
+      }),
+      () => {
+        setTimeout(() => {
+          this.measureChildRect();
+        }, 500);
+      },
+    );
+  };
 
   componentDidUpdate(prevProps, prevState) {
     const { content, isVisible, placement } = this.props;
@@ -140,22 +160,15 @@ class Tooltip extends Component {
     const becameVisible = isVisible && !prevProps.isVisible;
     const insetsChanged = !rfcIsEqual(prevState.displayInsets, displayInsets);
 
-    if (contentChanged || placementChanged || becameVisible || insetsChanged) {
-      setTimeout(() => {
-        this.setState(
-          {
-            adjustedContentSize: new Size(0, 0),
-            contentSize: new Size(0, 0),
-            measurementsFinished: false,
-          },
-          this.measureChildRect,
-        );
-      });
+    if (contentChanged || placementChanged || insetsChanged) {
+      this.resetMeasurements();
+    } else if (becameVisible) {
+      this.measureChildRect();
     }
   }
 
   componentWillUnmount() {
-    Dimensions.removeEventListener('change', this.updateWindowDims);
+    Dimensions.removeEventListener('change', this.resetMeasurements);
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -191,25 +204,6 @@ class Tooltip extends Component {
     return null;
   }
 
-  updateWindowDims = dims => {
-    this.setState(
-      {
-        windowDims: dims.window,
-        contentSize: new Size(0, 0),
-        adjustedContentSize: new Size(0, 0),
-        anchorPoint: new Point(0, 0),
-        tooltipOrigin: new Point(0, 0),
-        childRect: new Rect(0, 0, 0, 0),
-        measurementsFinished: false,
-      },
-      () => {
-        setTimeout(() => {
-          this.measureChildRect();
-        }, 500); // give the rotation a moment to finish
-      },
-    );
-  };
-
   doChildlessPlacement = () => {
     this.onChildMeasurementComplete(
       makeChildlessRect({
@@ -223,31 +217,22 @@ class Tooltip extends Component {
   measureContent = e => {
     const { width, height } = e.nativeEvent.layout;
     const contentSize = new Size(width, height);
-    const { adjustedContentSize } = this.state;
 
-    if (this.props.placement === 'right') {
-      console.log('mc', {
-        adjustedContentSize: this.state.adjustedContentSize,
-        contentSize,
-        prevContentSize: this.state.contentSize,
-      });
+    const nextState = { contentSize };
+    const contentSizeChanged = !rfcIsEqual(contentSize, this.state.contentSize);
+
+    if (
+      contentSizeChanged &&
+      rfcIsEqual(this.state.adjustedContentSize, this.state.contentSize)
+    ) {
+      nextState.adjustedContentSize = new Size(0, 0);
     }
 
-    this.setState(
-      {
-        contentSize,
-      },
-      () => {
-        if (
-          adjustedContentSize.width === -1 ||
-          adjustedContentSize.height === -1
-        ) {
-          // do nothing
-        } else {
-          this.computeGeometry(1);
-        }
-      },
-    );
+    this.setState(nextState, () => {
+      if (contentSizeChanged) {
+        this.computeGeometry();
+      }
+    });
   };
 
   onChildMeasurementComplete = rect => {
@@ -258,7 +243,7 @@ class Tooltip extends Component {
       },
       () => {
         this.isMeasuringChild = false;
-        this.computeGeometry(2);
+        this.computeGeometry();
       },
     );
   };
@@ -293,10 +278,7 @@ class Tooltip extends Component {
     }
   };
 
-  computeGeometry = num => {
-    if (this.props.placement === 'right') {
-      console.log('compute', num);
-    }
+  computeGeometry = () => {
     const { arrowSize, childContentSpacing } = this.props;
     const {
       childRect,
@@ -345,20 +327,16 @@ class Tooltip extends Component {
 
     const { tooltipOrigin, anchorPoint, adjustedContentSize } = geom;
 
+    const measurementsFinished =
+      !!childRect.width &&
+      !!contentSize.width &&
+      adjustedContentMeasured(adjustedContentSize, contentSize);
+
     this.setState({
       tooltipOrigin,
       anchorPoint,
       placement,
-      measurementsFinished:
-        childRect.width &&
-        ((adjustedContentSize.width > 0 &&
-          adjustedContentSize.height === -1 &&
-          adjustedContentSize.width === contentSize.width) ||
-          (adjustedContentSize.height > 0 &&
-            adjustedContentSize.width === -1 &&
-            adjustedContentSize.height === contentSize.height) ||
-          (adjustedContentSize.height === contentSize.height &&
-            adjustedContentSize.width === contentSize.width)),
+      measurementsFinished,
       adjustedContentSize,
     });
   };
@@ -406,6 +384,8 @@ class Tooltip extends Component {
     });
 
     const hasChildren = React.Children.count(this.props.children) > 0;
+    const shouldShowChildren =
+      this.state.measurementsFinished && this.props.showChildInTooltip;
 
     return (
       <TouchableWithoutFeedback onPress={this.props.onClose}>
@@ -421,7 +401,7 @@ class Tooltip extends Component {
               </View>
             </View>
           </View>
-          {hasChildren && this.props.showChildInTooltip
+          {hasChildren && shouldShowChildren
             ? this.renderChildInTooltip()
             : null}
         </View>

@@ -23,6 +23,48 @@ class Rect {
 
 const swapSizeDimmensions = size => new Size(size.height, size.width);
 
+const nonNegativeContentHeight = (adjustedContentSize, contentSize) =>
+  adjustedContentSize.height > 0
+    ? adjustedContentSize.height
+    : contentSize.height;
+
+const nonNegativeContentWidth = (adjustedContentSize, contentSize) =>
+  adjustedContentSize.width > 0 ? adjustedContentSize.width : contentSize.width;
+
+const adjustedContentMeasured = (adjustedContentSize, contentSize) => {
+  console.log({ adjustedContentSize, contentSize });
+
+  // this content is bounded in width, but can grow in height
+  const adjustedWidthFinished =
+    adjustedContentSize.width > 0 &&
+    adjustedContentSize.height === -1 &&
+    adjustedContentSize.width === contentSize.width;
+
+  // this content is bounded in height, but can grow in width
+  const adjustedHeightFinished =
+    adjustedContentSize.height > 0 &&
+    adjustedContentSize.width === -1 &&
+    adjustedContentSize.height === contentSize.height;
+
+  // this content is either bounded in both dimensions,
+  // or fits inside the displayInsets with adjustment
+  const contentEqualsAdjusted =
+    adjustedContentSize.height === contentSize.height &&
+    adjustedContentSize.width === contentSize.width;
+
+  // special centered case where neight dimension is bounded and the view
+  // fits with center justification and alignment
+  const unboundedCenteredFinished =
+    adjustedContentSize.width === -1 && adjustedContentSize.height === -1;
+
+  return (
+    adjustedWidthFinished ||
+    adjustedHeightFinished ||
+    contentEqualsAdjusted ||
+    unboundedCenteredFinished
+  );
+};
+
 const makeChildlessRect = ({ displayInsets, windowDims, placement }) => {
   switch (placement) {
     case 'bottom':
@@ -108,7 +150,10 @@ const computeTopGeometry = ({
       ? displayInsets.left
       : Math.max(
           displayInsets.left,
-          childRect.x + (childRect.width - adjustedContentSize.width) / 2,
+          childRect.x +
+            (childRect.width -
+              nonNegativeContentWidth(adjustedContentSize, contentSize)) /
+              2,
         ),
     Math.max(
       displayInsets.top - childContentSpacing,
@@ -144,7 +189,9 @@ const computeTopGeometry = ({
 
   if (tooltipOrigin.x + contentSize.width > maxWidth) {
     tooltipOrigin.x =
-      displayInsets.left + (maxWidth - adjustedContentSize.width) / 2;
+      displayInsets.left +
+      (maxWidth - nonNegativeContentWidth(adjustedContentSize, contentSize)) /
+        2;
   }
 
   return {
@@ -176,7 +223,10 @@ const computeBottomGeometry = ({
       ? displayInsets.left
       : Math.max(
           displayInsets.left,
-          childRect.x + (childRect.width - adjustedContentSize.width) / 2,
+          childRect.x +
+            (childRect.width -
+              nonNegativeContentWidth(adjustedContentSize, contentSize)) /
+              2,
         ),
     Math.min(
       windowDims.height - displayInsets.bottom + childContentSpacing,
@@ -213,7 +263,9 @@ const computeBottomGeometry = ({
 
   if (tooltipOrigin.x + contentSize.width > maxWidth) {
     tooltipOrigin.x =
-      displayInsets.left + (maxWidth - adjustedContentSize.width) / 2;
+      displayInsets.left +
+      (maxWidth - nonNegativeContentWidth(adjustedContentSize, contentSize)) /
+        2;
   }
 
   return {
@@ -281,7 +333,9 @@ const computeLeftGeometry = ({
 
   if (tooltipOrigin.y + contentSize.height > maxHeight) {
     tooltipOrigin.y =
-      windowDims.height - displayInsets.bottom - adjustedContentSize.height;
+      windowDims.height -
+      displayInsets.bottom -
+      nonNegativeContentHeight(adjustedContentSize, contentSize);
   }
 
   return {
@@ -351,7 +405,9 @@ const computeRightGeometry = ({
 
   if (tooltipOrigin.y + contentSize.height > maxHeight) {
     tooltipOrigin.y =
-      windowDims.height - displayInsets.bottom - adjustedContentSize.height;
+      windowDims.height -
+      displayInsets.bottom -
+      nonNegativeContentHeight(adjustedContentSize, contentSize);
   }
 
   return {
@@ -368,6 +424,7 @@ export {
   Rect,
   swapSizeDimmensions,
   makeChildlessRect,
+  adjustedContentMeasured,
   computeCenterGeometry,
   computeTopGeometry,
   computeBottomGeometry,
