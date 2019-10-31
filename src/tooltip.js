@@ -246,7 +246,13 @@ class Tooltip extends Component {
           this.childWrapper.current.measure(
             (x, y, width, height, pageX, pageY) => {
               const childRect = new Rect(pageX, pageY, width, height);
-              this.onChildMeasurementComplete(childRect);
+              if (
+                Object.values(childRect).every(value => value !== undefined)
+              ) {
+                this.onChildMeasurementComplete(childRect);
+              } else {
+                this.doChildlessPlacement();
+              }
             },
           );
         } else {
