@@ -56,6 +56,7 @@ const invertPlacement = (placement) => {
 };
 
 class Tooltip extends Component {
+  _isMounted = false;
   static defaultProps = {
     allowChildInteraction: true,
     arrowSize: new Size(16, 8),
@@ -133,6 +134,7 @@ class Tooltip extends Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     if (this.state.waitingForInteractions) {
       this.measureChildRect();
     }
@@ -157,6 +159,7 @@ class Tooltip extends Component {
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     Dimensions.removeEventListener("change", this.updateWindowDims);
   }
 
