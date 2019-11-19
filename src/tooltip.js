@@ -56,7 +56,7 @@ const invertPlacement = (placement) => {
 };
 
 class Tooltip extends Component {
-  _isMounted = false;
+  isMounted = false;
   static defaultProps = {
     allowChildInteraction: true,
     arrowSize: new Size(16, 8),
@@ -134,7 +134,7 @@ class Tooltip extends Component {
   }
 
   componentDidMount() {
-    this._isMounted = true;
+    this.isMounted = true;
     if (this.state.waitingForInteractions) {
       this.measureChildRect();
     }
@@ -159,7 +159,7 @@ class Tooltip extends Component {
   }
 
   componentWillUnmount() {
-    this._isMounted = false;
+    this.isMounted = false;
     Dimensions.removeEventListener("change", this.updateWindowDims);
   }
 
@@ -196,22 +196,24 @@ class Tooltip extends Component {
   }
 
   updateWindowDims = (dims) => {
-    this.setState(
-      {
-        windowDims: dims.window,
-        contentSize: new Size(0, 0),
-        adjustedContentSize: new Size(0, 0),
-        anchorPoint: new Point(0, 0),
-        tooltipOrigin: new Point(0, 0),
-        childRect: new Rect(0, 0, 0, 0),
-        measurementsFinished: false
-      },
-      () => {
-        setTimeout(() => {
-          this.measureChildRect();
-        }, 500); // give the rotation a moment to finish
-      }
-    );
+    if (this.isMounted) {
+      this.setState(
+        {
+          windowDims: dims.window,
+          contentSize: new Size(0, 0),
+          adjustedContentSize: new Size(0, 0),
+          anchorPoint: new Point(0, 0),
+          tooltipOrigin: new Point(0, 0),
+          childRect: new Rect(0, 0, 0, 0),
+          measurementsFinished: false
+        },
+        () => {
+          setTimeout(() => {
+            this.measureChildRect();
+          }, 500); // give the rotation a moment to finish
+        }
+      );
+    } 
   };
 
   doChildlessPlacement = () => {
