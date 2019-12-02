@@ -94,6 +94,11 @@ declare module 'react-native-walkthrough-tooltip' {
      * but rather an absolutely positioned view
      */
     useReactNativeModal?: boolean;
+
+    /** 
+     *The distance between the tooltip-rendered child and the arrow pointing to it
+    */
+    childContentSpacing?: number;
   }
 
   /**
