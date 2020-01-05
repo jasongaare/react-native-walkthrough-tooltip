@@ -99,6 +99,15 @@ declare module 'react-native-walkthrough-tooltip' {
      *The distance between the tooltip-rendered child and the arrow pointing to it
     */
     childContentSpacing?: number;
+
+    /**
+     *The top value to set for the container. This is useful to fix the issue with StatusBar in Android.
+     ```js
+        // Usage Example
+        <Tooltip topAdjustment={Platform.OS === 'android' ? -StatusBar.currentHeight : 0} />
+     ```
+    */
+    topAdjustment?: number;
   }
 
   /**
