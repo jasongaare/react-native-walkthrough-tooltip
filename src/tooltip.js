@@ -71,6 +71,7 @@ class Tooltip extends Component {
     supportedOrientations: ['portrait', 'landscape'],
     useInteractionManager: false,
     useReactNativeModal: true,
+    topAdjustment: 0,
   };
 
   static propTypes = {
@@ -97,6 +98,7 @@ class Tooltip extends Component {
     supportedOrientations: PropTypes.arrayOf(PropTypes.string),
     useInteractionManager: PropTypes.bool,
     useReactNativeModal: PropTypes.bool,
+    topAdjustment: PropTypes.number,
   };
 
   constructor(props) {
@@ -368,6 +370,7 @@ class Tooltip extends Component {
       ownProps: { ...this.props },
       placement: this.state.placement,
       tooltipOrigin: this.state.tooltipOrigin,
+      topAdjustment: this.props.topAdjustment,
     });
 
     const hasChildren = React.Children.count(this.props.children) > 0;
