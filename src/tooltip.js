@@ -144,6 +144,10 @@ class Tooltip extends Component {
 
     if (contentChanged || placementChanged || becameVisible || insetsChanged) {
       setTimeout(() => {
+        this.setState({
+          contentSize: new Size(0, 0),
+          adjustedContentSize: new Size(0, 0),
+        });
         this.measureChildRect();
       });
     }
