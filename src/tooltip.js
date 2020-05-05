@@ -58,6 +58,7 @@ class Tooltip extends Component {
     childContentSpacing: 4,
     children: null,
     closeOnChildInteraction: true,
+    closeOnContentInteraction: true,
     content: <View />,
     displayInsets: {},
     isVisible: false,
@@ -84,6 +85,7 @@ class Tooltip extends Component {
     childContentSpacing: PropTypes.number,
     children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     closeOnChildInteraction: PropTypes.bool,
+    closeOnContentInteraction: PropTypes.bool,
     content: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     displayInsets: PropTypes.shape({
       top: PropTypes.number,
@@ -375,6 +377,12 @@ class Tooltip extends Component {
 
     const hasChildren = React.Children.count(this.props.children) > 0;
 
+    const onPressContent = () => {
+      if (this.props.closeOnContentInteraction) {
+        this.props.onClose();
+      }
+    };
+
     return (
       <TouchableWithoutFeedback onPress={this.props.onClose}>
         <View style={generatedStyles.containerStyle}>
@@ -385,7 +393,9 @@ class Tooltip extends Component {
                 onLayout={this.measureContent}
                 style={generatedStyles.contentStyle}
               >
-                {this.props.content}
+                <TouchableWithoutFeedback onPress={onPressContent}>
+                  {this.props.content}
+                </TouchableWithoutFeedback>
               </View>
             </View>
           </View>
