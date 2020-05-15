@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import StorageManager from '../../../src/classes/storageManager.class';
-import ConfigurationManager from '../../../src/classes/configurationManager.class';
-import TutorialManager from '../../../src/classes/tutorialManager.class';
+import StorageManager from '../../../../src/classes/storageManager.class';
+import ConfigurationManager from '../../../../src/classes/configurationManager.class';
+import TutorialManager from '../../../../src/classes/tutorialManager.class';
 
-import BetterText from '../../../src/screens/components/betterText';
-import BetterButton from '../../../src/screens/components/betterButton';
+import BetterText from '../../../../src/screens/components/betterText';
+import BetterButton from '../../../../src/screens/components/betterButton';
 
 import {
   Animated,
