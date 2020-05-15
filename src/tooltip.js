@@ -620,7 +620,7 @@ class Tooltip extends Component {
           {/* RISK to ON double tap message */}
           {this.props.mandownNotification === true ?
             <View style={styles.notification}>
-              <Image resizeMode={'cover'} style={styles.notificationImage} source={require('../../../src/screens/modules/main/assets/gradient_overlay.png')} />
+              <Image resizeMode={'cover'} style={styles.notificationImage} source={require('../../../../src/screens/modules/main/assets/gradient_overlay.png')} />
 
               <View style={styles.notificationContainer}>
 
