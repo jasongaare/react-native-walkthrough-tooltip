@@ -82,12 +82,17 @@ const styles = EStyleSheet.create({
     '@media ios': {
       ...ifIphoneX({
         bottom: getStatusBarHeight() + 15,
+        left: '5%',
       }, 
       {
         bottom: 15,
+        left: '5%',
       }),
     },
-    left: '5%',
+    '@media android': {
+      bottom: 15,
+      right: '5%',
+    },
     zIndex: 1,
   },
   closeTutorialTop: {
