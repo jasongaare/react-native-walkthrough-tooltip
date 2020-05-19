@@ -102,14 +102,17 @@ class Tooltip extends Component {
   }
 
   async componentDidMount() {
+    
+    const tutorialData = await StorageManager.get('tutorial.finished');
+    this.setState({ doneTutorial: typeof tutorialData === 'string' && tutorialData !== null });
+
     if (this.state.waitingForInteractions) {
       InteractionManager.runAfterInteractions(() => {
         this.measureChildRect();
         this.setState({ waitingForInteractions: false });
       });
     }
-    const tutorialData = await StorageManager.get('tutorial.finished');
-    this.setState({ doneTutorial: typeof tutorialData === 'string' && tutorialData !== null });
+
   }
 
   async componentWillReceiveProps(nextProps) {
@@ -138,6 +141,14 @@ class Tooltip extends Component {
         this._startAnimation({ show: false });
       }
     }
+
+    const tutorialData = await StorageManager.get('tutorial.finished');
+    const doneTutorial = typeof tutorialData === 'string' && tutorialData !== null;
+
+    if (this.state.doneTutorial !== doneTutorial) {
+      this.setState({ doneTutorial: typeof tutorialData === 'string' && tutorialData !== null });
+    }
+    
   }
 
   componentDidUpdate() {
