@@ -104,7 +104,7 @@ class Tooltip extends Component {
   async componentDidMount() {
     
     const tutorialData = await StorageManager.get('tutorial.finished');
-    this.setState({ doneTutorial: typeof tutorialData === 'string' && tutorialData !== null });
+    this.setState({ doneTutorial: typeof tutorialData === 'object' && tutorialData !== null });
 
     if (this.state.waitingForInteractions) {
       InteractionManager.runAfterInteractions(() => {
@@ -143,10 +143,10 @@ class Tooltip extends Component {
     }
 
     const tutorialData = await StorageManager.get('tutorial.finished');
-    const doneTutorial = typeof tutorialData === 'string' && tutorialData !== null;
+    const doneTutorial = typeof tutorialData === 'object' && tutorialData !== null;
 
     if (this.state.doneTutorial !== doneTutorial) {
-      this.setState({ doneTutorial: typeof tutorialData === 'string' && tutorialData !== null });
+      this.setState({ doneTutorial: typeof tutorialData === 'object' && tutorialData !== null });
     }
     
   }
