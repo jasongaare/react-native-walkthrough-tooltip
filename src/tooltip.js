@@ -73,6 +73,7 @@ class Tooltip extends Component {
     useInteractionManager: false,
     useReactNativeModal: true,
     topAdjustment: 0,
+    accessible: true
   };
 
   static propTypes = {
@@ -101,6 +102,7 @@ class Tooltip extends Component {
     useInteractionManager: PropTypes.bool,
     useReactNativeModal: PropTypes.bool,
     topAdjustment: PropTypes.number,
+    accessible: PropTypes.bool,
   };
 
   constructor(props) {
@@ -384,7 +386,7 @@ class Tooltip extends Component {
     };
 
     return (
-      <TouchableWithoutFeedback onPress={this.props.onClose}>
+      <TouchableWithoutFeedback onPress={this.props.onClose} accessible={this.props.accessible}>
         <View style={generatedStyles.containerStyle}>
           <View style={[generatedStyles.backgroundStyle]}>
             <View style={generatedStyles.tooltipStyle}>

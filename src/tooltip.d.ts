@@ -98,9 +98,9 @@ declare module 'react-native-walkthrough-tooltip' {
      */
     useReactNativeModal?: boolean;
 
-    /** 
+    /**
      *The distance between the tooltip-rendered child and the arrow pointing to it
-    */
+     */
     childContentSpacing?: number;
 
     /**
@@ -111,6 +111,11 @@ declare module 'react-native-walkthrough-tooltip' {
      ```
     */
     topAdjustment?: number;
+
+    /**
+     *Set this to false if you want to override the default accessible on the root TouchableWithoutFeedback
+     */
+    accessible?: boolean;
   }
 
   /**
