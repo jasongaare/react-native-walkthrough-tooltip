@@ -65,6 +65,10 @@ declare module 'react-native-walkthrough-tooltip' {
     // The number of pixels to inset the tooltip on the screen
     displayInsets?: TooltipDisplayInsets;
 
+    // When true, tooltip's shadow are displayed
+    // Fix: https://github.com/jasongaare/react-native-walkthrough-tooltip/issues/81
+    enableShadow?: boolean;
+
     // When true, tooltip is displayed
     isVisible?: boolean;
 

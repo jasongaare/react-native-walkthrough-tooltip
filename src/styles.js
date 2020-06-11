@@ -16,6 +16,8 @@ const styles = StyleSheet.create({
   tooltip: {
     backgroundColor: 'transparent',
     position: 'absolute',
+  },
+  shadow: {
     shadowColor: 'black',
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 2,
@@ -179,12 +181,15 @@ const styleGenerator = styleGeneratorProps => {
           styles.containerVisible,
         topAdjustment !== 0 && {
           top: topAdjustment,
-        }
-      )
+        },
+      ),
     ],
     contentStyle,
     tooltipStyle: [
-      styles.tooltip,
+      StyleSheet.compose(
+        styles.tooltip,
+        ownProps.enableShadow ? styles.shadow : {},
+      ),
       tooltipPlacementStyles(styleGeneratorProps),
       ownProps.tooltipStyle,
     ],

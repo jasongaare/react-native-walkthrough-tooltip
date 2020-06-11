@@ -61,6 +61,7 @@ class Tooltip extends Component {
     closeOnContentInteraction: true,
     content: <View />,
     displayInsets: {},
+    enableShadow: false,
     isVisible: false,
     onClose: () => {
       console.warn(
@@ -73,7 +74,7 @@ class Tooltip extends Component {
     useInteractionManager: false,
     useReactNativeModal: true,
     topAdjustment: 0,
-    accessible: true
+    accessible: true,
   };
 
   static propTypes = {
@@ -94,6 +95,7 @@ class Tooltip extends Component {
       left: PropTypes.number,
       right: PropTypes.number,
     }),
+    enableShadow: PropTypes.bool,
     isVisible: PropTypes.bool,
     onClose: PropTypes.func,
     placement: PropTypes.oneOf(['top', 'left', 'bottom', 'right', 'center']),
@@ -386,7 +388,10 @@ class Tooltip extends Component {
     };
 
     return (
-      <TouchableWithoutFeedback onPress={this.props.onClose} accessible={this.props.accessible}>
+      <TouchableWithoutFeedback
+        onPress={this.props.onClose}
+        accessible={this.props.accessible}
+      >
         <View style={generatedStyles.containerStyle}>
           <View style={[generatedStyles.backgroundStyle]}>
             <View style={generatedStyles.tooltipStyle}>
@@ -395,7 +400,10 @@ class Tooltip extends Component {
                 onLayout={this.measureContent}
                 style={generatedStyles.contentStyle}
               >
-                <TouchableWithoutFeedback onPress={onPressContent} accessible={this.props.accessible}>
+                <TouchableWithoutFeedback
+                  onPress={onPressContent}
+                  accessible={this.props.accessible}
+                >
                   {this.props.content}
                 </TouchableWithoutFeedback>
               </View>
