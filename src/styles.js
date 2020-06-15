@@ -188,7 +188,7 @@ const styleGenerator = styleGeneratorProps => {
     tooltipStyle: [
       StyleSheet.compose(
         styles.tooltip,
-        ownProps.enableShadow ? styles.shadow : {},
+        ownProps.disableShadow ? {} : styles.shadow,
       ),
       tooltipPlacementStyles(styleGeneratorProps),
       ownProps.tooltipStyle,

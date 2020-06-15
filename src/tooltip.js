@@ -61,7 +61,7 @@ class Tooltip extends Component {
     closeOnContentInteraction: true,
     content: <View />,
     displayInsets: {},
-    enableShadow: false,
+    disableShadow: false,
     isVisible: false,
     onClose: () => {
       console.warn(
@@ -95,7 +95,7 @@ class Tooltip extends Component {
       left: PropTypes.number,
       right: PropTypes.number,
     }),
-    enableShadow: PropTypes.bool,
+    disableShadow: PropTypes.bool,
     isVisible: PropTypes.bool,
     onClose: PropTypes.func,
     placement: PropTypes.oneOf(['top', 'left', 'bottom', 'right', 'center']),
