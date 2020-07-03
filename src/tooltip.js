@@ -1,13 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import StorageManager from '../../../../src/classes/storageManager.class';
-import ConfigurationManager from '../../../../src/classes/configurationManager.class';
-import TutorialManager from '../../../../src/classes/tutorialManager.class';
-
-import BetterText from '../../../../src/screens/components/betterText';
-import BetterButton from '../../../../src/screens/components/betterButton';
-
 import {
   Animated,
   Dimensions,
@@ -17,8 +10,6 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   View,
-  Image,
-  Alert,
 } from 'react-native';
 import {
   Point,
@@ -97,14 +88,10 @@ class Tooltip extends Component {
         translate: new Animated.ValueXY(),
         fade: new Animated.Value(0),
       },
-      doneTutorial: false,
     };
   }
 
   async componentDidMount() {
-    
-    const tutorialData = await StorageManager.get('tutorial.finished');
-    this.setState({ doneTutorial: typeof tutorialData === 'string' && tutorialData !== null });
 
     if (this.state.waitingForInteractions) {
       InteractionManager.runAfterInteractions(() => {
@@ -140,13 +127,6 @@ class Tooltip extends Component {
       } else {
         this._startAnimation({ show: false });
       }
-    }
-
-    const tutorialData = await StorageManager.get('tutorial.finished');
-    const doneTutorial = typeof tutorialData === 'string' && tutorialData !== null;
-
-    if (this.state.doneTutorial !== doneTutorial) {
-      this.setState({ doneTutorial: typeof tutorialData === 'string' && tutorialData !== null });
     }
     
   }
@@ -562,48 +542,6 @@ class Tooltip extends Component {
     return childElement;
   };
 
-  quitTutorialAlert() {
-    Alert.alert(
-      __('Tutorial_Close_Title'),
-      __('Tutorial_Close_Body'),
-      [
-        {
-          text: __('Logout_Cancel'),
-          style: 'cancel',
-        },
-        {
-          text: __('Tutorial_Button_Close'),
-          onPress: () => this.quitTutorial(),
-          style: 'destructive',
-        },
-      ],
-      { cancelable: true }
-    );
-  }
-
-  quitTutorial() {
-    this.props.parentComponent.setState({
-      startUpTutorial: false,
-      tutorialUntouchable: false,
-      toolTipModesVisible: false,
-      toolTipAlarmVisible: false,
-      alarmTutorialUntouchable: false,
-      toolTipMandownVisible: false,
-      toolTipParamVisible: false,
-      toolTipMenuVisible: false,
-      showAvailableForResponseTooltip: false,
-      toolTipSettingsVisible: false,
-      toolTipMapVisible: false,
-      toolTipVisible: false,
-      connectionOpacity: false,
-      bluetoothOpacity: false,
-      emergencyOpacity: false,
-      batteryOpacity: false,
-    });
-
-    TutorialManager.quitTutorial();
-  }
-
   render() {
     const { measurementsFinished, placement, waitingForInteractions } = this.state;
     const { backgroundColor, children, content, isVisible, onClose } = this.props;
@@ -628,38 +566,7 @@ class Tooltip extends Component {
       <View>
         {/* This renders the fullscreen tooltip */}
         <Modal transparent visible={isVisible && !waitingForInteractions} onRequestClose={onClose}>
-          {/* RISK to ON double tap message */}
-          {this.props.mandownNotification === true ?
-            <View style={styles.notification}>
-              <Image resizeMode={'cover'} style={styles.notificationImage} source={require('../../../../src/screens/modules/main/assets/gradient_overlay.png')} />
-
-              <View style={styles.notificationContainer}>
-
-                <View style={styles.notificationBox}>
-                  <BetterText Style={styles.notificationText}>{__('Mandown_Notification_First')}<BetterText style={styles.weightedFont}>{__('Mandown_Notification_Modes')}</BetterText>{__('Mandown_Notification_Last')}</BetterText>
-                </View>
-              </View>
-
-            </View>
-            :
-            null
-          }
-          {/* Close tutorial button */}
-          {this.props.quitTutorial === false || this.state.doneTutorial === false ? 
-            null 
-            :
-            <View style={this.props.top === true ? styles.closeTutorialTop : styles.closeTutorialBottom}>
-              <BetterButton
-                noMarginTop
-                styling={{
-                  backgroundColor: ConfigurationManager.getConfig('Theme.Colors.Severity.Red'),
-                  color: ConfigurationManager.getConfig('Theme.Colors.AppBackground'),
-                }}
-                text={__('Tutorial_Button_Close')}
-                onPress={this.quitTutorialAlert.bind(this)} 
-              />
-            </View>
-          }
+          {/* shite here */}
           <TouchableWithoutFeedback onPress={onClose}>
             <View
               style={[
