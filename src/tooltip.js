@@ -102,20 +102,20 @@ class Tooltip extends Component {
 
   } 
 
-  // static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps, prevState) {
 
-  //   if (nextProps.isVisible !== this.props.isVisible) {
-  //     if (nextProps.isVisible) {
-  //       // We want to start the show animation only when contentSize is known
-  //       // so that we can have some logic depending on the geometry
-  //       return { contentSize: new Size(0, 0) };
+    if (nextProps.contentSize !== prevState.contentSize) {
+      if (nextProps.isVisible) {
+        // We want to start the show animation only when contentSize is known
+        // so that we can have some logic depending on the geometry
+        return { contentSize: new Size(0, 0) };
 
-  //     } 
-  //   }
+      } 
+    }
 
-  //   return null;
+    return null;
 
-  // }
+  }
 
   // componentWillReceiveProps(nextProps) {
   //   const willBeVisible = nextProps.isVisible;
@@ -158,7 +158,7 @@ class Tooltip extends Component {
       if (prevProps.isVisible) {
         // We want to start the show animation only when contentSize is known
         // so that we can have some logic depending on the geometry
-        this.setState({ contentSize: new Size(0, 0) });
+        //this.setState({ contentSize: new Size(0, 0) });
 
         // The location of the child element may have changed based on
         // transition animations in the corresponding view, so remeasure

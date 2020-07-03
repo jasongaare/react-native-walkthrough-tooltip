@@ -1,6 +1,6 @@
 {
   "name": "@x-guard/react-native-walkthrough-tooltip",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "An inline wrapper for calling out React Native components via tooltip",
   "main": "src/tooltip.js",
   "scripts": {
