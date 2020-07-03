@@ -100,61 +100,12 @@ class Tooltip extends Component {
       });
     }
 
-  } 
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-
-    console.warn('derivedstate', nextProps, prevState);
-
-    if (nextProps.isVisible !== prevState.isVisible) {
-      if (nextProps.isVisible) {
-        // We want to start the show animation only when contentSize is known
-        // so that we can have some logic depending on the geometry
-        return { contentSize: new Size(0, 0) };
-
-      } 
-    }
-
-    return null;
-
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const willBeVisible = nextProps.isVisible;
-  //   const nextContent = nextProps.content;
-  //   const { isVisible, content } = this.props;
-
-  //   if (nextContent !== content && willBeVisible) {
-  //     // The location of the child element may have changed based on
-  //     // transition animations in the corresponding view, so remeasure
-  //     InteractionManager.runAfterInteractions(() => {
-  //       this.measureChildRect();
-  //     });
-  //   } else if (willBeVisible !== isVisible) {
-  //     if (willBeVisible) {
-  //       // We want to start the show animation only when contentSize is known
-  //       // so that we can have some logic depending on the geometry
-  //       this.setState({ contentSize: new Size(0, 0) });
-
-  //       // The location of the child element may have changed based on
-  //       // transition animations in the corresponding view, so remeasure
-  //       InteractionManager.runAfterInteractions(() => {
-  //         this.measureChildRect();
-  //       });
-  //     } else {
-  //       this._startAnimation({ show: false });
-  //     }
-  //   }
-    
-  // }
-
-  componentDidUpdate(prevProps, prevState) {
-
-    console.warn('didupdate', prevProps, prevState);
-
-    const willBeVisible = this.props.isVisible;
-    const nextContent = this.props.content;
-    const { isVisible, content } = prevProps;
+  componentWillReceiveProps(nextProps) {
+    const willBeVisible = nextProps.isVisible;
+    const nextContent = nextProps.content;
+    const { isVisible, content } = this.props;
 
     if (nextContent !== content && willBeVisible) {
       // The location of the child element may have changed based on
@@ -176,12 +127,6 @@ class Tooltip extends Component {
       } else {
         this._startAnimation({ show: false });
       }
-    }
-
-    // We always want the measurements finished flag to be false
-    // after the tooltip is closed
-    if (this.state.measurementsFinished && !this.props.isVisible) {
-      this.setState({ measurementsFinished: false });
     }
   }
 
