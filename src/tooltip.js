@@ -104,8 +104,8 @@ class Tooltip extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
 
-    if (prevProps.isVisible !== prevProps.isVisible) {
-      if (prevProps.isVisible) {
+    if (nextProps.isVisible !== this.props.isVisible) {
+      if (nextProps.isVisible) {
         // We want to start the show animation only when contentSize is known
         // so that we can have some logic depending on the geometry
         return { contentSize: new Size(0, 0) };
