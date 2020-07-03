@@ -442,14 +442,17 @@ class Tooltip extends Component {
 
     Animated.parallel([
       Animated.timing(values.fade, {
+        useNativeDriver: true,
         toValue: show ? 1 : 0,
         ...commonConfig,
       }),
       Animated.timing(values.translate, {
+        useNativeDriver: true,
         toValue: show ? new Point(0, 0) : translateOrigin,
         ...commonConfig,
       }),
       Animated.timing(values.scale, {
+        useNativeDriver: true,
         toValue: show ? 1 : 0,
         ...commonConfig,
       }),
