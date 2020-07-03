@@ -102,20 +102,20 @@ class Tooltip extends Component {
 
   } 
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  // static getDerivedStateFromProps(nextProps, prevState) {
 
-    if (nextProps.contentSize !== prevState.contentSize) {
-      if (nextProps.isVisible) {
-        // We want to start the show animation only when contentSize is known
-        // so that we can have some logic depending on the geometry
-        return { contentSize: new Size(0, 0) };
+  //   if (nextProps.contentSize !== prevState.contentSize) {
+  //     if (nextProps.isVisible) {
+  //       // We want to start the show animation only when contentSize is known
+  //       // so that we can have some logic depending on the geometry
+  //       return { contentSize: new Size(0, 0) };
 
-      } 
-    }
+  //     } 
+  //   }
 
-    return null;
+  //   return null;
 
-  }
+  // }
 
   // componentWillReceiveProps(nextProps) {
   //   const willBeVisible = nextProps.isVisible;
@@ -148,14 +148,18 @@ class Tooltip extends Component {
 
   componentDidUpdate(prevProps, prevState) {
 
-    if (prevProps.content !== this.props.content && this.props.isVisible) {
+    const willBeVisible = prevProps.isVisible;
+    const nextContent = prevProps.content;
+    const { isVisible, content } = this.props;
+
+    if (nextContent !== content && willBeVisible) {
       // The location of the child element may have changed based on
       // transition animations in the corresponding view, so remeasure
       InteractionManager.runAfterInteractions(() => {
         this.measureChildRect();
       });
-    } else if (prevProps.isVisible !== this.props.isVisible) {
-      if (this.props.isVisible) {
+    } else if (willBeVisible !== isVisible) {
+      if (willBeVisible) {
         // We want to start the show animation only when contentSize is known
         // so that we can have some logic depending on the geometry
         this.setState({ contentSize: new Size(0, 0) });
