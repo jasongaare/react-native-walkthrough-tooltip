@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import TutorialTooltip from '../../../../src/screens/components/tutorialTooltip';
+
 import {
   Animated,
   Dimensions,
@@ -566,7 +568,9 @@ class Tooltip extends Component {
       <View>
         {/* This renders the fullscreen tooltip */}
         <Modal transparent visible={isVisible && !waitingForInteractions} onRequestClose={onClose}>
-          {/* shite here */}
+          
+          <TutorialTooltip parentComponent={this.props.parentComponent} quitTutorial={this.props.quitTutorial} mandownNotification={this.props.mandownNotification} top={this.props.top} />
+
           <TouchableWithoutFeedback onPress={onClose}>
             <View
               style={[
