@@ -7,6 +7,19 @@ When not visible, the wrapped element is displayed normally.
 
 **Used by**: [`react-native-walkthrough`](https://github.com/jasongaare/react-native-walkthrough): a lightweight walkthrough library for React Native using react-native-walkthrough-tooltip
 
+### Table of Contents
+
+  - [Installation](#installation)
+  - [Sponsorship](#sponsorship)
+  - [Breaking Changes in Version 1.0](#breaking-changes-in-version-10)
+  - [Example Usage](#example-usage)
+  - [Screenshot](#screenshot)
+  - [How it works](#how-it-works)
+  - [Props](#props)
+  - [Style Props](#style-props)
+  - [Class definitions for props](#class-definitions-for-props)
+  - [TooltipChildrenContext](#tooltipchildrencontext)
+
 ### Installation
 
 ```
@@ -14,13 +27,12 @@ yarn add react-native-walkthrough-tooltip
 ```
 
 ### Sponsorship
-> `react-native-walkthrough-tooltip` is being sponsored by the following tool, please help to support us by taking a look and signing up for a free trial!
 
 <a href="https://tracking.gitads.io/?repo=react-native-walkthrough-tooltip">
  <img src="https://images.gitads.io/react-native-walkthrough-tooltip" alt="GitAds"/>
 </a>
 
-
+> `react-native-walkthrough-tooltip` is sponsored by the above tool, you can help by checking it out and signing up for a free trial
 
 ### Breaking Changes in Version 1.0
 
