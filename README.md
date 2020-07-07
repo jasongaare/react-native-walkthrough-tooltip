@@ -1,14 +1,28 @@
 # React Native Walkthrough Tooltip [![npm](https://img.shields.io/npm/v/react-native-walkthrough-tooltip.svg)](https://www.npmjs.com/package/react-native-walkthrough-tooltip) [![npm](https://img.shields.io/npm/dm/react-native-walkthrough-tooltip.svg)](https://www.npmjs.com/package/react-native-walkthrough-tooltip)
 
-
 ## Tooltip
 
 React Native Walkthrough Tooltip is a fullscreen modal that highlights whichever element it wraps.\
 When not visible, the wrapped element is displayed normally.
 
-> 🎉 Now available 🎉 [`react-native-walkthrough`](https://github.com/jasongaare/react-native-walkthrough): a lightweight walkthrough library for React Native using react-native-walkthrough-tooltip
+**Used by**: [`react-native-walkthrough`](https://github.com/jasongaare/react-native-walkthrough): a lightweight walkthrough library for React Native using react-native-walkthrough-tooltip
 
-## Breaking Changes in Version 1.0
+### Installation
+
+```
+yarn add react-native-walkthrough-tooltip
+```
+
+### Sponsorship
+> `react-native-walkthrough-tooltip` is being sponsored by the following tool, please help to support us by taking a look and signing up for a free trial!
+
+<a href="https://tracking.gitads.io/?repo=react-native-walkthrough-tooltip">
+ <img src="https://images.gitads.io/react-native-walkthrough-tooltip" alt="GitAds"/>
+</a>
+
+
+
+### Breaking Changes in Version 1.0
 
 For Version 1.0, the library was refactored and simplified. 
 
@@ -24,14 +38,6 @@ Changes to handling users pressing the tooltip child element:
 - **No more `onChildPress` and `onChildLongPress` props** - touches are now passed to the child by default. This allows you to maintain the original functionality of the child element. Further, the tooltip will also automatically dismiss on interaction with the child element.
 - **Added `closeOnChildInteraction` prop** - if you want the user to be able to interact with the child element, but not automatically dismiss the tooltip when they do so, set this to false (true by default)
 - **Added `allowChildInteraction` prop** - if you'd like to disable interaction with the child element, set this to false (true by default). When false, tapping on the child element will call `onClose` as if the user touched the background element.
-
- 
-
-### Installation
-
-```
-yarn add react-native-walkthrough-tooltip
-```
 
 ### Example Usage
 
