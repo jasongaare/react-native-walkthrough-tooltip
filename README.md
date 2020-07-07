@@ -1,11 +1,9 @@
 # React Native Walkthrough Tooltip [![npm](https://img.shields.io/npm/v/react-native-walkthrough-tooltip.svg)](https://www.npmjs.com/package/react-native-walkthrough-tooltip) [![npm](https://img.shields.io/npm/dm/react-native-walkthrough-tooltip.svg)](https://www.npmjs.com/package/react-native-walkthrough-tooltip)
 
-## Tooltip
-
 React Native Walkthrough Tooltip is a fullscreen modal that highlights whichever element it wraps.\
 When not visible, the wrapped element is displayed normally.
 
-**Used by**: [`react-native-walkthrough`](https://github.com/jasongaare/react-native-walkthrough): a lightweight walkthrough library for React Native using react-native-walkthrough-tooltip
+*Used by* [`react-native-walkthrough`](https://github.com/jasongaare/react-native-walkthrough): a lightweight walkthrough library for React Native using react-native-walkthrough-tooltip
 
 ### Table of Contents
 
@@ -32,7 +30,7 @@ yarn add react-native-walkthrough-tooltip
  <img src="https://images.gitads.io/react-native-walkthrough-tooltip" alt="GitAds"/>
 </a>
 
-> `react-native-walkthrough-tooltip` is sponsored by the above tool, you can help by checking it out and signing up for a free trial
+> `react-native-walkthrough-tooltip` is sponsored by the above tool, help us out by checking it out and signing up for a free trial
 
 ### Breaking Changes in Version 1.0
 
