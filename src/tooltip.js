@@ -113,6 +113,7 @@ class Tooltip extends Component {
     const { isVisible, useInteractionManager } = props;
 
     this.isMeasuringChild = false;
+    this.interactionPromise = null;
 
     this.childWrapper = React.createRef();
     this.state = {
@@ -157,6 +158,7 @@ class Tooltip extends Component {
 
   componentWillUnmount() {
     Dimensions.removeEventListener('change', this.updateWindowDims);
+    this.interactionPromise && this.interactionPromise.cancel();
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -270,6 +272,9 @@ class Tooltip extends Component {
     };
 
     if (this.props.useInteractionManager) {
+      if (this.interactionPromise) {
+        this.interactionPromise.cancel();
+      }
       InteractionManager.runAfterInteractions(() => {
         doMeasurement();
       });
