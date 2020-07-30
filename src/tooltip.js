@@ -275,7 +275,7 @@ class Tooltip extends Component {
       if (this.interactionPromise) {
         this.interactionPromise.cancel();
       }
-      InteractionManager.runAfterInteractions(() => {
+      this.interactionPromise = InteractionManager.runAfterInteractions(() => {
         doMeasurement();
       });
     } else {
