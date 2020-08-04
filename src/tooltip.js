@@ -158,7 +158,9 @@ class Tooltip extends Component {
 
   componentWillUnmount() {
     Dimensions.removeEventListener('change', this.updateWindowDims);
-    this.interactionPromise && this.interactionPromise.cancel();
+    if (this.interactionPromise) {
+     this.interactionPromise.cancel();
+    }
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
