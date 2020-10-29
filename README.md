@@ -25,7 +25,7 @@ yarn add react-native-walkthrough-tooltip
 
 ### Breaking Changes in Version 1.0
 
-For Version 1.0, the library was refactored and simplified. 
+For Version 1.0, the library was refactored and simplified.
 
 - **No more `animated` prop** - if you want to have your tooltips animated, use the last stable version: `0.6.1`. Hopefully animations can be added again in the sure (great idea for a PR!)
 - **No more `displayArea` and `childlessPlacementPadding` props** - these have been replaced with the `displayInsets` prop, which allows you to simply declare how many pixels in from each side of the screen to inset the area the tooltip may display.
@@ -93,12 +93,13 @@ The tooltip wraps an element _in place_ in your React Native rendering. When it 
 
 The tooltip styles should work out-of-the-box for most use cases, however should you need you can customize the styles of the tooltip using these props.
 
-| Prop name       | Effect                                                                          |
-| --------------- | ------------------------------------------------------------------------------- |
-| arrowStyle      | Styles the triangle that points to the called out element                       |
-| backgroundStyle | Styles the overlay view that sits behind the tooltip, but over the current view |
-| contentStyle    | Styles the content wrapper that surrounds the `content` element                 |
-| tooltipStyle    | Styles the tooltip that wraps the arrow and content elements                    |
+| Prop name            | Effect                                                                          |
+| -------------------- | ------------------------------------------------------------------------------- |
+| arrowStyle           | Styles the triangle that points to the called out element                       |
+| backgroundStyle      | Styles the overlay view that sits behind the tooltip, but over the current view |
+| contentStyle         | Styles the content wrapper that surrounds the `content` element                 |
+| tooltipStyle         | Styles the tooltip that wraps the arrow and content elements                    |
+| childrenWrapperStyle | Styles the view that wraps cloned children                                      |
 
 ### Class definitions for props
 
