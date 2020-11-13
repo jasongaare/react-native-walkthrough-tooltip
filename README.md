@@ -51,7 +51,7 @@ import Tooltip from 'react-native-walkthrough-tooltip';
   placement="top"
   onClose={() => this.setState({ toolTipVisible: false })}
 >
-  <TouchableHighlight style={styles.touchable}>
+  <TouchableHighlight style={styles.touchable} onPress={() => this.setState({ toolTipVisible: true })}>
     <Text>Press me</Text>
   </TouchableHighlight>
 </Tooltip>
