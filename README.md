@@ -42,6 +42,8 @@ Changes to handling users pressing the tooltip child element:
 
 ### Example Usage
 
+To see an expo snack example, click [here](https://snack.expo.io/@matthewliuhello/react-native-walkthrough-tooltip-example)
+
 ```js
 import Tooltip from 'react-native-walkthrough-tooltip';
 
