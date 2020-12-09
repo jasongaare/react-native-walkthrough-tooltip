@@ -133,6 +133,7 @@ class Tooltip extends Component {
           : props.placement,
       measurementsFinished: false,
       windowDims: Dimensions.get('window'),
+      isMounted: true,
     };
   }
 
@@ -150,14 +151,17 @@ class Tooltip extends Component {
     const insetsChanged = !rfcIsEqual(prevState.displayInsets, displayInsets);
 
     if (contentChanged || placementChanged || becameVisible || insetsChanged) {
-      setTimeout(() => {
-        this.measureChildRect();
-      });
+      if (this.state.isMounted) {
+        setTimeout(() => {
+          this.measureChildRect();
+        });
+      }
     }
   }
 
   componentWillUnmount() {
     Dimensions.removeEventListener('change', this.updateWindowDims);
+    this.setState({ isMounted: false });
     if (this.interactionPromise) {
       this.interactionPromise.cancel();
     }
