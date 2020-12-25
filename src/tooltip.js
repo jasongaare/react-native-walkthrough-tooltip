@@ -419,9 +419,9 @@ class Tooltip extends Component {
               </View>
             </View>
           </View>
-          {hasChildren && this.props.showChildInTooltip
+          {/* {hasChildren && this.props.showChildInTooltip
             ? this.renderChildInTooltip()
-            : null}
+            : null} */}
         </View>
       </TouchableWithoutFeedback>
     );
