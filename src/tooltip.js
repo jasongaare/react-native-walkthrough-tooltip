@@ -397,6 +397,9 @@ class Tooltip extends Component {
       }
     };
 
+    const { y } = this.state.childRect;
+    const objLengthNeed = generatedStyles.contentStyle.length && generatedStyles.contentStyle.find(x => !!x.lengthNeed)
+
     return (
       <TouchableWithoutFeedback
         onPress={this.props.onClose}
@@ -404,7 +407,10 @@ class Tooltip extends Component {
       >
         <View style={generatedStyles.containerStyle}>
           <View style={[generatedStyles.backgroundStyle]}>
-            <View style={generatedStyles.tooltipStyle}>
+            <View style={[
+              generatedStyles.tooltipStyle,
+              objLengthNeed && y < objLengthNeed.lengthNeed ? { top: objLengthNeed.lengthNeed } : {},
+            ]}>
               {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
               <View
                 onLayout={this.measureContent}
