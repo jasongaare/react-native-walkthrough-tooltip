@@ -406,15 +406,16 @@ class Tooltip extends Component {
         accessible={this.props.accessible}
       >
         <View style={generatedStyles.containerStyle}>
-          <View style={[generatedStyles.backgroundStyle]}>
+          <View style={generatedStyles.backgroundStyle}>
             <View style={[
               generatedStyles.tooltipStyle,
-              objLengthNeed && y < objLengthNeed.lengthNeed ? { top: objLengthNeed.lengthNeed } : {},
             ]}>
-              {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
+              {hasChildren && !(objLengthNeed && y <= objLengthNeed.lengthNeed) ? <View style={generatedStyles.arrowStyle} /> : null}
               <View
                 onLayout={this.measureContent}
-                style={generatedStyles.contentStyle}
+                style={[generatedStyles.contentStyle, 
+                objLengthNeed && y <= objLengthNeed.lengthNeed ? { top: objLengthNeed.lengthNeed } : {},
+                ]}
               >
                 <TouchableWithoutFeedback
                   onPress={onPressContent}
