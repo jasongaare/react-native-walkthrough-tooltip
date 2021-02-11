@@ -144,7 +144,7 @@ const computeTopGeometry = ({
 
   if (tooltipOrigin.x + contentSize.width > maxWidth) {
     tooltipOrigin.x =
-      displayInsets.left + (maxWidth - adjustedContentSize.width) / 2;
+      windowDims.width - displayInsets.right - adjustedContentSize.width;
   }
 
   return {
