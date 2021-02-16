@@ -19,7 +19,7 @@ When not visible, the wrapped element is displayed normally.
 
 ### Installation
 
-```
+```bash
 yarn add react-native-walkthrough-tooltip
 ```
 
@@ -99,9 +99,9 @@ The tooltip styles should work out-of-the-box for most use cases, however should
 | -------------------- | ------------------------------------------------------------------------------- |
 | arrowStyle           | Styles the triangle that points to the called out element                       |
 | backgroundStyle      | Styles the overlay view that sits behind the tooltip, but over the current view |
+| childrenWrapperStyle | Styles the view that wraps cloned children                                      |
 | contentStyle         | Styles the content wrapper that surrounds the `content` element                 |
 | tooltipStyle         | Styles the tooltip that wraps the arrow and content elements                    |
-| childrenWrapperStyle | Styles the view that wraps cloned children                                      |
 
 ### Class definitions for props
 
@@ -110,6 +110,7 @@ The tooltip styles should work out-of-the-box for most use cases, however should
 ### TooltipChildrenContext
 
 [React Context](https://reactjs.org/docs/context.html) that can be used to distinguish "real" children rendered inside parent's layout from their copies rendered inside tooltip's modal. The duplicate child rendered in the tooltip modal is wrapped in a Context.Provider which provides object with prop `tooltipDuplicate` set to `true`, so informed decisions may be made, if necessary, based on where the child rendered.
+
 ```js
 import Tooltip, { TooltipChildrenContext } from 'react-native-walkthrough-tooltip';
 ...
