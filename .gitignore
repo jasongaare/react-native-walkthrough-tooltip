@@ -13,3 +13,6 @@ lcov.info
 
 # Logs
 npm-debug.log
+
+# vscode settings
+.vscode
