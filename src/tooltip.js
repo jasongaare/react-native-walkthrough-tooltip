@@ -428,22 +428,23 @@ class Tooltip extends Component {
   };
 
   render() {
-    const { children, isVisible, useReactNativeModal } = this.props;
+    const { children, isVisible, useReactNativeModal, modalComponent } = this.props;
 
     const hasChildren = React.Children.count(children) > 0;
     const showTooltip = isVisible && !this.state.waitingForInteractions;
+    const ModalComponent = modalComponent || Modal;
 
     return (
       <React.Fragment>
         {useReactNativeModal ? (
-          <Modal
+          <ModalComponent
             transparent
             visible={showTooltip}
             onRequestClose={this.props.onClose}
             supportedOrientations={this.props.supportedOrientations}
           >
             {this.renderContentForTooltip()}
-          </Modal>
+          </ModalComponent>
         ) : null}
 
         {/* This renders the child element in place in the parent's layout */}
