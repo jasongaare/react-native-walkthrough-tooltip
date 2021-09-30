@@ -114,6 +114,7 @@ class Tooltip extends Component {
 
     this.isMeasuringChild = false;
     this.interactionPromise = null;
+    this.dimensionsSubscription = null;
 
     this.childWrapper = React.createRef();
     this.state = {
@@ -137,7 +138,10 @@ class Tooltip extends Component {
   }
 
   componentDidMount() {
-    Dimensions.addEventListener('change', this.updateWindowDims);
+    this.dimensionsSubscription = Dimensions.addEventListener(
+      'change',
+      this.updateWindowDims,
+    );
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -157,7 +161,16 @@ class Tooltip extends Component {
   }
 
   componentWillUnmount() {
-    Dimensions.removeEventListener('change', this.updateWindowDims);
+    // removeEventListener deprecated
+    // https://reactnative.dev/docs/dimensions#removeeventlistener
+    if (Dimensions.removeEventListener) {
+      // react native < 0.65.*
+      Dimensions.removeEventListener('change', this.updateWindowDims);
+    } else if (this.dimensionsSubscription) {
+      // react native >= 0.65.*
+      this.dimensionsSubscription.remove();
+    }
+
     if (this.interactionPromise) {
       this.interactionPromise.cancel();
     }
@@ -428,7 +441,12 @@ class Tooltip extends Component {
   };
 
   render() {
-    const { children, isVisible, useReactNativeModal, modalComponent } = this.props;
+    const {
+      children,
+      isVisible,
+      useReactNativeModal,
+      modalComponent,
+    } = this.props;
 
     const hasChildren = React.Children.count(children) > 0;
     const showTooltip = isVisible && !this.state.waitingForInteractions;
