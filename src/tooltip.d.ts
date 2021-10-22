@@ -123,6 +123,9 @@ declare module 'react-native-walkthrough-tooltip' {
      *Set this to false if you want to override the default accessible on the root TouchableWithoutFeedback
      */
     accessible?: boolean;
+
+    /** Will use given component instead of default react-native Modal component **/
+    modalComponent?: object;
   }
 
   /**

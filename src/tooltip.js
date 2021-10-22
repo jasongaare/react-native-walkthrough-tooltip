@@ -67,7 +67,7 @@ class Tooltip extends Component {
     isVisible: false,
     onClose: () => {
       console.warn(
-        '[react-native-walkthrough-tooltip] onClose prop no provided',
+        '[react-native-walkthrough-tooltip] onClose prop not provided',
       );
     },
     placement: 'center', // falls back to "top" if there ARE children
@@ -116,6 +116,7 @@ class Tooltip extends Component {
 
     this.isMeasuringChild = false;
     this.interactionPromise = null;
+    this.dimensionsSubscription = null;
 
     this.childWrapper = React.createRef();
     this.state = {
@@ -139,7 +140,10 @@ class Tooltip extends Component {
   }
 
   componentDidMount() {
-    Dimensions.addEventListener('change', this.updateWindowDims);
+    this.dimensionsSubscription = Dimensions.addEventListener(
+      'change',
+      this.updateWindowDims,
+    );
     this.isMounted = true;
   }
 
@@ -162,7 +166,15 @@ class Tooltip extends Component {
   }
 
   componentWillUnmount() {
-    Dimensions.removeEventListener('change', this.updateWindowDims);
+    // removeEventListener deprecated
+    // https://reactnative.dev/docs/dimensions#removeeventlistener
+    if (Dimensions.removeEventListener) {
+      // react native < 0.65.*
+      Dimensions.removeEventListener('change', this.updateWindowDims);
+    } else if (this.dimensionsSubscription) {
+      // react native >= 0.65.*
+      this.dimensionsSubscription.remove();
+    }
     this.isMounted = false;
     if (this.interactionPromise) {
       this.interactionPromise.cancel();
@@ -434,22 +446,28 @@ class Tooltip extends Component {
   };
 
   render() {
-    const { children, isVisible, useReactNativeModal } = this.props;
+    const {
+      children,
+      isVisible,
+      useReactNativeModal,
+      modalComponent,
+    } = this.props;
 
     const hasChildren = React.Children.count(children) > 0;
     const showTooltip = isVisible && !this.state.waitingForInteractions;
+    const ModalComponent = modalComponent || Modal;
 
     return (
       <React.Fragment>
         {useReactNativeModal ? (
-          <Modal
+          <ModalComponent
             transparent
             visible={showTooltip}
             onRequestClose={this.props.onClose}
             supportedOrientations={this.props.supportedOrientations}
           >
             {this.renderContentForTooltip()}
-          </Modal>
+          </ModalComponent>
         ) : null}
 
         {/* This renders the child element in place in the parent's layout */}
