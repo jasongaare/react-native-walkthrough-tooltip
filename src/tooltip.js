@@ -163,12 +163,12 @@ class Tooltip extends Component {
   componentWillUnmount() {
     // removeEventListener deprecated
     // https://reactnative.dev/docs/dimensions#removeeventlistener
-    if (Dimensions.removeEventListener) {
-      // react native < 0.65.*
-      Dimensions.removeEventListener('change', this.updateWindowDims);
-    } else if (this.dimensionsSubscription) {
+    if (this.dimensionsSubscription?.remove) {
       // react native >= 0.65.*
       this.dimensionsSubscription.remove();
+    } else {
+      // react native < 0.65.*
+      Dimensions.removeEventListener('change', this.updateWindowDims);
     }
 
     if (this.interactionPromise) {
