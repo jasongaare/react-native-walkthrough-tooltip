@@ -32,10 +32,10 @@ const DEFAULT_DISPLAY_INSETS = {
   right: 24,
 };
 
-const computeDisplayInsets = insetsFromProps =>
+const computeDisplayInsets = (insetsFromProps) =>
   Object.assign({}, DEFAULT_DISPLAY_INSETS, insetsFromProps);
 
-const invertPlacement = placement => {
+const invertPlacement = (placement) => {
   switch (placement) {
     case 'top':
       return 'bottom';
@@ -75,6 +75,7 @@ class Tooltip extends Component {
     useReactNativeModal: true,
     topAdjustment: 0,
     accessible: true,
+    animationType: 'none',
   };
 
   static propTypes = {
@@ -105,6 +106,7 @@ class Tooltip extends Component {
     useReactNativeModal: PropTypes.bool,
     topAdjustment: PropTypes.number,
     accessible: PropTypes.bool,
+    animationType: PropTypes.oneOf(['none', 'fade', 'slide']),
   };
 
   constructor(props) {
@@ -208,7 +210,7 @@ class Tooltip extends Component {
     return null;
   }
 
-  updateWindowDims = dims => {
+  updateWindowDims = (dims) => {
     this.setState(
       {
         windowDims: dims.window,
@@ -237,7 +239,7 @@ class Tooltip extends Component {
     );
   };
 
-  measureContent = e => {
+  measureContent = (e) => {
     const { width, height } = e.nativeEvent.layout;
     const contentSize = new Size(width, height);
     this.setState({ contentSize }, () => {
@@ -245,7 +247,7 @@ class Tooltip extends Component {
     });
   };
 
-  onChildMeasurementComplete = rect => {
+  onChildMeasurementComplete = (rect) => {
     this.setState(
       {
         childRect: rect,
@@ -272,7 +274,7 @@ class Tooltip extends Component {
             (x, y, width, height, pageX, pageY) => {
               const childRect = new Rect(pageX, pageY, width, height);
               if (
-                Object.values(childRect).every(value => value !== undefined)
+                Object.values(childRect).every((value) => value !== undefined)
               ) {
                 this.onChildMeasurementComplete(childRect);
               } else {
@@ -300,13 +302,8 @@ class Tooltip extends Component {
 
   computeGeometry = () => {
     const { arrowSize, childContentSpacing } = this.props;
-    const {
-      childRect,
-      contentSize,
-      displayInsets,
-      placement,
-      windowDims,
-    } = this.state;
+    const { childRect, contentSize, displayInsets, placement, windowDims } =
+      this.state;
 
     const options = {
       displayInsets,
@@ -446,6 +443,7 @@ class Tooltip extends Component {
       isVisible,
       useReactNativeModal,
       modalComponent,
+      animationType,
     } = this.props;
 
     const hasChildren = React.Children.count(children) > 0;
@@ -456,6 +454,7 @@ class Tooltip extends Component {
       <React.Fragment>
         {useReactNativeModal ? (
           <ModalComponent
+            animationType={animationType}
             transparent
             visible={showTooltip}
             onRequestClose={this.props.onClose}
