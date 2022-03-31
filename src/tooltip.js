@@ -75,6 +75,7 @@ class Tooltip extends Component {
     useReactNativeModal: true,
     topAdjustment: 0,
     accessible: true,
+    animationType: 'none',
   };
 
   static propTypes = {
@@ -105,6 +106,7 @@ class Tooltip extends Component {
     useReactNativeModal: PropTypes.bool,
     topAdjustment: PropTypes.number,
     accessible: PropTypes.bool,
+    animationType: PropTypes.oneOf(['none', 'fade', 'slide'])
   };
 
   constructor(props) {
@@ -456,6 +458,7 @@ class Tooltip extends Component {
       <React.Fragment>
         {useReactNativeModal ? (
           <ModalComponent
+          animationType={this.props.animationType}
             transparent
             visible={showTooltip}
             onRequestClose={this.props.onClose}
