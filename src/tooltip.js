@@ -454,7 +454,7 @@ class Tooltip extends Component {
       <React.Fragment>
         {useReactNativeModal ? (
           <ModalComponent
-            animationType={animationType}
+            animationType={this.props.animationType}
             transparent
             visible={showTooltip}
             onRequestClose={this.props.onClose}
