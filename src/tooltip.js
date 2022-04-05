@@ -75,7 +75,7 @@ class Tooltip extends Component {
     useReactNativeModal: true,
     topAdjustment: 0,
     accessible: true,
-    animationType: 'none',
+    animationType: 'fade',
   };
 
   static propTypes = {
