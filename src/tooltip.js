@@ -326,7 +326,7 @@ class Tooltip extends Component {
       childContentSpacing,
     };
 
-    let geom = computeTopGeometry(options);
+    let geom;
 
     // special case for centered, childless placement tooltip
     if (
@@ -347,7 +347,8 @@ class Tooltip extends Component {
           break;
         case 'top':
         default:
-          break; // computed just above if-else-block
+          geom = computeTopGeometry(options);
+          break;
       }
     }
 
