@@ -131,7 +131,7 @@ declare module 'react-native-walkthrough-tooltip' {
     modalComponent?: object;
 
     // Support for nested elements within the Tooltip component.
-    children?: React.ReactNode
+    children?: React.ReactNode;
   }
 
   /**
