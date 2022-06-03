@@ -76,6 +76,7 @@ class Tooltip extends Component {
     topAdjustment: 0,
     accessible: true,
     statusBarTranslucent: false,
+    animationType: 'fade',
   };
 
   static propTypes = {
@@ -107,6 +108,7 @@ class Tooltip extends Component {
     topAdjustment: PropTypes.number,
     accessible: PropTypes.bool,
     statusBarTranslucent: PropTypes.bool,
+    animationType: PropTypes.oneOf(['none', 'fade', 'slide']),
   };
 
   constructor(props) {
@@ -444,6 +446,7 @@ class Tooltip extends Component {
       useReactNativeModal,
       modalComponent,
       statusBarTranslucent,
+      animationType,
     } = this.props;
 
     const hasChildren = React.Children.count(children) > 0;
@@ -454,6 +457,7 @@ class Tooltip extends Component {
       <React.Fragment>
         {useReactNativeModal ? (
           <ModalComponent
+            animationType={this.props.animationType}
             transparent
             visible={showTooltip}
             onRequestClose={this.props.onClose}
