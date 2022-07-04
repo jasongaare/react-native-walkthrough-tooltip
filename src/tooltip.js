@@ -52,11 +52,13 @@ const invertPlacement = placement => {
 
 class Tooltip extends Component {
   static defaultProps = {
+    allowBackgroundInteraction: false,
     allowChildInteraction: true,
     arrowSize: new Size(16, 8),
     backgroundColor: 'rgba(0,0,0,0.5)',
     childContentSpacing: 4,
     children: null,
+    closeOnBackgroundInteraction: true,
     closeOnChildInteraction: true,
     closeOnContentInteraction: true,
     content: <View />,
@@ -69,6 +71,7 @@ class Tooltip extends Component {
       );
     },
     placement: 'center', // falls back to "top" if there ARE children
+    preventCloseOnTapCancel: false,
     showChildInTooltip: true,
     supportedOrientations: ['portrait', 'landscape'],
     useInteractionManager: false,
@@ -78,6 +81,7 @@ class Tooltip extends Component {
   };
 
   static propTypes = {
+    allowBackgroundInteraction: PropTypes.bool,
     allowChildInteraction: PropTypes.bool,
     arrowSize: PropTypes.shape({
       height: PropTypes.number,
@@ -86,6 +90,7 @@ class Tooltip extends Component {
     backgroundColor: PropTypes.string,
     childContentSpacing: PropTypes.number,
     children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+    closeOnBackgroundInteraction: PropTypes.bool,
     closeOnChildInteraction: PropTypes.bool,
     closeOnContentInteraction: PropTypes.bool,
     content: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
@@ -99,6 +104,7 @@ class Tooltip extends Component {
     isVisible: PropTypes.bool,
     onClose: PropTypes.func,
     placement: PropTypes.oneOf(['top', 'left', 'bottom', 'right', 'center']),
+    preventCloseOnTapCancel: PropTypes.bool,
     showChildInTooltip: PropTypes.bool,
     supportedOrientations: PropTypes.arrayOf(PropTypes.string),
     useInteractionManager: PropTypes.bool,
@@ -320,7 +326,7 @@ class Tooltip extends Component {
       childContentSpacing,
     };
 
-    let geom = computeTopGeometry(options);
+    let geom;
 
     // special case for centered, childless placement tooltip
     if (
@@ -341,7 +347,8 @@ class Tooltip extends Component {
           break;
         case 'top':
         default:
-          break; // computed just above if-else-block
+          geom = computeTopGeometry(options);
+          break;
       }
     }
 
@@ -359,7 +366,16 @@ class Tooltip extends Component {
   renderChildInTooltip = () => {
     const { height, width, x, y } = this.state.childRect;
 
-    const onTouchEnd = () => {
+    const onTouchEnd = event => {
+      if (
+        this.props.preventCloseOnTapCancel &&
+        (event.nativeEvent.locationY < 0 ||
+          event.nativeEvent.locationX < 0 ||
+          event.nativeEvent.locationY > height ||
+          event.nativeEvent.locationX > width)
+      ) {
+        return;
+      }
       if (this.props.closeOnChildInteraction) {
         this.props.onClose();
       }
@@ -404,19 +420,36 @@ class Tooltip extends Component {
 
     const hasChildren = React.Children.count(this.props.children) > 0;
 
+    const onPressBackground = () => {
+      if (this.props.closeOnBackgroundInteraction) {
+        this.props.onClose();
+      }
+    };
+
     const onPressContent = () => {
       if (this.props.closeOnContentInteraction) {
         this.props.onClose();
       }
     };
 
+    const pointerEventsMode = this.props.allowBackgroundInteraction
+      ? 'box-none'
+      : undefined;
+
     return (
       <TouchableWithoutFeedback
-        onPress={this.props.onClose}
+        disabled={this.props.allowBackgroundInteraction}
+        onPress={onPressBackground}
         accessible={this.props.accessible}
       >
-        <View style={generatedStyles.containerStyle}>
-          <View style={[generatedStyles.backgroundStyle]}>
+        <View
+          style={generatedStyles.containerStyle}
+          pointerEvents={pointerEventsMode}
+        >
+          <View
+            style={generatedStyles.backgroundStyle}
+            pointerEvents={pointerEventsMode}
+          >
             <View style={generatedStyles.tooltipStyle}>
               {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
               <View

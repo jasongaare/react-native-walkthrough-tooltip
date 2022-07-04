@@ -50,6 +50,9 @@ declare module 'react-native-walkthrough-tooltip' {
   }
 
   export interface TooltipProps extends Partial<TooltipStyleProps> {
+    // When true (default is false), user can interact with background components
+    allowBackgroundInteraction?: boolean;
+
     // When true (default), user can interact with child element
     allowChildInteraction?: boolean;
 
@@ -58,6 +61,9 @@ declare module 'react-native-walkthrough-tooltip' {
 
     // Color of the fullscreen background beneath the tooltip. Overrides the backgroundStyle prop
     backgroundColor?: string;
+
+    // When true (default), onClose prop is called when user touches background element
+    closeOnBackgroundInteraction?: boolean;
 
     // When true (default), onClose prop is called when user touches child element
     closeOnChildInteraction?: boolean;
@@ -88,6 +94,9 @@ declare module 'react-native-walkthrough-tooltip' {
      * and the content will be centered within the bounds defined by the displayInsets.
      */
     placement?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+
+    // When false (default), user's can cancel taps inside child elements and the tooltip will still close.
+    preventCloseOnTapCancel?: boolean;
 
     // Determines if the tooltip's children should be shown in the foreground when the tooltip is visible.
     showChildInTooltip?: boolean;
