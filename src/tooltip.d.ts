@@ -46,7 +46,7 @@ declare module 'react-native-walkthrough-tooltip' {
     childrenWrapperStyle?: StyleProp<ViewStyle>;
 
     // Styles the view element that wraps the original children
-    parentWrapperStyle?: StyleProp<ViewStyle>
+    parentWrapperStyle?: StyleProp<ViewStyle>;
   }
 
   export interface TooltipProps extends Partial<TooltipStyleProps> {
@@ -129,6 +129,11 @@ declare module 'react-native-walkthrough-tooltip' {
 
     /** Will use given component instead of default react-native Modal component **/
     modalComponent?: object;
+
+    /**
+     *Set this to true to use translucent status bar (cover enire screen on android)
+     */
+    statusBarTranslucent?: boolean;
   }
 
   /**
