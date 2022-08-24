@@ -4,6 +4,8 @@ import {
   Dimensions,
   InteractionManager,
   Modal,
+  ScrollView,
+  TouchableHighlight,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -419,17 +421,21 @@ class Tooltip extends Component {
           <View style={[generatedStyles.backgroundStyle]}>
             <View style={generatedStyles.tooltipStyle}>
               {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
-              <View
-                onLayout={this.measureContent}
-                style={generatedStyles.contentStyle}
-              >
-                <TouchableWithoutFeedback
-                  onPress={onPressContent}
-                  accessible={this.props.accessible}
-                >
-                  {this.props.content}
-                </TouchableWithoutFeedback>
-              </View>
+                <TouchableHighlight>
+                  <View
+                    onLayout={this.measureContent}
+                    style={generatedStyles.contentStyle}
+                  >
+                    <ScrollView>
+                    {/* <TouchableWithoutFeedback
+                      onPress={onPressContent}
+                      accessible={this.props.accessible}
+                    > */}
+                      {this.props.content}
+                    {/* </TouchableWithoutFeedback> */}
+                    </ScrollView>
+                  </View>
+                </TouchableHighlight>
             </View>
           </View>
           {hasChildren && this.props.showChildInTooltip
