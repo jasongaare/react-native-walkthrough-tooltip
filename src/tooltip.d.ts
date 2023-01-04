@@ -123,6 +123,17 @@ declare module 'react-native-walkthrough-tooltip' {
     topAdjustment?: number;
 
     /**
+     * Horizontal adjustment in pixels for the container. If for some reason the alignment of the child element we are
+     * highlighting is off, the horizontalAdjustment prop can be used to tweak the horizontal positioning of the child
+     * element which we are highlighting.
+     ```js
+        // Usage Example
+        <Tooltip horizontalAdjustment={-84} />
+     ```
+     */
+    horizontalAdjustment?: number;
+
+    /**
      *Set this to false if you want to override the default accessible on the root TouchableWithoutFeedback
      */
     accessible?: boolean;

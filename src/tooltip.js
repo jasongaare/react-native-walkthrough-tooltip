@@ -74,6 +74,7 @@ class Tooltip extends Component {
     useInteractionManager: false,
     useReactNativeModal: true,
     topAdjustment: 0,
+    horizontalAdjustment: 0,
     accessible: true,
   };
 
@@ -104,6 +105,7 @@ class Tooltip extends Component {
     useInteractionManager: PropTypes.bool,
     useReactNativeModal: PropTypes.bool,
     topAdjustment: PropTypes.number,
+    horizontalAdjustment: PropTypes.number,
     accessible: PropTypes.bool,
   };
 
@@ -357,7 +359,11 @@ class Tooltip extends Component {
   };
 
   renderChildInTooltip = () => {
-    const { height, width, x, y } = this.state.childRect;
+    let { height, width, x, y } = this.state.childRect;
+
+    if (this.props.horizontalAdjustment) {
+      x = x + this.props.horizontalAdjustment;
+    }
 
     const onTouchEnd = () => {
       if (this.props.closeOnChildInteraction) {
