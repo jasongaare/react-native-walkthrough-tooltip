@@ -65,6 +65,9 @@ declare module 'react-native-walkthrough-tooltip' {
     // When true (default), onClose prop is called when user touches content element
     closeOnContentInteraction?: boolean;
 
+    // When true (default), onClose prop is called when user touches background element
+    closeOnBackgroundInteraction?: boolean;
+
     // This is the view displayed in the tooltip popover bubble
     content?: React.ReactElement;
 

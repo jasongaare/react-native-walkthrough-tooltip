@@ -59,6 +59,7 @@ class Tooltip extends Component {
     children: null,
     closeOnChildInteraction: true,
     closeOnContentInteraction: true,
+    closeOnBackgroundInteraction: true,
     content: <View />,
     displayInsets: {},
     disableShadow: false,
@@ -89,6 +90,7 @@ class Tooltip extends Component {
     children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     closeOnChildInteraction: PropTypes.bool,
     closeOnContentInteraction: PropTypes.bool,
+    closeOnBackgroundInteraction: PropTypes.bool,
     content: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     displayInsets: PropTypes.shape({
       top: PropTypes.number,
@@ -410,6 +412,12 @@ class Tooltip extends Component {
 
     const hasChildren = React.Children.count(this.props.children) > 0;
 
+    const onPressBackground = () => {
+      if (this.props.closeOnBackgroundInteraction) {
+        this.props.onClose();
+      }
+    };
+
     const onPressContent = () => {
       if (this.props.closeOnContentInteraction) {
         this.props.onClose();
@@ -418,7 +426,7 @@ class Tooltip extends Component {
 
     return (
       <TouchableWithoutFeedback
-        onPress={this.props.onClose}
+        onPress={onPressBackground}
         accessible={this.props.accessible}
       >
         <View style={generatedStyles.containerStyle}>
