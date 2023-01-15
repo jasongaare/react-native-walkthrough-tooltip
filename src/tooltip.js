@@ -77,6 +77,7 @@ class Tooltip extends Component {
     topAdjustment: 0,
     horizontalAdjustment: 0,
     accessible: true,
+    animationType: 'none',
   };
 
   static propTypes = {
@@ -109,6 +110,7 @@ class Tooltip extends Component {
     topAdjustment: PropTypes.number,
     horizontalAdjustment: PropTypes.number,
     accessible: PropTypes.bool,
+    animationType: PropTypes.string,
   };
 
   constructor(props) {
@@ -474,6 +476,7 @@ class Tooltip extends Component {
             visible={showTooltip}
             onRequestClose={this.props.onClose}
             supportedOrientations={this.props.supportedOrientations}
+            animationType={this.props.animationType}
           >
             {this.renderContentForTooltip()}
           </ModalComponent>
