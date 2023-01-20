@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import {
   Dimensions,
@@ -78,6 +78,8 @@ class Tooltip extends Component {
     horizontalAdjustment: 0,
     accessible: true,
     animationType: 'none',
+    skipText: 'Skip',
+    skipFunction: () => {},
   };
 
   static propTypes = {
@@ -111,6 +113,9 @@ class Tooltip extends Component {
     horizontalAdjustment: PropTypes.number,
     accessible: PropTypes.bool,
     animationType: PropTypes.string,
+    skipText: PropTypes.string,
+    skipStyle: PropTypes.object,
+    skipFunction: PropTypes.func,
   };
 
   constructor(props) {
@@ -431,27 +436,38 @@ class Tooltip extends Component {
         onPress={onPressBackground}
         accessible={this.props.accessible}
       >
-        <View style={generatedStyles.containerStyle}>
-          <View style={[generatedStyles.backgroundStyle]}>
-            <View style={generatedStyles.tooltipStyle}>
-              {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
-              <View
-                onLayout={this.measureContent}
-                style={generatedStyles.contentStyle}
-              >
-                <TouchableWithoutFeedback
-                  onPress={onPressContent}
-                  accessible={this.props.accessible}
+        <Fragment>
+          <TouchableOpacity
+            onPress={this.props.handleSkip}
+            style={{ position: 'absolute', top: 0, right: 10, zIndex: 600 }}
+          >
+            <Text style={this.props.skipTextStyle}>{this.props.skipText}</Text>
+          </TouchableOpacity>
+
+          <View style={generatedStyles.containerStyle}>
+            <View style={[generatedStyles.backgroundStyle]}>
+              <View style={generatedStyles.tooltipStyle}>
+                {hasChildren ? (
+                  <View style={generatedStyles.arrowStyle} />
+                ) : null}
+                <View
+                  onLayout={this.measureContent}
+                  style={generatedStyles.contentStyle}
                 >
-                  {this.props.content}
-                </TouchableWithoutFeedback>
+                  <TouchableWithoutFeedback
+                    onPress={onPressContent}
+                    accessible={this.props.accessible}
+                  >
+                    {this.props.content}
+                  </TouchableWithoutFeedback>
+                </View>
               </View>
             </View>
+            {hasChildren && this.props.showChildInTooltip
+              ? this.renderChildInTooltip()
+              : null}
           </View>
-          {hasChildren && this.props.showChildInTooltip
-            ? this.renderChildInTooltip()
-            : null}
-        </View>
+        </Fragment>
       </TouchableWithoutFeedback>
     );
   };

@@ -149,6 +149,11 @@ declare module 'react-native-walkthrough-tooltip' {
 
     //Set animation for React Native modal. Default is 'none'
     animationType?: 'none' | 'fade' | 'slide';
+
+    skipText?: string;
+    SkipTextStyle?: StyleProp<ViewStyle>;
+    SkipFunction?: () => void;
+    
   }
 
   /**
