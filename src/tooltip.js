@@ -485,6 +485,7 @@ class Tooltip extends Component {
             ref={this.childWrapper}
             onLayout={this.measureChildRect}
             style={this.props.parentWrapperStyle}
+            {...this.props.childrenWrapperProps}
           >
             {children}
           </View>

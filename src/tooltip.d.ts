@@ -3,7 +3,7 @@
 
 declare module 'react-native-walkthrough-tooltip' {
   import React from 'react';
-  import { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
+  import { GestureResponderEvent, StyleProp, ViewStyle, ViewProps } from 'react-native';
 
   type Orientation =
     | 'portrait'
@@ -50,6 +50,10 @@ declare module 'react-native-walkthrough-tooltip' {
   }
 
   export interface TooltipProps extends Partial<TooltipStyleProps> {
+
+    // Adds props to the View ChildrenWrapper
+    childrenWrapperProps?: ViewProps;
+
     // When true (default), user can interact with child element
     allowChildInteraction?: boolean;
 
