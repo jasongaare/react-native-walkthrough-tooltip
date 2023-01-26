@@ -16,3 +16,6 @@ npm-debug.log
 
 # vscode settings
 .vscode
+
+# idea settings
+.idea
