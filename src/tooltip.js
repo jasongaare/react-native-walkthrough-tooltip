@@ -105,6 +105,7 @@ class Tooltip extends Component {
     showChildInTooltip: PropTypes.bool,
     supportedOrientations: PropTypes.arrayOf(PropTypes.string),
     useInteractionManager: PropTypes.bool,
+    interactionManagerTimeout: PropTypes.number,
     useReactNativeModal: PropTypes.bool,
     topAdjustment: PropTypes.number,
     horizontalAdjustment: PropTypes.number,
@@ -294,7 +295,19 @@ class Tooltip extends Component {
       if (this.interactionPromise) {
         this.interactionPromise.cancel();
       }
+
+      let interactionTimeout;
+      if (this.props.interactionManagerTimeout !== undefined) {
+        // Make sure doMeasurement runs, also if runAfterInteractions doesn't run (rare case)
+        interactionTimeout = setTimeout(() => {
+          doMeasurement();
+        }, this.props.interactionManagerTimeout);
+      }
+
       this.interactionPromise = InteractionManager.runAfterInteractions(() => {
+        if (interactionTimeout) {
+          clearTimeout(interactionTimeout);
+        }
         doMeasurement();
       });
     } else {
