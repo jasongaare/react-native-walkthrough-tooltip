@@ -77,6 +77,7 @@ class Tooltip extends Component {
     topAdjustment: 0,
     horizontalAdjustment: 0,
     accessible: true,
+    scrollable: false,
   };
 
   static propTypes = {
@@ -109,6 +110,7 @@ class Tooltip extends Component {
     topAdjustment: PropTypes.number,
     horizontalAdjustment: PropTypes.number,
     accessible: PropTypes.bool,
+    scrollable: PropTypes.bool,
   };
 
   constructor(props) {
@@ -408,7 +410,7 @@ class Tooltip extends Component {
     const hasChildren = React.Children.count(this.props.children) > 0;
     const screenHeight = Dimensions.get('window').height;
 
-    if (screenHeight < 700) {
+    if (this.props.scrollable) {
       generatedStyles.containerStyle = {
         ...generatedStyles.containerStyle,
         height: screenHeight * 1.3,

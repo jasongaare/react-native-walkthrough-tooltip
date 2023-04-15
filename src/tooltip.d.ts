@@ -46,7 +46,7 @@ declare module 'react-native-walkthrough-tooltip' {
     childrenWrapperStyle?: StyleProp<ViewStyle>;
 
     // Styles the view element that wraps the original children
-    parentWrapperStyle?: StyleProp<ViewStyle>
+    parentWrapperStyle?: StyleProp<ViewStyle>;
   }
 
   export interface TooltipProps extends Partial<TooltipStyleProps> {
@@ -146,6 +146,9 @@ declare module 'react-native-walkthrough-tooltip' {
 
     // Support for nested elements within the Tooltip component.
     children?: React.ReactNode;
+
+    // Make the tooltip wrapper scrollable.
+    scrollable?: boolean;
   }
 
   /**
