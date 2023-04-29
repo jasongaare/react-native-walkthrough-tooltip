@@ -6,6 +6,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   View,
+  ScrollView,
 } from 'react-native';
 import rfcIsEqual from 'react-fast-compare';
 import {
