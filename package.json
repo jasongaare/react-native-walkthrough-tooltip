@@ -42,7 +42,7 @@
     "react-native": "^0.55.3"
   },
   "peerDependencies": {
-    "@types/react": ">=16.8.24 <18"
+    "@types/react": ">=16.8.24"
   },
   "jest": {
     "preset": "react-native",
