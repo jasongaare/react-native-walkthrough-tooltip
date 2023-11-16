@@ -468,7 +468,7 @@ class Tooltip extends Component {
 
     return (
       <React.Fragment>
-        {useReactNativeModal ? (
+        {useReactNativeModal && showTooltip ? (
           <ModalComponent
             transparent
             visible={showTooltip}
