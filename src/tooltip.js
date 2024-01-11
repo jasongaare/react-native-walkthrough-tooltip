@@ -6,6 +6,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   View,
+  ScrollView,
 } from 'react-native';
 import rfcIsEqual from 'react-fast-compare';
 import {
@@ -32,10 +33,10 @@ const DEFAULT_DISPLAY_INSETS = {
   right: 24,
 };
 
-const computeDisplayInsets = insetsFromProps =>
+const computeDisplayInsets = (insetsFromProps) =>
   Object.assign({}, DEFAULT_DISPLAY_INSETS, insetsFromProps);
 
-const invertPlacement = placement => {
+const invertPlacement = (placement) => {
   switch (placement) {
     case 'top':
       return 'bottom';
@@ -77,6 +78,7 @@ class Tooltip extends Component {
     topAdjustment: 0,
     horizontalAdjustment: 0,
     accessible: true,
+    scrollable: false,
   };
 
   static propTypes = {
@@ -109,6 +111,7 @@ class Tooltip extends Component {
     topAdjustment: PropTypes.number,
     horizontalAdjustment: PropTypes.number,
     accessible: PropTypes.bool,
+    scrollable: PropTypes.bool,
   };
 
   constructor(props) {
@@ -212,7 +215,7 @@ class Tooltip extends Component {
     return null;
   }
 
-  updateWindowDims = dims => {
+  updateWindowDims = (dims) => {
     this.setState(
       {
         windowDims: dims.window,
@@ -241,7 +244,7 @@ class Tooltip extends Component {
     );
   };
 
-  measureContent = e => {
+  measureContent = (e) => {
     const { width, height } = e.nativeEvent.layout;
     const contentSize = new Size(width, height);
     this.setState({ contentSize }, () => {
@@ -249,7 +252,7 @@ class Tooltip extends Component {
     });
   };
 
-  onChildMeasurementComplete = rect => {
+  onChildMeasurementComplete = (rect) => {
     this.setState(
       {
         childRect: rect,
@@ -276,7 +279,7 @@ class Tooltip extends Component {
             (x, y, width, height, pageX, pageY) => {
               const childRect = new Rect(pageX, pageY, width, height);
               if (
-                Object.values(childRect).every(value => value !== undefined)
+                Object.values(childRect).every((value) => value !== undefined)
               ) {
                 this.onChildMeasurementComplete(childRect);
               } else {
@@ -304,13 +307,8 @@ class Tooltip extends Component {
 
   computeGeometry = () => {
     const { arrowSize, childContentSpacing } = this.props;
-    const {
-      childRect,
-      contentSize,
-      displayInsets,
-      placement,
-      windowDims,
-    } = this.state;
+    const { childRect, contentSize, displayInsets, placement, windowDims } =
+      this.state;
 
     const options = {
       displayInsets,
@@ -411,12 +409,15 @@ class Tooltip extends Component {
     });
 
     const hasChildren = React.Children.count(this.props.children) > 0;
+    const screenHeight = Dimensions.get('window').height;
 
-    const onPressBackground = () => {
-      if (this.props.closeOnBackgroundInteraction) {
-        this.props.onClose();
-      }
-    };
+    if (this.props.scrollable) {
+      generatedStyles.containerStyle = {
+        ...generatedStyles.containerStyle,
+        height: screenHeight * 1.3,
+        backgroundColor: 'rgba(0,0,0, 0.5)',
+      };
+    }
 
     const onPressContent = () => {
       if (this.props.closeOnContentInteraction) {
@@ -426,10 +427,10 @@ class Tooltip extends Component {
 
     return (
       <TouchableWithoutFeedback
-        onPress={onPressBackground}
+        onPress={this.props.onClose}
         accessible={this.props.accessible}
       >
-        <View style={generatedStyles.containerStyle}>
+        <ScrollView contentContainerStyle={generatedStyles.containerStyle}>
           <View style={[generatedStyles.backgroundStyle]}>
             <View style={generatedStyles.tooltipStyle}>
               {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
@@ -449,18 +450,14 @@ class Tooltip extends Component {
           {hasChildren && this.props.showChildInTooltip
             ? this.renderChildInTooltip()
             : null}
-        </View>
+        </ScrollView>
       </TouchableWithoutFeedback>
     );
   };
 
   render() {
-    const {
-      children,
-      isVisible,
-      useReactNativeModal,
-      modalComponent,
-    } = this.props;
+    const { children, isVisible, useReactNativeModal, modalComponent } =
+      this.props;
 
     const hasChildren = React.Children.count(children) > 0;
     const showTooltip = isVisible && !this.state.waitingForInteractions;
