@@ -430,7 +430,7 @@ class Tooltip extends Component {
         accessible={this.props.accessible}
       >
         <View style={generatedStyles.containerStyle}>
-          <View style={[generatedStyles.backgroundStyle]}>
+          <View style={[generatedStyles.backgroundStyle, this.props.backgroundStyle]}>
             <View style={generatedStyles.tooltipStyle}>
               {hasChildren ? <View style={generatedStyles.arrowStyle} /> : null}
               <View
