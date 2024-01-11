@@ -46,7 +46,7 @@ declare module 'react-native-walkthrough-tooltip' {
     childrenWrapperStyle?: StyleProp<ViewStyle>;
 
     // Styles the view element that wraps the original children
-    parentWrapperStyle?: StyleProp<ViewStyle>
+    parentWrapperStyle?: StyleProp<ViewStyle>;
   }
 
   export interface TooltipProps extends Partial<TooltipStyleProps> {
@@ -104,6 +104,12 @@ declare module 'react-native-walkthrough-tooltip' {
      * to wait for navigation transitions to complete, etc
      */
     useInteractionManager?: boolean;
+
+    /**
+     * In some rare cases InteractionManager.runAfterInteractions is not executed. This can be useful
+     * to trigger the measurement after a maximal amount of time (in milliseconds).
+     */
+    interactionManagerTimeout?: number;
 
     /**
      * When false, will not use a React Native Modal component to display tooltip,
