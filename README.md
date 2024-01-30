@@ -101,6 +101,7 @@ The tooltip styles should work out-of-the-box for most use cases, however should
 | arrowStyle           | Styles the triangle that points to the called out element                       |
 | backgroundStyle      | Styles the overlay view that sits behind the tooltip, but over the current view |
 | childrenWrapperStyle | Styles the view that wraps cloned children                                      |
+| parentWrapperStyle   | Styles the view element that wraps the original children                        |
 | contentStyle         | Styles the content wrapper that surrounds the `content` element                 |
 | tooltipStyle         | Styles the tooltip that wraps the arrow and content elements                    |
 
