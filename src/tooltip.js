@@ -243,8 +243,13 @@ class Tooltip extends Component {
 
   measureContent = e => {
     const { width, height } = e.nativeEvent.layout;
-    const contentSize = new Size(width, height);
-    this.setState({ contentSize }, () => {
+    const newContentSize = new Size(width, height);
+    this.setState(({ contentSize }) => ({
+      contentSize: {
+        width: Math.max(contentSize.width, newContentSize.width),
+        height: Math.max(contentSize.height, newContentSize.height)
+      }
+    }), () => {
       this.computeGeometry();
     });
   };
