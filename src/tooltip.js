@@ -20,7 +20,7 @@ import {
   computeLeftGeometry,
   computeRightGeometry,
 } from './geom';
-import styleGenerator from './styles';
+import styleGenerator, { HORIZONTAL_DIRECTION } from './styles';
 import TooltipChildrenContext from './tooltip-children.context';
 
 export { TooltipChildrenContext };
@@ -384,7 +384,7 @@ class Tooltip extends Component {
               height,
               width,
               top: y,
-              left: x,
+              [HORIZONTAL_DIRECTION]: x,
               alignItems: 'center',
               justifyContent: 'center',
             },

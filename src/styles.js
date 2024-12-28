@@ -1,4 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { I18nManager, StyleSheet } from 'react-native';
+
+export const HORIZONTAL_DIRECTION = I18nManager.isRTL ? 'right' : 'left';
 
 const styles = StyleSheet.create({
   container: {
@@ -12,6 +14,7 @@ const styles = StyleSheet.create({
   },
   background: {
     ...StyleSheet.absoluteFillObject,
+    ...(I18nManager.isRTL ? { flexDirection: 'row-reverse' } : {}),
   },
   tooltip: {
     backgroundColor: 'transparent',
@@ -73,7 +76,8 @@ const arrowPlacementStyles = ({
   }
 
   return {
-    left: anchorPoint.x - tooltipOrigin.x - (width / 2 - marginLeft),
+    [HORIZONTAL_DIRECTION]:
+      anchorPoint.x - tooltipOrigin.x - (width / 2 - marginLeft),
     top: anchorPoint.y - tooltipOrigin.y - (height / 2 - marginTop),
     width,
     height,
