@@ -5,7 +5,8 @@ import {
   InteractionManager,
   Keyboard,
   Modal,
-  TouchableWithoutFeedback,
+  Pressable,
+  StyleSheet,
   View,
 } from 'react-native';
 import rfcIsEqual from 'react-fast-compare';
@@ -33,10 +34,10 @@ const DEFAULT_DISPLAY_INSETS = {
   right: 24,
 };
 
-const computeDisplayInsets = insetsFromProps =>
+const computeDisplayInsets = (insetsFromProps) =>
   Object.assign({}, DEFAULT_DISPLAY_INSETS, insetsFromProps);
 
-const invertPlacement = placement => {
+const invertPlacement = (placement) => {
   switch (placement) {
     case 'top':
       return 'bottom';
@@ -196,7 +197,7 @@ class Tooltip extends Component {
       this.interactionPromise.cancel();
     }
 
-    this.keyboardSubscriptions.forEach(sub => {
+    this.keyboardSubscriptions.forEach((sub) => {
       if (sub && typeof sub.remove === 'function') {
         sub.remove();
       }
@@ -258,7 +259,7 @@ class Tooltip extends Component {
     }, 120);
   };
 
-  updateWindowDims = dims => {
+  updateWindowDims = (dims) => {
     this.setState(
       {
         windowDims: dims.window,
@@ -287,7 +288,7 @@ class Tooltip extends Component {
     );
   };
 
-  measureContent = e => {
+  measureContent = (e) => {
     const { width, height } = e.nativeEvent.layout;
     const contentSize = new Size(width, height);
     this.setState({ contentSize }, () => {
@@ -295,7 +296,7 @@ class Tooltip extends Component {
     });
   };
 
-  onChildMeasurementComplete = rect => {
+  onChildMeasurementComplete = (rect) => {
     this.setState(
       {
         childRect: rect,
@@ -326,7 +327,7 @@ class Tooltip extends Component {
               }
               const childRect = new Rect(pageX, pageY, width, height);
               if (
-                Object.values(childRect).every(value => value !== undefined)
+                Object.values(childRect).every((value) => value !== undefined)
               ) {
                 this.onChildMeasurementComplete(childRect);
               } else {
@@ -354,13 +355,8 @@ class Tooltip extends Component {
 
   computeGeometry = () => {
     const { arrowSize, childContentSpacing } = this.props;
-    const {
-      childRect,
-      contentSize,
-      displayInsets,
-      placement,
-      windowDims,
-    } = this.state;
+    const { childRect, contentSize, displayInsets, placement, windowDims } =
+      this.state;
 
     const options = {
       displayInsets,
@@ -475,9 +471,9 @@ class Tooltip extends Component {
     };
 
     return (
-      <TouchableWithoutFeedback
+      <Pressable
+        style={[StyleSheet.absoluteFill, { zIndex: 500 }]}
         onPress={onPressBackground}
-        accessible={this.props.accessible}
       >
         <View style={generatedStyles.containerStyle}>
           <View style={[generatedStyles.backgroundStyle]}>
@@ -487,12 +483,12 @@ class Tooltip extends Component {
                 onLayout={this.measureContent}
                 style={generatedStyles.contentStyle}
               >
-                <TouchableWithoutFeedback
+                <Pressable
                   onPress={onPressContent}
                   accessible={this.props.accessible}
                 >
                   {this.props.content}
-                </TouchableWithoutFeedback>
+                </Pressable>
               </View>
             </View>
           </View>
@@ -500,17 +496,13 @@ class Tooltip extends Component {
             ? this.renderChildInTooltip()
             : null}
         </View>
-      </TouchableWithoutFeedback>
+      </Pressable>
     );
   };
 
   render() {
-    const {
-      children,
-      isVisible,
-      useReactNativeModal,
-      modalComponent,
-    } = this.props;
+    const { children, isVisible, useReactNativeModal, modalComponent } =
+      this.props;
 
     const hasChildren = React.Children.count(children) > 0;
     const showTooltip = isVisible && !this.state.waitingForInteractions;

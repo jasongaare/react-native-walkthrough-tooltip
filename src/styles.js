@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     opacity: 0,
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(0,0,0,0.01)',
     zIndex: 500,
   },
   containerVisible: {
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const arrowRotationForPlacement = placement => {
+const arrowRotationForPlacement = (placement) => {
   switch (placement) {
     case 'bottom':
       return '180deg';
@@ -130,7 +130,7 @@ const tooltipPlacementStyles = ({ arrowSize, placement, tooltipOrigin }) => {
   }
 };
 
-const styleGenerator = styleGeneratorProps => {
+const styleGenerator = (styleGeneratorProps) => {
   const {
     adjustedContentSize,
     displayInsets,
@@ -150,8 +150,8 @@ const styleGenerator = styleGeneratorProps => {
     ownProps.contentStyle,
   ];
 
-  const contentBackgroundColor = StyleSheet.flatten(contentStyle)
-    .backgroundColor;
+  const contentBackgroundColor =
+    StyleSheet.flatten(contentStyle).backgroundColor;
 
   const arrowStyle = [
     styles.arrow,
