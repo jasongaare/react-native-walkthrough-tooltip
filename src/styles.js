@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     opacity: 0,
     backgroundColor: 'transparent',
     zIndex: 500,
@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     opacity: 1,
   },
   background: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
   tooltip: {
     backgroundColor: 'transparent',
