@@ -89,6 +89,8 @@ declare module 'react-native-walkthrough-tooltip' {
      * Default is 'top' for tooltips rendered with children. Default is 'center' for tooltips
      * rendered without children. NOTE: center is only available with a childless placement,
      * and the content will be centered within the bounds defined by the displayInsets.
+     * If the requested side has no room for the content but the opposite side has more,
+     * the tooltip flips to the opposite side rather than drawing over the child.
      */
     placement?: 'top' | 'bottom' | 'left' | 'right' | 'center';
 
