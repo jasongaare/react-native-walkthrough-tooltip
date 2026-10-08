@@ -1,48 +1,109 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`testing styling shows stylesheet is as expected 1`] = `
+exports[`testing styling shows generated styles are as expected 1`] = `
 Object {
-  "arrow": Object {
-    "borderBottomColor": "transparent",
-    "borderLeftColor": "transparent",
-    "borderRightColor": "transparent",
-    "borderTopColor": "transparent",
-    "position": "absolute",
-  },
-  "background": Object {
-    "bottom": 0,
-    "left": 0,
-    "position": "absolute",
-    "right": 0,
-    "top": 0,
-  },
-  "container": Object {
-    "backgroundColor": "transparent",
-    "bottom": 0,
-    "left": 0,
-    "opacity": 0,
-    "position": "absolute",
-    "right": 0,
-    "top": 0,
-  },
-  "containerVisible": Object {
-    "opacity": 1,
-  },
-  "content": Object {
-    "backgroundColor": "#fff",
-    "borderRadius": 4,
-    "padding": 8,
-  },
-  "tooltip": Object {
-    "backgroundColor": "transparent",
-    "position": "absolute",
-    "shadowColor": "black",
-    "shadowOffset": Object {
-      "height": 2,
-      "width": 0,
+  "arrowStyle": Array [
+    Object {
+      "borderBottomColor": "transparent",
+      "borderLeftColor": "transparent",
+      "borderRightColor": "transparent",
+      "borderTopColor": "transparent",
+      "position": "absolute",
     },
-    "shadowOpacity": 0.8,
-    "shadowRadius": 2,
-  },
+    Object {
+      "borderBottomWidth": 9,
+      "borderLeftWidth": 9,
+      "borderRightWidth": 9,
+      "borderTopWidth": 9,
+      "height": 18,
+      "left": 23,
+      "top": 99,
+      "width": 18,
+    },
+    Object {
+      "borderTopColor": "#fff",
+    },
+    undefined,
+    Object {
+      "transform": Array [
+        Object {
+          "rotate": "0deg",
+        },
+      ],
+    },
+  ],
+  "backgroundStyle": Array [
+    Object {
+      "bottom": 0,
+      "left": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+    },
+    undefined,
+    Object {
+      "backgroundColor": "rgba(0,0,0,0.5)",
+      "paddingBottom": 24,
+      "paddingLeft": 24,
+      "paddingRight": 24,
+      "paddingTop": 24,
+    },
+  ],
+  "containerStyle": Array [
+    Object {
+      "backgroundColor": "transparent",
+      "bottom": 0,
+      "left": 0,
+      "opacity": 0,
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "zIndex": 500,
+    },
+    Array [
+      Object {
+        "opacity": 1,
+      },
+      false,
+    ],
+  ],
+  "contentStyle": Array [
+    Object {
+      "backgroundColor": "#fff",
+      "borderRadius": 4,
+      "overflow": "hidden",
+      "padding": 8,
+    },
+    Object {
+      "height": 100,
+    },
+    Object {
+      "width": 200,
+    },
+    undefined,
+  ],
+  "tooltipStyle": Array [
+    Array [
+      Object {
+        "backgroundColor": "transparent",
+        "position": "absolute",
+      },
+      Object {
+        "shadowColor": "black",
+        "shadowOffset": Object {
+          "height": 2,
+          "width": 0,
+        },
+        "shadowOpacity": 0.8,
+        "shadowRadius": 2,
+      },
+    ],
+    Object {
+      "left": 24,
+      "paddingBottom": 8,
+      "top": 274,
+    },
+    undefined,
+  ],
 }
 `;
