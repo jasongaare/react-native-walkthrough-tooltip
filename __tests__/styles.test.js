@@ -1,14 +1,6 @@
 import { StyleSheet } from 'react-native';
 import styleGenerator from '../src/styles';
 
-const absoluteFill = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-};
-
 const styleGeneratorProps = {
   adjustedContentSize: { width: 200, height: 100 },
   anchorPoint: { x: 56, y: 382 },
@@ -33,7 +25,11 @@ describe('testing styling', () => {
       styleGeneratorProps,
     );
 
-    expect(StyleSheet.flatten(containerStyle)).toMatchObject(absoluteFill);
-    expect(StyleSheet.flatten(backgroundStyle)).toMatchObject(absoluteFill);
+    expect(StyleSheet.flatten(containerStyle)).toMatchObject(
+      StyleSheet.absoluteFill,
+    );
+    expect(StyleSheet.flatten(backgroundStyle)).toMatchObject(
+      StyleSheet.absoluteFill,
+    );
   });
 });
