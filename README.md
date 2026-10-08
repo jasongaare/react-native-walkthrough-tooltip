@@ -23,6 +23,8 @@ When not visible, the wrapped element is displayed normally.
 yarn add react-native-walkthrough-tooltip
 ```
 
+Requires React Native 0.56 or later.
+
 ### Breaking Changes in Version 1.0
 
 For Version 1.0, the library was refactored and simplified.

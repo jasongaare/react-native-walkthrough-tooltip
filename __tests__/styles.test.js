@@ -101,4 +101,16 @@ describe('testing styling', () => {
     expect(hidden.containerStyle.opacity).toBe(0);
     expect(visible.containerStyle.opacity).toBe(1);
   });
+
+  // the container and background must fill the screen for the tooltip to
+  // position itself and for taps outside the tooltip to be caught
+  it('fills the screen with the container and background', () => {
+    const geom = computeTopGeometry({ ...geometryOptions, arrowSize });
+    const { backgroundStyle, containerStyle } = flattenAll(
+      generateStyles(geom),
+    );
+
+    expect(containerStyle).toMatchObject(StyleSheet.absoluteFill);
+    expect(backgroundStyle).toMatchObject(StyleSheet.absoluteFill);
+  });
 });
