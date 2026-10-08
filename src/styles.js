@@ -136,6 +136,7 @@ const styleGenerator = styleGeneratorProps => {
     adjustedContentSize,
     displayInsets,
     measurementsFinished,
+    measuringContent,
     ownProps,
     placement,
     topAdjustment,
@@ -146,8 +147,9 @@ const styleGenerator = styleGeneratorProps => {
 
   const contentStyle = [
     styles.content,
-    height > 0 && { height }, // ignore special case of -1 with center placement (and 0 when not yet measured)
-    width > 0 && { width }, // ignore special case of -1 with center placement (and 0 when not yet measured)
+    // let new content lay out at its natural size so it can be measured again
+    !measuringContent && height > 0 && { height }, // ignore special case of -1 with center placement (and 0 when not yet measured)
+    !measuringContent && width > 0 && { width }, // ignore special case of -1 with center placement (and 0 when not yet measured)
     ownProps.contentStyle,
   ];
 

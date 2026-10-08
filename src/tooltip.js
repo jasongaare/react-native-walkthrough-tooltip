@@ -144,6 +144,9 @@ class Tooltip extends Component {
       // requested side has no room and the tooltip flips (see computeGeometry)
       renderedPlacement: initialPlacement,
       measurementsFinished: false,
+      // true while the content is laid out at its natural size again after
+      // it changed, so the tooltip can grow or shrink to fit it
+      measuringContent: false,
       windowDims: Dimensions.get('window'),
     };
   }
@@ -163,6 +166,13 @@ class Tooltip extends Component {
     const placementChanged = prevProps.placement !== placement;
     const becameVisible = isVisible && !prevProps.isVisible;
     const insetsChanged = !rfcIsEqual(prevState.displayInsets, displayInsets);
+
+    if (contentChanged && isVisible) {
+      // drop the size fixed by the previous measurement, otherwise the new
+      // content is squeezed into (or stretched to) the old content's size
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ measuringContent: true });
+    }
 
     if (contentChanged || placementChanged || becameVisible || insetsChanged) {
       setTimeout(() => {
@@ -211,6 +221,7 @@ class Tooltip extends Component {
     if (prevState.measurementsFinished && !nextProps.isVisible) {
       nextState.measurementsFinished = false;
       nextState.adjustedContentSize = new Size(0, 0);
+      nextState.measuringContent = false;
     }
 
     if (Object.keys(nextState).length) {
@@ -252,7 +263,7 @@ class Tooltip extends Component {
   measureContent = e => {
     const { width, height } = e.nativeEvent.layout;
     const contentSize = new Size(width, height);
-    this.setState({ contentSize }, () => {
+    this.setState({ contentSize, measuringContent: false }, () => {
       this.computeGeometry();
     });
   };
@@ -427,6 +438,7 @@ class Tooltip extends Component {
       arrowSize: this.props.arrowSize,
       displayInsets: this.state.displayInsets,
       measurementsFinished: this.state.measurementsFinished,
+      measuringContent: this.state.measuringContent,
       ownProps: { ...this.props },
       placement: this.state.renderedPlacement,
       tooltipOrigin: this.state.tooltipOrigin,
