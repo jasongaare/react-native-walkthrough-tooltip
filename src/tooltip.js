@@ -412,9 +412,9 @@ class Tooltip extends Component {
 
     const hasChildren = React.Children.count(this.props.children) > 0;
 
-    const onPressBackground = () => {
+    const onPressBackground = (event) => {
       if (this.props.closeOnBackgroundInteraction) {
-        this.props.onClose();
+        this.props.onClose(event);
       }
     };
 
@@ -426,7 +426,7 @@ class Tooltip extends Component {
 
     return (
       <TouchableWithoutFeedback
-        onPress={onPressBackground}
+        onPress={(event) => onPressBackground(event)}
         accessible={this.props.accessible}
       >
         <View style={generatedStyles.containerStyle}>
