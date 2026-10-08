@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { shallow } from 'enzyme';
 import Tooltip from '../src/tooltip';
 import { Size, Rect } from '../src/geom';
@@ -148,5 +148,70 @@ describe('Tooltip placement flipping', () => {
     wrapper.setProps({ placement: 'left' });
     expect(wrapper.state().placement).toBe('left');
     expect(wrapper.state().renderedPlacement).toBe('left');
+  });
+});
+
+describe('Tooltip content changes', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('resizes to fit new content', () => {
+    const wrapper = shallow(
+      <Tooltip
+        isVisible
+        placement="top"
+        content={<Text>short</Text>}
+        onClose={() => {}}
+      >
+        <Text>child</Text>
+      </Tooltip>,
+    );
+    const layout = (width, height) => ({
+      nativeEvent: { layout: { width, height } },
+    });
+    // the view whose layout is reported as the content size
+    const contentStyle = () => {
+      const { measureContent } = wrapper.instance();
+      const style = wrapper
+        .update()
+        .find(View)
+        .filterWhere(node => node.prop('onLayout') === measureContent)
+        .prop('style');
+      return StyleSheet.flatten(style);
+    };
+
+    wrapper.setState({ windowDims });
+    wrapper.instance().onChildMeasurementComplete(new Rect(140, 350, 64, 64));
+    wrapper.instance().measureContent(layout(200, 50));
+    expect(contentStyle()).toMatchObject({ width: 200, height: 50 });
+
+    wrapper.setProps({ content: <Text>a much longer message</Text> });
+
+    // the old size is dropped so the new content can be laid out and measured
+    expect(contentStyle().height).toBeUndefined();
+    expect(contentStyle().width).toBeUndefined();
+
+    wrapper.instance().measureContent(layout(200, 120));
+    expect(contentStyle()).toMatchObject({ width: 200, height: 120 });
+  });
+
+  it('keeps its size when re-rendered with the same content', () => {
+    const wrapper = shallow(
+      <Tooltip
+        isVisible
+        placement="top"
+        content={<Text>same</Text>}
+        onClose={() => {}}
+      >
+        <Text>child</Text>
+      </Tooltip>,
+    );
+    wrapper.setProps({ content: <Text>same</Text> });
+    expect(wrapper.state().measuringContent).toBe(false);
   });
 });

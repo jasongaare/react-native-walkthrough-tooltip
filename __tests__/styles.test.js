@@ -102,6 +102,19 @@ describe('testing styling', () => {
     expect(visible.containerStyle.opacity).toBe(1);
   });
 
+  it('lets the content size itself while it is being measured again', () => {
+    const geom = computeTopGeometry({ ...geometryOptions, arrowSize });
+    const fixed = flattenAll(generateStyles(geom));
+    const measuring = flattenAll(
+      generateStyles(geom, { measuringContent: true }),
+    );
+    expect(fixed.contentStyle).toMatchObject({ width: 200, height: 100 });
+    expect(measuring.contentStyle.width).toBeUndefined();
+    expect(measuring.contentStyle.height).toBeUndefined();
+    // and it stays on screen meanwhile
+    expect(measuring.containerStyle.opacity).toBe(1);
+  });
+
   // the container and background must fill the screen for the tooltip to
   // position itself and for taps outside the tooltip to be caught
   it('fills the screen with the container and background', () => {
