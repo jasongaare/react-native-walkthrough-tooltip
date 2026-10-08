@@ -2,55 +2,71 @@
 
 exports[`Testing Computing Geometry correctly calculates bottom geometry 1`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 100,
+    "width": 200,
+  },
   "anchorPoint": Point {
     "x": 56,
-    "y": 414,
+    "y": 418,
   },
   "placement": "bottom",
   "tooltipOrigin": Point {
-    "x": 0,
-    "y": 422,
+    "x": 24,
+    "y": 426,
   },
 }
 `;
 
 exports[`Testing Computing Geometry correctly calculates bottom geometry 2`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 200,
+    "width": 150,
+  },
   "anchorPoint": Point {
     "x": 272,
-    "y": 414,
+    "y": 418,
   },
   "placement": "bottom",
   "tooltipOrigin": Point {
-    "x": 197,
-    "y": 432,
+    "x": 201,
+    "y": 436,
   },
 }
 `;
 
 exports[`Testing Computing Geometry correctly calculates bottom geometry 3`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 396,
+    "width": 300,
+  },
   "anchorPoint": Point {
     "x": 99,
-    "y": 235,
+    "y": 239,
   },
   "placement": "bottom",
   "tooltipOrigin": Point {
-    "x": 0,
-    "y": 243,
+    "x": 24,
+    "y": 247,
   },
 }
 `;
 
 exports[`Testing Computing Geometry correctly calculates left geometry 1`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 100,
+    "width": -8,
+  },
   "anchorPoint": Point {
-    "x": 24,
+    "x": 20,
     "y": 382,
   },
   "placement": "left",
   "tooltipOrigin": Point {
-    "x": -192,
+    "x": 20,
     "y": 332,
   },
 }
@@ -58,13 +74,17 @@ Object {
 
 exports[`Testing Computing Geometry correctly calculates left geometry 2`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 200,
+    "width": 150,
+  },
   "anchorPoint": Point {
-    "x": 240,
+    "x": 236,
     "y": 382,
   },
   "placement": "left",
   "tooltipOrigin": Point {
-    "x": 83,
+    "x": 68,
     "y": 282,
   },
 }
@@ -72,27 +92,35 @@ Object {
 
 exports[`Testing Computing Geometry correctly calculates left geometry 3`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 500,
+    "width": -8,
+  },
   "anchorPoint": Point {
-    "x": 24,
+    "x": 20,
     "y": 135,
   },
   "placement": "left",
   "tooltipOrigin": Point {
-    "x": -292,
-    "y": 0,
+    "x": 20,
+    "y": 24,
   },
 }
 `;
 
 exports[`Testing Computing Geometry correctly calculates right geometry 1`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 100,
+    "width": 200,
+  },
   "anchorPoint": Point {
-    "x": 88,
+    "x": 92,
     "y": 382,
   },
   "placement": "right",
   "tooltipOrigin": Point {
-    "x": 104,
+    "x": 100,
     "y": 332,
   },
 }
@@ -100,13 +128,17 @@ Object {
 
 exports[`Testing Computing Geometry correctly calculates right geometry 2`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 200,
+    "width": 25,
+  },
   "anchorPoint": Point {
-    "x": 304,
+    "x": 308,
     "y": 382,
   },
   "placement": "right",
   "tooltipOrigin": Point {
-    "x": 311,
+    "x": 326,
     "y": 282,
   },
 }
@@ -114,56 +146,72 @@ Object {
 
 exports[`Testing Computing Geometry correctly calculates right geometry 3`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 500,
+    "width": 165,
+  },
   "anchorPoint": Point {
-    "x": 174,
+    "x": 178,
     "y": 135,
   },
   "placement": "right",
   "tooltipOrigin": Point {
-    "x": 190,
-    "y": 0,
+    "x": 186,
+    "y": 24,
   },
 }
 `;
 
 exports[`Testing Computing Geometry correctly calculates top geometry 1`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 100,
+    "width": 200,
+  },
   "anchorPoint": Point {
     "x": 56,
-    "y": 350,
+    "y": 346,
   },
   "placement": "top",
   "tooltipOrigin": Point {
-    "x": 0,
-    "y": 242,
+    "x": 24,
+    "y": 238,
   },
 }
 `;
 
 exports[`Testing Computing Geometry correctly calculates top geometry 2`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 200,
+    "width": 150,
+  },
   "anchorPoint": Point {
     "x": 272,
-    "y": 350,
+    "y": 346,
   },
   "placement": "top",
   "tooltipOrigin": Point {
-    "x": 197,
-    "y": 132,
+    "x": 201,
+    "y": 128,
   },
 }
 `;
 
 exports[`Testing Computing Geometry correctly calculates top geometry 3`] = `
 Object {
+  "adjustedContentSize": Size {
+    "height": 3,
+    "width": 300,
+  },
   "anchorPoint": Point {
     "x": 99,
-    "y": 35,
+    "y": 31,
   },
   "placement": "top",
   "tooltipOrigin": Point {
-    "x": 0,
-    "y": -473,
+    "x": 24,
+    "y": 20,
   },
 }
 `;

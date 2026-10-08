@@ -362,6 +362,63 @@ const computeRightGeometry = ({
   };
 };
 
+/**
+ * Room left over on a placement's main axis once the content, arrow and
+ * spacing are laid out between the child and the display inset. Negative means
+ * the content cannot fit on that side.
+ *
+ * `arrowSize` is expected pre-swapped for left/right placements, as it is for
+ * the compute*Geometry functions, so its width is the arrow's depth there.
+ */
+const computeMainAxisSlack = (
+  placement,
+  {
+    childRect,
+    contentSize,
+    arrowSize,
+    displayInsets,
+    windowDims,
+    childContentSpacing,
+  },
+) => {
+  switch (placement) {
+    case 'top':
+      return (
+        childRect.y -
+        childContentSpacing -
+        arrowSize.height -
+        displayInsets.top -
+        contentSize.height
+      );
+    case 'bottom':
+      return (
+        windowDims.height -
+        displayInsets.bottom -
+        (childRect.y + childRect.height + childContentSpacing) -
+        arrowSize.height -
+        contentSize.height
+      );
+    case 'left':
+      return (
+        childRect.x -
+        childContentSpacing -
+        arrowSize.width -
+        displayInsets.left -
+        contentSize.width
+      );
+    case 'right':
+      return (
+        windowDims.width -
+        displayInsets.right -
+        (childRect.x + childRect.width + childContentSpacing) -
+        arrowSize.width -
+        contentSize.width
+      );
+    default:
+      return 0;
+  }
+};
+
 export {
   Point,
   Size,
@@ -373,4 +430,5 @@ export {
   computeBottomGeometry,
   computeLeftGeometry,
   computeRightGeometry,
+  computeMainAxisSlack,
 };

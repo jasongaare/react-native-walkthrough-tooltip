@@ -19,6 +19,7 @@ import {
   computeBottomGeometry,
   computeLeftGeometry,
   computeRightGeometry,
+  computeMainAxisSlack,
 } from './geom';
 import styleGenerator from './styles';
 import TooltipChildrenContext from './tooltip-children.context';
@@ -121,6 +122,12 @@ class Tooltip extends Component {
     this.dimensionsSubscription = null;
 
     this.childWrapper = React.createRef();
+
+    const initialPlacement =
+      React.Children.count(props.children) === 0
+        ? invertPlacement(props.placement)
+        : props.placement;
+
     this.state = {
       // no need to wait for interactions if not visible initially
       waitingForInteractions: isVisible && useInteractionManager,
@@ -132,10 +139,10 @@ class Tooltip extends Component {
       displayInsets: computeDisplayInsets(props.displayInsets),
       // if we have no children, and place the tooltip at the "top" we want it to
       // behave like placement "bottom", i.e. display below the top of the screen
-      placement:
-        React.Children.count(props.children) === 0
-          ? invertPlacement(props.placement)
-          : props.placement,
+      placement: initialPlacement,
+      // the side actually drawn on, which differs from `placement` when the
+      // requested side has no room and the tooltip flips (see computeGeometry)
+      renderedPlacement: initialPlacement,
       measurementsFinished: false,
       windowDims: Dimensions.get('window'),
     };
@@ -167,7 +174,7 @@ class Tooltip extends Component {
   componentWillUnmount() {
     // removeEventListener deprecated
     // https://reactnative.dev/docs/dimensions#removeeventlistener
-    if (this.dimensionsSubscription?.remove) {
+    if (this.dimensionsSubscription && this.dimensionsSubscription.remove) {
       // react native >= 0.65.*
       this.dimensionsSubscription.remove();
     } else {
@@ -191,6 +198,7 @@ class Tooltip extends Component {
 
     if (nextPlacement !== prevState.placement) {
       nextState.placement = nextPlacement;
+      nextState.renderedPlacement = nextPlacement;
     }
 
     // update computed display insets if they changed
@@ -312,28 +320,43 @@ class Tooltip extends Component {
       windowDims,
     } = this.state;
 
+    const hasChildren = React.Children.count(this.props.children) > 0;
+
+    // "center" only centers childless tooltips; with children it is drawn on top
+    const requestedPlacement =
+      hasChildren && placement === 'center' ? 'top' : placement;
+
     const options = {
       displayInsets,
       childRect,
       windowDims,
       arrowSize:
-        placement === 'top' || placement === 'bottom'
+        requestedPlacement === 'top' || requestedPlacement === 'bottom'
           ? arrowSize
           : swapSizeDimmensions(arrowSize),
       contentSize,
       childContentSpacing,
     };
 
+    // If the requested side has no room for the content but the opposite side
+    // has more, flip. Otherwise the clamped size goes negative, the size is
+    // dropped when styling, and the bubble is drawn over the child it points at.
+    let renderedPlacement = requestedPlacement;
+    if (hasChildren) {
+      const opposite = invertPlacement(requestedPlacement);
+      const slack = computeMainAxisSlack(requestedPlacement, options);
+      if (slack < 0 && computeMainAxisSlack(opposite, options) > slack) {
+        renderedPlacement = opposite;
+      }
+    }
+
     let geom = computeTopGeometry(options);
 
     // special case for centered, childless placement tooltip
-    if (
-      placement === 'center' &&
-      React.Children.count(this.props.children) === 0
-    ) {
+    if (renderedPlacement === 'center' && !hasChildren) {
       geom = computeCenterGeometry(options);
     } else {
-      switch (placement) {
+      switch (renderedPlacement) {
         case 'bottom':
           geom = computeBottomGeometry(options);
           break;
@@ -354,7 +377,7 @@ class Tooltip extends Component {
     this.setState({
       tooltipOrigin,
       anchorPoint,
-      placement,
+      renderedPlacement,
       measurementsFinished: childRect.width && contentSize.width,
       adjustedContentSize,
     });
@@ -405,7 +428,7 @@ class Tooltip extends Component {
       displayInsets: this.state.displayInsets,
       measurementsFinished: this.state.measurementsFinished,
       ownProps: { ...this.props },
-      placement: this.state.placement,
+      placement: this.state.renderedPlacement,
       tooltipOrigin: this.state.tooltipOrigin,
       topAdjustment: this.props.topAdjustment,
     });

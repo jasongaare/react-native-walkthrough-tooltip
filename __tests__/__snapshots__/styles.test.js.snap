@@ -1,40 +1,61 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`testing styling shows stylesheet is as expected 1`] = `
+exports[`testing styling generates styles for bottom placement 1`] = `
 Object {
-  "arrow": Object {
+  "arrowStyle": Object {
     "borderBottomColor": "transparent",
+    "borderBottomWidth": 9,
     "borderLeftColor": "transparent",
+    "borderLeftWidth": 9,
     "borderRightColor": "transparent",
-    "borderTopColor": "transparent",
+    "borderRightWidth": 9,
+    "borderTopColor": "#fff",
+    "borderTopWidth": 9,
+    "height": 18,
+    "left": 91,
     "position": "absolute",
+    "top": -9,
+    "transform": Array [
+      Object {
+        "rotate": "180deg",
+      },
+    ],
+    "width": 18,
   },
-  "background": Object {
+  "backgroundStyle": Object {
+    "backgroundColor": "rgba(0,0,0,0.5)",
     "bottom": 0,
     "left": 0,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "paddingTop": 24,
     "position": "absolute",
     "right": 0,
     "top": 0,
   },
-  "container": Object {
+  "containerStyle": Object {
     "backgroundColor": "transparent",
     "bottom": 0,
     "left": 0,
-    "opacity": 0,
+    "opacity": 1,
     "position": "absolute",
     "right": 0,
     "top": 0,
+    "zIndex": 500,
   },
-  "containerVisible": Object {
-    "opacity": 1,
-  },
-  "content": Object {
+  "contentStyle": Object {
     "backgroundColor": "#fff",
     "borderRadius": 4,
+    "height": 100,
+    "overflow": "hidden",
     "padding": 8,
+    "width": 200,
   },
-  "tooltip": Object {
+  "tooltipStyle": Object {
     "backgroundColor": "transparent",
+    "left": 72,
+    "paddingTop": 8,
     "position": "absolute",
     "shadowColor": "black",
     "shadowOffset": Object {
@@ -43,6 +64,214 @@ Object {
     },
     "shadowOpacity": 0.8,
     "shadowRadius": 2,
+    "top": 368,
+  },
+}
+`;
+
+exports[`testing styling generates styles for left placement 1`] = `
+Object {
+  "arrowStyle": Object {
+    "borderBottomColor": "transparent",
+    "borderBottomWidth": 9,
+    "borderLeftColor": "transparent",
+    "borderLeftWidth": 9,
+    "borderRightColor": "transparent",
+    "borderRightWidth": 9,
+    "borderTopColor": "#fff",
+    "borderTopWidth": 9,
+    "height": 18,
+    "left": 107,
+    "position": "absolute",
+    "top": 41,
+    "transform": Array [
+      Object {
+        "rotate": "-90deg",
+      },
+    ],
+    "width": 18,
+  },
+  "backgroundStyle": Object {
+    "backgroundColor": "rgba(0,0,0,0.5)",
+    "bottom": 0,
+    "left": 0,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "paddingTop": 24,
+    "position": "absolute",
+    "right": 0,
+    "top": 0,
+  },
+  "containerStyle": Object {
+    "backgroundColor": "transparent",
+    "bottom": 0,
+    "left": 0,
+    "opacity": 1,
+    "position": "absolute",
+    "right": 0,
+    "top": 0,
+    "zIndex": 500,
+  },
+  "contentStyle": Object {
+    "backgroundColor": "#fff",
+    "borderRadius": 4,
+    "height": 100,
+    "overflow": "hidden",
+    "padding": 8,
+    "width": 108,
+  },
+  "tooltipStyle": Object {
+    "backgroundColor": "transparent",
+    "left": 20,
+    "paddingRight": 8,
+    "position": "absolute",
+    "shadowColor": "black",
+    "shadowOffset": Object {
+      "height": 2,
+      "width": 0,
+    },
+    "shadowOpacity": 0.8,
+    "shadowRadius": 2,
+    "top": 282,
+  },
+}
+`;
+
+exports[`testing styling generates styles for right placement 1`] = `
+Object {
+  "arrowStyle": Object {
+    "borderBottomColor": "transparent",
+    "borderBottomWidth": 9,
+    "borderLeftColor": "transparent",
+    "borderLeftWidth": 9,
+    "borderRightColor": "transparent",
+    "borderRightWidth": 9,
+    "borderTopColor": "#fff",
+    "borderTopWidth": 9,
+    "height": 18,
+    "left": -9,
+    "position": "absolute",
+    "top": 41,
+    "transform": Array [
+      Object {
+        "rotate": "90deg",
+      },
+    ],
+    "width": 18,
+  },
+  "backgroundStyle": Object {
+    "backgroundColor": "rgba(0,0,0,0.5)",
+    "bottom": 0,
+    "left": 0,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "paddingTop": 24,
+    "position": "absolute",
+    "right": 0,
+    "top": 0,
+  },
+  "containerStyle": Object {
+    "backgroundColor": "transparent",
+    "bottom": 0,
+    "left": 0,
+    "opacity": 1,
+    "position": "absolute",
+    "right": 0,
+    "top": 0,
+    "zIndex": 500,
+  },
+  "contentStyle": Object {
+    "backgroundColor": "#fff",
+    "borderRadius": 4,
+    "height": 100,
+    "overflow": "hidden",
+    "padding": 8,
+    "width": 135,
+  },
+  "tooltipStyle": Object {
+    "backgroundColor": "transparent",
+    "left": 208,
+    "paddingLeft": 8,
+    "position": "absolute",
+    "shadowColor": "black",
+    "shadowOffset": Object {
+      "height": 2,
+      "width": 0,
+    },
+    "shadowOpacity": 0.8,
+    "shadowRadius": 2,
+    "top": 282,
+  },
+}
+`;
+
+exports[`testing styling generates styles for top placement 1`] = `
+Object {
+  "arrowStyle": Object {
+    "borderBottomColor": "transparent",
+    "borderBottomWidth": 9,
+    "borderLeftColor": "transparent",
+    "borderLeftWidth": 9,
+    "borderRightColor": "transparent",
+    "borderRightWidth": 9,
+    "borderTopColor": "#fff",
+    "borderTopWidth": 9,
+    "height": 18,
+    "left": 91,
+    "position": "absolute",
+    "top": 99,
+    "transform": Array [
+      Object {
+        "rotate": "0deg",
+      },
+    ],
+    "width": 18,
+  },
+  "backgroundStyle": Object {
+    "backgroundColor": "rgba(0,0,0,0.5)",
+    "bottom": 0,
+    "left": 0,
+    "paddingBottom": 24,
+    "paddingLeft": 24,
+    "paddingRight": 24,
+    "paddingTop": 24,
+    "position": "absolute",
+    "right": 0,
+    "top": 0,
+  },
+  "containerStyle": Object {
+    "backgroundColor": "transparent",
+    "bottom": 0,
+    "left": 0,
+    "opacity": 1,
+    "position": "absolute",
+    "right": 0,
+    "top": 0,
+    "zIndex": 500,
+  },
+  "contentStyle": Object {
+    "backgroundColor": "#fff",
+    "borderRadius": 4,
+    "height": 100,
+    "overflow": "hidden",
+    "padding": 8,
+    "width": 200,
+  },
+  "tooltipStyle": Object {
+    "backgroundColor": "transparent",
+    "left": 72,
+    "paddingBottom": 8,
+    "position": "absolute",
+    "shadowColor": "black",
+    "shadowOffset": Object {
+      "height": 2,
+      "width": 0,
+    },
+    "shadowOpacity": 0.8,
+    "shadowRadius": 2,
+    "top": 188,
   },
 }
 `;
