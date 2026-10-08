@@ -150,3 +150,44 @@ describe('Tooltip placement flipping', () => {
     expect(wrapper.state().renderedPlacement).toBe('left');
   });
 });
+
+describe('Tooltip reopening', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('stays hidden until the child is measured again', () => {
+    const wrapper = shallow(
+      <Tooltip
+        isVisible
+        placement="top"
+        content={<Text>content</Text>}
+        onClose={() => {}}
+      >
+        <Text>child</Text>
+      </Tooltip>,
+    );
+    const layout = { nativeEvent: { layout: { width: 200, height: 100 } } };
+
+    wrapper.setState({ windowDims });
+    wrapper.instance().onChildMeasurementComplete(new Rect(140, 350, 64, 64));
+    wrapper.instance().measureContent(layout);
+    expect(wrapper.state().measurementsFinished).toBeTruthy();
+
+    wrapper.setProps({ isVisible: false });
+    wrapper.setProps({ isVisible: true });
+
+    // the content lays out before the child (which may have scrolled) is
+    // measured again, so the old position must not be shown
+    wrapper.instance().measureContent(layout);
+    expect(wrapper.state().measurementsFinished).toBeFalsy();
+
+    wrapper.instance().onChildMeasurementComplete(new Rect(140, 450, 64, 64));
+    expect(wrapper.state().measurementsFinished).toBeTruthy();
+    expect(wrapper.state().tooltipOrigin.y).toBe(338);
+  });
+});

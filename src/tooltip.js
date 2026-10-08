@@ -211,6 +211,10 @@ class Tooltip extends Component {
     if (prevState.measurementsFinished && !nextProps.isVisible) {
       nextState.measurementsFinished = false;
       nextState.adjustedContentSize = new Size(0, 0);
+      // forget where the child was, it may have moved (e.g. scrolled) before
+      // the tooltip opens again; otherwise the content would be shown at the
+      // old position until the child is measured again
+      nextState.childRect = new Rect(0, 0, 0, 0);
     }
 
     if (Object.keys(nextState).length) {
