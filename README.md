@@ -10,6 +10,7 @@ When not visible, the wrapped element is displayed normally.
   - [Installation](#installation)
   - [Breaking Changes in Version 1.0](#breaking-changes-in-version-10)
   - [Example Usage](#example-usage)
+  - [Example App](#example-app)
   - [Screenshot](#screenshot)
   - [How it works](#how-it-works)
   - [Props](#props)
@@ -60,6 +61,25 @@ import Tooltip from 'react-native-walkthrough-tooltip';
   </TouchableHighlight>
 </Tooltip>
 ```
+
+### Example App
+
+This repo ships an Expo app in [`example/`](example) that imports the library
+directly from `src/`, so you can develop against it with hot reload and no
+build step:
+
+```bash
+cd example
+npm install
+npm run ios     # or: npm run android
+```
+
+It has four screens covering placement and `displayInsets` clamping, a
+multi-step walkthrough, every style prop, and the interaction/dismissal props
+(including childless tooltips and `TooltipChildrenContext`). See
+[`example/README.md`](example/README.md) for details.
+
+There is also an expo snack example [here](https://snack.expo.io/@matthewliuhello/react-native-walkthrough-tooltip-example).
 
 ### Screenshot
 

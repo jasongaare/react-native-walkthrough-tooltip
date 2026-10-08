@@ -1,0 +1,25 @@
+{
+  "name": "react-native-walkthrough-tooltip-example",
+  "version": "1.0.0",
+  "description": "Example app for testing react-native-walkthrough-tooltip against current React Native",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@expo-google-fonts/archivo": "^0.4.2",
+    "@expo-google-fonts/ibm-plex-mono": "^0.4.1",
+    "expo": "~57.0.27",
+    "expo-font": "~57.0.4",
+    "expo-status-bar": "~57.0.1",
+    "prop-types": "^15.8.1",
+    "react": "19.2.3",
+    "react-fast-compare": "^2.0.4",
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.6.2"
+  }
+}
