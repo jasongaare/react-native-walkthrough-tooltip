@@ -1,10 +1,75 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Modal, Text } from 'react-native';
 import { shallow } from 'enzyme';
 import Tooltip from '../src/tooltip';
 import { Size, Rect } from '../src/geom';
 
+// Model React Native versions that no longer export InteractionManager.
+jest.mock('react-native', () =>
+  Object.defineProperty(
+    Object.create(require.requireActual('react-native')),
+    'InteractionManager',
+    { value: undefined },
+  ),
+);
+
 const windowDims = { width: 375, height: 667 };
+
+describe('Tooltip deferred measurement', () => {
+  let wrapper;
+  let measure;
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    wrapper = shallow(<Tooltip isVisible useInteractionManager />);
+    measure = jest.fn();
+    wrapper.instance().childWrapper.current = { measure };
+  });
+
+  afterEach(() => {
+    if (wrapper) {
+      wrapper.unmount();
+    }
+    jest.clearAllTimers();
+    jest.useRealTimers();
+  });
+
+  it('defers measurement and reveals the tooltip when measurement completes', () => {
+    wrapper.instance().measureChildRect();
+    expect(measure).not.toHaveBeenCalled();
+    expect(wrapper.find(Modal).prop('visible')).toBe(false);
+
+    jest.runAllImmediates();
+    expect(measure).toHaveBeenCalledTimes(1);
+    measure.mock.calls[0][0](0, 0, 64, 32, 100, 200);
+    expect(wrapper.state().childRect).toEqual(new Rect(100, 200, 64, 32));
+    wrapper.update();
+    expect(wrapper.find(Modal).prop('visible')).toBe(true);
+  });
+
+  it('only measures once when pending work is replaced', () => {
+    measure.mockImplementation(callback => callback(0, 0, 64, 32, 100, 200));
+    wrapper.instance().measureChildRect();
+    wrapper.instance().measureChildRect();
+    jest.runAllImmediates();
+    expect(measure).toHaveBeenCalledTimes(1);
+    expect(wrapper.state().childRect).toEqual(new Rect(100, 200, 64, 32));
+  });
+
+  it('cancels pending measurement on unmount', () => {
+    wrapper.instance().measureChildRect();
+    wrapper.unmount();
+    wrapper = null;
+    jest.runAllImmediates();
+    expect(measure).not.toHaveBeenCalled();
+  });
+
+  it('measures synchronously when deferral is disabled', () => {
+    wrapper.setProps({ useInteractionManager: false });
+    wrapper.instance().measureChildRect();
+    expect(measure).toHaveBeenCalledTimes(1);
+  });
+});
 
 // Renders a tooltip, feeds it the measurements it would normally get from
 // layout, and returns the state produced by computeGeometry.
