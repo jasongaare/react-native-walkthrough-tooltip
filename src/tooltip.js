@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   Dimensions,
-  InteractionManager,
   Modal,
   TouchableWithoutFeedback,
   View,
@@ -302,9 +301,8 @@ class Tooltip extends Component {
       if (this.interactionPromise) {
         this.interactionPromise.cancel();
       }
-      this.interactionPromise = InteractionManager.runAfterInteractions(() => {
-        doMeasurement();
-      });
+      const handle = setImmediate(doMeasurement);
+      this.interactionPromise = { cancel: () => clearImmediate(handle) };
     } else {
       doMeasurement();
     }

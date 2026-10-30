@@ -101,9 +101,10 @@ declare module 'react-native-walkthrough-tooltip' {
     supportedOrientations?: Orientation[];
 
     /**
-     * Set this to true if you want the tooltip to wait to become visible until the callback
-     * from InteractionManager.runAfterInteractions is executed. Can be useful if you need
-     * to wait for navigation transitions to complete, etc
+     * Set this to true to defer tooltip measurement with setImmediate.
+     * The prop name is retained for compatibility; it no longer uses InteractionManager
+     * or waits for navigation transitions or active interactions to finish.
+     * Pending measurement is cancelled when replaced or when the tooltip unmounts.
      */
     useInteractionManager?: boolean;
 
